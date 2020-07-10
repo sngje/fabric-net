@@ -1,0 +1,2 @@
+
+{"index":{"fields":["age"]}, "ddoc":"indexAgeDoc", "name":"indexAge", "type":"json"}
