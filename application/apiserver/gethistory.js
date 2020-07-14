@@ -50,10 +50,9 @@ async function main() {
 
         // const query_result = await contract.evaluateTransaction('queryCage', 'Cage1');
         // // console.log(`Transaction has been evaluated, result is: ${query_result.toString()}`);
-        
+
         // Disconnect from the gateway.
-        await gateway.disconnect();
-        
+        await gateway.disconnect();  
     } catch (error) {
         console.error(`Failed to evaluate transaction: ${error}`);
         process.exit(1);

@@ -12,7 +12,7 @@
 #
 # prepending $PWD/../bin to PATH to ensure we are picking up the correct binaries
 # this may be commented out to resolve installed version of tools if desired
-export PATH=${PWD}/./bin:${PWD}:$PATH
+export PATH=${PWD}/./bin:$PATH
 export FABRIC_CFG_PATH=${PWD}/configtx
 export VERBOSE=false
 
@@ -439,7 +439,7 @@ function networkDown() {
 
 
     # remove channel and script artifacts
-    sudo rm -rf channel-artifacts log.txt fabcar.tar.gz fabcar
+    sudo rm -rf channel-artifacts log.txt farm.tar.gz fabcar
 
   fi
 }
@@ -476,7 +476,7 @@ IMAGETAG="latest"
 # default ca image tag
 CA_IMAGETAG="latest"
 # default database
-DATABASE="couchdb"
+DATABASE="leveldb"
 
 # Parse commandline args
 
