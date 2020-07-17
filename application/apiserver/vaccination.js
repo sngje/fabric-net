@@ -35,7 +35,7 @@ async function main() {
         const contract = network.getContract('farm');
 
         // define condition for search
-        const condition = 'true';
+        const condition = true;
 
         // get the data from ledger
         const result = await contract.evaluateTransaction('queryWithVaccination', condition);

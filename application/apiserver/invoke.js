@@ -41,7 +41,12 @@ async function main() {
 
         // Submit the specified transaction.
         // let vaccination = Buffer.from(JSON.stringify({cholera: true, plague: false}));
-        let tx = await contract.submitTransaction('createCage', 'Cage7', false, 5);
+        // const values = {
+        //     age: parseInt(5),
+        //     vaccination: false
+        // };
+
+        let tx = await contract.submitTransaction('createCage', 'Cage4', true, 5);
         console.log('Transaction has been submitted');
         console.log(tx.toString());
 
