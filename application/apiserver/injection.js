@@ -36,7 +36,7 @@ async function main() {
         
         // get all cages from couchdb from specified condition
         // then convert to JSON object
-        let condition = false;
+        let condition = 'false';
         const result = await contract.evaluateTransaction('queryWithVaccination', condition);
         let objects = JSON.parse(result);
 
@@ -50,7 +50,7 @@ async function main() {
         for (let i = 0; i < objects.length; i++) {
             let object = objects[i];
             let key = object.Key;
-            let tx = await contract.submitTransaction('changeCondition', key, true);
+            let tx = await contract.submitTransaction('changeCondition', key, 'true');
             console.log(`OK - ${tx}`);
         }
         

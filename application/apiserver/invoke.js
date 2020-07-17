@@ -46,7 +46,7 @@ async function main() {
         //     vaccination: false
         // };
 
-        let tx = await contract.submitTransaction('createCage', 'Cage4', true, 5);
+        let tx = await contract.submitTransaction('createCage', 'Cage4', 'true', 5);
         console.log('Transaction has been submitted');
         console.log(tx.toString());
 

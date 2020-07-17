@@ -15,18 +15,18 @@ class Farm extends Contract {
         const cages = [
             {
                 docType: 'duck',
-                age: 1,
-                vaccination: false,
+                age: '1',
+                vaccination: 'false',
             },
             {
                 docType: 'duck',
-                age: 2,
-                vaccination: false,
+                age: '2',
+                vaccination: 'false',
             },
             {
                 docType: 'duck',
-                age: 3,
-                vaccination: true,
+                age: '3',
+                vaccination: 'true',
             },
         ];
 
