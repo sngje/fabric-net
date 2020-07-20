@@ -15,18 +15,18 @@ class Farm extends Contract {
         const cages = [
             {
                 docType: 'duck',
-                age: '1',
-                vaccination: 'false',
+                age: 2,
+                vaccination: false,
             },
             {
                 docType: 'duck',
-                age: '2',
-                vaccination: 'false',
+                age: 2,
+                vaccination: false,
             },
             {
                 docType: 'duck',
-                age: '3',
-                vaccination: 'true',
+                age: 2,
+                vaccination: true,
             },
         ];
 
@@ -39,11 +39,22 @@ class Farm extends Contract {
 
     async createCage(ctx, cageId, vaccination, age) {
         console.info('============= START : Create cage ===========');
+        // ==== Check if marble already exists ====
+        let cageState = await ctx.stub.getState(cageId);
+        if (cageState.toString()) {
+            throw new Error("This cage already exists: " + cageId);
+        }
 
+        let int_age = parseInt(age);
+		if (typeof int_age !== "number") {
+			throw new Error("Age argument must be a numeric string");
+        }
+
+        let condition = (String(vaccination) === 'true') ? true : false;
         const cage = {
             docType: 'duck',
-            age: age,
-            vaccination: vaccination,
+            age: int_age,
+            vaccination: condition,
         };
 
         await ctx.stub.putState(cageId, Buffer.from(JSON.stringify(cage)));
@@ -51,7 +62,7 @@ class Farm extends Contract {
         return ctx.stub.getTxID();
     }
 
-    async changeCageAge(ctx, cageId, newAge) {
+    async changeCageAge(ctx, cageId) {
         console.info('============= START : changeCageAge ===========');
 
         const cageAsBytes = await ctx.stub.getState(cageId); // get the cage from chaincode state
@@ -59,11 +70,32 @@ class Farm extends Contract {
             throw new Error(`${cageId} does not exist`);
         }
         const cage = JSON.parse(cageAsBytes.toString());
-        cage.age = newAge;
+        
+        // let int_age = parseInt(newAge);
+		// if (typeof int_age !== "number") {
+		// 	throw new Error("Age argument must be a numeric string");
+        // }
+        
+        cage.age = cage.age + 1;
 
         await ctx.stub.putState(cageId, Buffer.from(JSON.stringify(cage)));
         console.info('============= END : changeCageAge ===========');
         return ctx.stub.getTxID();
+    }
+
+    async deleteCage(ctx, cageId) {
+        console.info('============= START : deleteCage ===========');
+
+        const cageAsBytes = await ctx.stub.getState(cageId); // get the cage from chaincode state
+        if (!cageAsBytes || cageAsBytes.length === 0) {
+            throw new Error(`${cageId} does not exist`);
+        }
+    
+
+        await ctx.stub.deleteState(cageId);
+        console.info('============= END : deleteCage ===========');
+        // return ctx.stub.getTxID();
+        return 'Deleted';
     }
 
     async changeCondition(ctx, cageId, newCondition) {
@@ -74,7 +106,8 @@ class Farm extends Contract {
             throw new Error(`${cageAsBytes} does not exist`);
         }
         const cage = JSON.parse(cageAsBytes.toString());
-        cage.vaccination = newCondition;
+        let condition = (String(newCondition) === 'true') ? true : false;
+        cage.vaccination = condition;
 
         await ctx.stub.putState(cageId, Buffer.from(JSON.stringify(cage)));
         console.info('============= END : changeCondition ===========');
@@ -110,11 +143,12 @@ class Farm extends Contract {
     }
 
     
-    async queryWithVaccination(ctx, condition) {
+    async queryWithVaccination(ctx, vaccination) {
         console.info('============= START : queryWithVaccination ===========');
-
+        
+        let condition = (String(vaccination) === 'true') ? true : false;
         let queryString = {};
-        queryString.selector = {}
+        queryString.selector = {};
         queryString.selector.vaccination = condition;
         //use_index: ['_design/indexVcDoc', 'indexVc']
         let queryResults = await this.queryWithQueryString(ctx, JSON.stringify(queryString));
@@ -124,9 +158,14 @@ class Farm extends Contract {
 
     async queryWithAge(ctx, age) {
 
+        let int_age = parseInt(age);
+		if (typeof int_age !== "number") {
+			throw new Error("Age argument must be a numeric string");
+        }
+        
         let queryString = {};
-        queryString.selector = {}
-        queryString.selector.age = age;
+        queryString.selector = {};
+        queryString.selector.age = int_age;
         let queryResults = await this.queryWithQueryString(ctx, JSON.stringify(queryString));
         return queryResults;
 
@@ -135,7 +174,9 @@ class Farm extends Contract {
     async queryAll(ctx) {
 
         let queryString = {
-            selector: {}
+            selector: {
+                docType: 'duck'
+            }
         };
 
         let queryResults = await this.queryWithQueryString(ctx, JSON.stringify(queryString));
@@ -144,9 +185,9 @@ class Farm extends Contract {
     }
     
     async queryWithQueryString(ctx, queryString) {
-
-        console.log('query String');
-        console.log(JSON.stringify(queryString));
+        // let queryString = JSON.stringify(queryString);
+        console.log('queryWithQueryString: start');
+        // console.log(JSON.parse(queryString));
 
         let resultsIterator = await ctx.stub.getQueryResult(queryString);
 
@@ -207,6 +248,7 @@ class Farm extends Contract {
         const promiseOfIterator = ctx.stub.getHistoryForKey(key);
         const results = [];
         for await (const keyMod of promiseOfIterator) {
+            // const tx = keyMod.getTxId();
             const resp = {
                 timestamp: keyMod.timestamp,
                 txid: keyMod.tx_id
@@ -214,12 +256,13 @@ class Farm extends Contract {
             if (keyMod.is_delete) {
                 resp.data = 'KEY DELETED';
             } else {
-                resp.data = keyMod.value.toString('utf8');
+                resp.data = JSON.parse(keyMod.value.toString('utf8'));
             }
+            resp.tx_id = keyMod.txId;
             results.push(resp);
         }
         console.log(results);
-        return results;
+        return JSON.stringify(results);
     }
 
 }

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="transactions">
+    <h4>Query for cage - {{ cage_id }}</h4>
+    <hr/>
+    <!-- START TABLE -->
+    <table>
+      <thead>
+        <tr>
+            <th>ID</th>
+            <th>Age</th>
+            <th>Vaccination</th>
+            <th>Timestamp</th>
+            <th>Transaction ID</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for arr in transactions %}
+        <tr>
+          <td>{{ cage_id }}</td>
+          <td>{{ arr['data']['age'] }}</td>
+          <td>{{ arr['data']['vaccination'] }}</td>
+          <td>{{ myTimeFunc(arr['timestamp']['seconds']|int) }}</td>
+          <td>{{ arr['full']['txId'] }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <!-- END TABLE -->
+  </div>
+{% endblock %}

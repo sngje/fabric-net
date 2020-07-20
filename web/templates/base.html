@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+     
+{% include 'header.html' %}
+<body>
+    {% block content %}
+    {% endblock %}
+    
+    {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div id="alter-box" class="materialert {{ category }}">
+                <i class="material-icons">check</i> {{ message }}
+                <!-- info_outline, check, warning, error_outline -->
+                <button type="button" id="close-alert" class="close-alert">×</button>
+            </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <script>
+        $('#close-alert').click(function(){
+            $( "#alter-box" ).fadeOut( "slow", function() {
+        });
+    });
+    </script>
+</body>
+</html>
+

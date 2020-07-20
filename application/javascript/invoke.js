@@ -13,7 +13,7 @@ const path = require('path');
 async function main() {
     try {
         // load the network configuration
-        const ccpPath = path.resolve(__dirname, '..', '..', 'test-network', 'organizations', 'peerOrganizations', 'org1.example.com', 'connection-org1.json');
+        const ccpPath = path.resolve(__dirname, '..', '..', 'organizations', 'peerOrganizations', 'org1.example.com', 'connection-org1.json');
         let ccp = JSON.parse(fs.readFileSync(ccpPath, 'utf8'));
 
         // Create a new file system based wallet for managing identities.
@@ -40,8 +40,15 @@ async function main() {
         const contract = network.getContract('farm');
 
         // Submit the specified transaction.
-        await contract.submitTransaction('createCage', 'Cage5', true, 3);
+        // let vaccination = Buffer.from(JSON.stringify({cholera: true, plague: false}));
+        // const values = {
+        //     age: parseInt(5),
+        //     vaccination: false
+        // };
+
+        let tx = await contract.submitTransaction('createCage', 'Cage3', true, 5);
         console.log('Transaction has been submitted');
+        console.log(tx.toString());
 
         // Disconnect from the gateway.
         await gateway.disconnect();

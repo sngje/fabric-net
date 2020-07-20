@@ -1,0 +1,140 @@
+@font-face {
+    font-family: "myfont";
+    src: url("/static/font/Dubai-Regular.woff") format('woff');
+}
+
+body {
+	font-family: myfont, serif;
+    overflow-x: hidden;
+    padding: 20px;
+}
+
+
+.circle-text {
+	display: table-cell;
+	height: 200px;
+	width: 200px;
+	text-align: center;
+	vertical-align: middle;
+	border-radius: 50%;
+	background: #534072;
+	color: #fff;
+	font-size: 23px;
+}
+
+.acircle-text {
+	display: table-cell;
+	height: 100px;
+	width: 200px;
+	text-align: center;
+	vertical-align: middle;
+	background: #534072;
+	color: #fff;
+	font-size: 23px;
+}
+
+.active { 
+	background: pink;
+}
+
+.our-colour {
+	background: #534072;
+}
+
+.hover-our-colour:hover {
+	background: #534072;
+}
+
+#welcome_icons {
+	padding: 70;
+	text-align: center;
+}
+
+.content {
+	display: inline-block;
+	cursor: pointer;
+}
+
+.border {
+	border: thin solid blue;
+}
+
+.modal {
+	max-height: 120%;
+	/*width: 70%;*/
+}
+
+.modal-bigger {
+	width: 80%;
+	height: 85% !important;
+}
+
+.modal-smaller {
+	height: 61% !important;
+}
+
+.oval {
+    border-radius: 50%;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50px; /*50px vs. 50%*/
+}
+
+.materialert{
+    position: relative;
+    min-width: 150px;
+    padding: 15px;
+    margin-bottom: 20px;
+    margin-top: 15px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    transition: all 0.1s linear;
+    webkit-box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+.materialert .material-icons{
+    margin-right: 10px;
+}
+.materialert .close-alert{
+    -webkit-appearance: none;
+    border: 0;
+    cursor: pointer;
+    color: inherit;
+    background: 0 0;
+    font-size: 22px;
+    line-height: 1;
+    font-weight: bold;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, .7);
+    filter: alpha(opacity=40);
+    margin-bottom: -5px;
+    position: absolute;
+    top: 16px;
+    right: 5px;
+}
+.materialert.info{
+    background-color: #039be5;
+    color: #fff;
+}
+.materialert.success{
+    background-color: #43a047;
+    color: #fff;
+}
+.materialert.error{
+    background-color: #c62828;
+    color: #fff;
+}
+.materialert.danger{
+    background-color: #c62828;
+    color: #fff;
+}
+.materialert.warning{
+    background-color: #fbc02d;
+    color: #fff;
+}

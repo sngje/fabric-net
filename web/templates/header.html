@@ -1,0 +1,42 @@
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-alpha.2/js/materialize.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-alpha.2/css/materialize.min.css">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/body.css') }}">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
+  {% if title %}
+    <title>Supply chain management - {{ title }}!</title>
+  {% else %}
+    <title>Supply chain management!</title>
+  {% endif %}
+
+<script type="text/javascript">
+// For the DatePicker utility from MaterializeCSS :)
+  $(document).ready(function(){
+    $('.datepicker').datepicker({
+      container: 'body'
+    });
+  });
+  $(document).ready(function(){
+    $('select').select();
+  });
+  $(document).ready(function(){
+    $('.modal').modal();
+  });
+</script>
+
+</head>
+<nav>
+  <div class="nav-wrapper our-colour">
+    <a href="/index" class="brand-logo"><i class="material-icons md-48">&nbsp;dashboard</i>Supply chain management</a>
+    <ul id="nav-mobile" class="right hide-on-med-and-down">
+      <li><a href="{{ url_for('allcages') }}">Current state</a></li>
+      <li><a href="{{ url_for('injection') }}">Health monitor</a></li>
+      <li><a href="#">Profit management</a></li>
+      <li><a href="#">Product delivery</a></li>
+    </ul>
+  </div>
+</nav>
+
+

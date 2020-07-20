@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="transactions">
+      <h4>All cages</h4>
+      <hr/>
+      <!-- START TABLE -->
+      <table>
+        <thead>
+          <tr>
+              <th>ID</th>
+              <th>Age</th>
+              <th>Vaccination</th>
+              <th>Trace</th>
+              <th>Delete</th>
+
+          </tr>
+        </thead>
+        <tbody>
+          {% for arr in transactions %}
+          <tr>
+            <td>{{ arr['Key'] }}</td>
+            <td><a href="{{ url_for('changeage', cage_id=arr['Key'])}}">{{ arr['Record']['age'] }}</a></td>
+            <td>{{ arr['Record']['vaccination'] }}</td>
+            <td><a href="{{ url_for('history', cage_id=arr['Key'])}}">See history</a></td>
+            <td><a href="{{ url_for('delete', cage_id=arr['Key'])}}"><i class="material-icons md-30">&nbsp;delete</i></a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <!-- END TABLE -->
+    </div>
+    <h2>
+      <a class="btn-floating btn-large waves-effect waves-light our-colour">
+        <i class="material-icons">add</i>
+      </a>
+    </h2>
+{% endblock %}
+

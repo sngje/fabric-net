@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="transactions">
+    <h4>Transaction status</h4>
+    <hr/>
+    <!-- START TABLE -->
+    <table>
+      <thead>
+        <tr>
+            <th>Message</th>
+            <th>Transaction ID</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ transactions['response'] }}</td>
+          <td>{{ transactions['tx_id'] }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <!-- END TABLE -->
+  </div>
+{% endblock %}
+

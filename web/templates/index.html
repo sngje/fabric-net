@@ -1,0 +1,30 @@
+<html>
+  <head>
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-alpha.2/css/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/body.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-alpha.2/js/materialize.min.js"></script>
+    <title>Supply chain management!</title>
+  </head>
+  <body>
+      <h1 class="center">Hyperledger fabric- Supply chain management!</h1>
+      <br/>
+      <div id="welcome_icons">
+        <div class="row content">
+          <div class="col s6"><a href="{{ url_for('allcages') }}"><div class="circle-text">Current state</div></a></div>
+          <div class="col s6"><a href="{{ url_for('injection') }}"><div class="circle-text">Health monitor</div></a></div>
+        </div>
+        <div class="row content">
+          <div class="col s6"><a href="#"><div class="circle-text">Profit management</div></a></div>
+          <div class="col s6"><a href="#"><div class="circle-text">product delivery</div></a></div>
+        </div>
+      </div>
+
+      <div class="center">
+        <h5>A web-application made with Python & MaterializeCSS.</h5>
+      </div>
+  </body>
+</html>
