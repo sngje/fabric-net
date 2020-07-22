@@ -1,10 +1,16 @@
 {% extends 'base.html' %}
 {% block content %}
   <div class="transactions">
-      <h4>All cages</h4>
+      <h4>All cages 
+        <span style="text-align:right">
+          <a href="{{ url_for('create_cage') }}" class="btn-floating pulse btn waves-effect waves-light our-colour">
+            <i class="right-align material-icons">add</i>
+          </a>
+        </span>
+      </h4>
       <hr/>
       <!-- START TABLE -->
-      <table>
+      <table class="striped">
         <thead>
           <tr>
               <th>ID</th>
@@ -29,10 +35,17 @@
       </table>
       <!-- END TABLE -->
     </div>
-    <h2>
-      <a class="btn-floating btn-large waves-effect waves-light our-colour">
-        <i class="material-icons">add</i>
-      </a>
-    </h2>
+
+    <br />
+    <ul class="pagination col center-align">
+      <li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>
+      <li class="active"><a href="#!">1</a></li>
+      <li class="waves-effect"><a href="#!">2</a></li>
+      <li class="waves-effect"><a href="#!">3</a></li>
+      <li class="waves-effect"><a href="#!">4</a></li>
+      <li class="waves-effect"><a href="#!">5</a></li>
+      <li class="waves-effect"><a href="#!"><i class="material-icons">chevron_right</i></a></li>
+    </ul>
+    
 {% endblock %}
 

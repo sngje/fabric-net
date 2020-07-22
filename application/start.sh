@@ -7,6 +7,12 @@
 # Exit on first error
 set -e
 
+# create npm packages
+pushd ../contract/javascript
+npm install
+popd
+
+
 # don't rewrite paths for Windows Git Bash users
 export MSYS_NO_PATHCONV=1
 starttime=$(date +%s)
@@ -30,8 +36,9 @@ rm -rf go/wallet/*
 pushd ../
 ./network.sh down
 ./network.sh up createChannel -ca -s couchdb
-./network.sh deployFarm -l ${CC_SRC_LANGUAGE}
+./network.sh deployFarm -l javascript
 popd
+
 
 cat <<EOF
 

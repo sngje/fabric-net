@@ -6,28 +6,27 @@
       <hr/>
       <!-- START FORM -->
         <div class="row">
-          <form class="col s12" action="submitPizza" method="POST">
-              <div class="row">
-                <div class="input-field col s12">
-                  <select name="state">
-                    <option value="" disabled selected>Choose pizza state</option>
-                    <option value="production">Production</option>
-                    <option value="freezing">Freezing</option>
-                    <option value="packaging">Packaging</option>
-                    <option value="distribution">Distribution</option>
-                  </select>
-                </div>
-              </div>
+          <form class="col s12" action="create_cage" method="POST">
               <div class="row">
                 <div class="input-field col s6">
-                  <input placeholder="Timestamp" name="timestamp" type="text" >
+                  <input placeholder="ID" name="id" type="text" >
                 </div>
                 <div class="input-field col s6">
-                  <input placeholder="Date" name="date" type="text" >
+                  <input placeholder="Age" name="age" type="text" >
+                </div>
+                <div class="row">
+                  </div><div class="switch col">
+                    <label>
+                      False
+                      <input type="checkbox" name="vaccination">
+                      <span class="lever"></span>
+                      True
+                    </label>
+                  </div>
                 </div>
               </div>
               <input class="waves-light btn our-colour" type="submit" value="Submit" name="">
-              <input  onclick="location.href='/changeOwner/wholesaler';" class="waves-light btn our-colour" type="button" value="Transfer Ownership" style="color: white;"  name="">
+              <!-- <input  onclick="location.href='/changeOwner/wholesaler';" class="waves-light btn our-colour" type="button" value="Transfer Ownership" style="color: white;"  name=""> -->
           </form>
         </div>
       <!-- END FORM -->

@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, flash, url_for
-import requests, json, random, os, time
+import requests, json, random, os, time, json
 
 app = Flask(__name__)
 
@@ -35,7 +35,7 @@ def index():
 	return render_template('index.html')
 
 # Route: query cages page
-@app.route("/cages")
+@app.route("/live")
 def allcages():
 	r = requests.get('http://localhost:3000/api/queryallcages') 
 	if r.json()==None or r.json()=={}:
@@ -56,17 +56,16 @@ def history(cage_id):
 
 
 # Route: injection check up
-@app.route("/injection")
+@app.route("/health_monitor")
 def injection():
 	r = requests.get('http://localhost:3000/api/injection') 
 	if r.status_code != 200:
-		flash("Server error - 500", "info")
+		flash("All cages are injected", "info")
 		return redirect(url_for('allcages'))
 	if r.json()==None or r.json()=={}:
 		transactions = {}
 	else:
 		transactions = r.json()
-	flash(transactions['error'], "info")
 	return render_template('injection.html', title="Health monitor", transactions=transactions)
 
 # Route: inject
@@ -77,6 +76,7 @@ def inject(cage_id):
 		transactions = {}
 	else:
 		transactions = r.json()
+	flash(transactions['response'], "success")
 	return render_template('transaction.html', title=f"Inject cage - {cage_id}", cage_id=cage_id, transactions=transactions)
 
 # Route: changeage
@@ -106,22 +106,37 @@ def delete(cage_id):
 	return render_template('transaction.html', title=f"Deleted - {cage_id}", cage_id=cage_id, transactions=transactions)
 
 # Route: create cage
-@app.route("/add", methods=["POST", "GET"])
-def add():
-	# r = requests.delete(f'http://localhost:3000/api/delete/{cage_id}') 
-	# if r.status_code != 200:
-	# 	return redirect(url_for('index'))
-	# if r.json()==None or r.json()=={}:
-	# 	transactions = {}
-	# else:
-	# 	transactions = r.json()
+@app.route("/create_cage", methods=["POST", "GET"])
+def create_cage():
+	if request.method == "POST":
+		key = request.form['id']
+		age = int(request.form['age'])
+		vaccination = 'true' if (request.form.get('vaccination', False)) != False else 'false'
+
+		req = {
+			'id': f'{key}',
+			'age': f'{age}',
+			'vaccination': f'{vaccination}'
+			}
+		req = json.loads(json.dumps(req))
+		# send the data
+		r = requests.post(f'http://localhost:3000/api/addcage', json=req) 
+		if r.status_code != 200:
+			flash(req, "error")
+			return redirect(url_for('create_cage'))
+		if r.json()==None or r.json()=={}:
+			transactions = {}
+		else:
+			transactions = r.json()
+		flash(transactions['response'], "success")
+		return redirect(url_for('allcages'))
 	return render_template('create_cage.html', title="Cerate cage")
 
 
 
 # When running this app on the local machine, default the port to 8000
-port = int(os.getenv('PORT', 5000))
+port = int(os.getenv('PORT', 8080))
 
 # Entry point to the program
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=port, debug=True)
+    app.run(host='localhost', port=port, debug=True)

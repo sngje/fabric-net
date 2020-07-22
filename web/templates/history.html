@@ -4,7 +4,7 @@
     <h4>Query for cage - {{ cage_id }}</h4>
     <hr/>
     <!-- START TABLE -->
-    <table>
+    <table class="striped">
       <thead>
         <tr>
             <th>ID</th>
@@ -21,7 +21,7 @@
           <td>{{ arr['data']['age'] }}</td>
           <td>{{ arr['data']['vaccination'] }}</td>
           <td>{{ myTimeFunc(arr['timestamp']['seconds']|int) }}</td>
-          <td>{{ arr['full']['txId'] }}</td>
+          <td>{{ arr['tx_id'] }}</td>
         </tr>
         {% endfor %}
       </tbody>

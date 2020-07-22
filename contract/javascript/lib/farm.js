@@ -265,6 +265,85 @@ class Farm extends Contract {
         return JSON.stringify(results);
     }
 
+    async getAllResults(promiseOfIterator) {
+        const allResults = [];
+        for await (const res of promiseOfIterator) {
+            // no more res.value.value ...
+            // if not a getHistoryForKey iterator then key is contained in res.key
+            allResults.push(res.value.toString('utf8'));
+        }
+    
+        // iterator will be automatically closed on exit from the loop
+        // either by reaching the end, or a break or throw terminated the loop
+        return allResults;
+    }
+    
+
+    //old style
+    async newGetAllResults(iterator, isHistory) {
+        let allResults = [];
+        while (true) {
+            let res = await iterator.next();
+    
+            if (res.value && res.value.value.toString()) {
+                let jsonRes = {};
+                console.log(res.value.value.toString('utf8'));
+    
+                if (isHistory && isHistory === true) {
+                    jsonRes.TxId = res.value.tx_id;
+                    jsonRes.Timestamp = res.value.timestamp;
+                    jsonRes.IsDelete = res.value.is_delete.toString();
+                    try {
+                        jsonRes.Value = JSON.parse(res.value.value.toString('utf8'));
+                    } catch (err) {
+                        console.log(err);
+                        jsonRes.Value = res.value.value.toString('utf8');
+                    }
+                } else {
+                    jsonRes.Key = res.value.key;
+                    try {
+                        jsonRes.Record = JSON.parse(res.value.value.toString('utf8'));
+                    } catch (err) {
+                        console.log(err);
+                        jsonRes.Record = res.value.value.toString('utf8');
+                    }
+                }
+                allResults.push(jsonRes);
+            }
+            if (res.done) {
+                console.log('end of data');
+                await iterator.close();
+                console.info(allResults);
+                return allResults;
+            }
+        }
+    }
+      
+    async queryWithPaginationNew(ctx, queryString, page_size, bookmark) {
+        let pageSize = parseInt(page_size);
+        let promiseOfIterator = ctx.stub.getQueryResultWithPagination(queryString, pageSize, bookmark);
+        let results = await this.getAllResults(promiseOfIterator);
+        const metadata = (await promiseOfIterator).metadata;
+        let ResponseMetadata = {
+            RecordsCount: metadata.fetched_records_count,
+            Bookmark: metadata.bookmark,
+        };
+        return JSON.stringify({data: results, meta: ResponseMetadata});
+    }
+
+    async queryWithPagination(ctx, queryString, page_size, bookmark) {
+        let pageSize = parseInt(page_size);
+        const { iterator, metadata } = await ctx.stub.getQueryResultWithPagination(queryString, pageSize, bookmark);
+        let results = await this.newGetAllResults(iterator, false);
+        // use RecordsCount and Bookmark to keep consistency with the go sample
+        results.ResponseMetadata = {
+            RecordsCount: metadata.fetched_records_count,
+            Bookmark: metadata.bookmark,
+        };
+        return JSON.stringify(results);
+    }
+    
+    
 }
 
 module.exports = Farm;
