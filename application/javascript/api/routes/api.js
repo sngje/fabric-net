@@ -3,15 +3,22 @@ const fabricNetwork = require('./fabricNetwork');
 
 const router = express.Router();
 
-router.get('/queryallcages', async function (req, res) {
+router.get('/queryallcages/:bookmark', async function (req, res) {
     try {
         // Get the contract from the network
         const {contract, gateway} = await fabricNetwork.connectNetwork();
 
         // Evaluate the specified transaction.
         // queryAllCages transaction - requires no arguments, ex: ('queryAllCages')
-        const result = await contract.evaluateTransaction('queryAllCages');
-        console.log('Transaction has been evaluated');
+        let queryString = {
+            selector: {
+                docType: 'duck'
+            }
+        };
+        let bookmark = (req.params.bookmark !== '0') ? req.params.bookmark : ''; 
+        const result = await contract.evaluateTransaction('queryWithPagination',
+                    JSON.stringify(queryString), 10,
+                    bookmark);
         console.log(JSON.parse(result));
         res.status(200).json(JSON.parse(result));
 

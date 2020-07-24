@@ -22,13 +22,13 @@
           </tr>
         </thead>
         <tbody>
-          {% for arr in transactions %}
+          {% for arr in transactions['data'] %}
           <tr>
-            <td>{{ arr['Key'] }}</td>
-            <td><a href="{{ url_for('changeage', cage_id=arr['Key'])}}">{{ arr['Record']['age'] }}</a></td>
-            <td>{{ arr['Record']['vaccination'] }}</td>
-            <td><a href="{{ url_for('history', cage_id=arr['Key'])}}">See history</a></td>
-            <td><a href="{{ url_for('delete', cage_id=arr['Key'])}}"><i class="material-icons md-30">&nbsp;delete</i></a></td>
+            <td>{{ arr['key'] }}</td>
+            <td><a href="{{ url_for('changeage', cage_id=arr['key'])}}">{{ arr['data']['age'] }}</a></td>
+            <td>{{ arr['data']['vaccination'] }}</td>
+            <td><a href="{{ url_for('history', cage_id=arr['key'])}}">See history</a></td>
+            <td><a href="{{ url_for('delete', cage_id=arr['key'])}}"><i class="material-icons md-30">&nbsp;delete</i></a></td>
           </tr>
           {% endfor %}
         </tbody>
@@ -39,12 +39,20 @@
     <br />
     <ul class="pagination col center-align">
       <li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>
-      <li class="active"><a href="#!">1</a></li>
+      <!-- <li class="active"><a href="#!">1</a></li>
       <li class="waves-effect"><a href="#!">2</a></li>
       <li class="waves-effect"><a href="#!">3</a></li>
       <li class="waves-effect"><a href="#!">4</a></li>
-      <li class="waves-effect"><a href="#!">5</a></li>
-      <li class="waves-effect"><a href="#!"><i class="material-icons">chevron_right</i></a></li>
+      <li class="waves-effect"><a href="#!">5</a></li> -->
+      {% if transactions['meta_data']['fetchedRecordsCount'] >= 10 %}
+        <li class="waves-effect">
+          <a href="{{ url_for('allcages_pagination', bookmark=transactions['meta_data']['bookmark']) }}">
+            <i class="material-icons">chevron_right</i>
+          </a>
+        </li>
+      {% else %}
+        <li class="disabled"><a href="#!"><i class="material-icons">chevron_right</i></a></li>
+      {% endif %}
     </ul>
     
 {% endblock %}

@@ -37,12 +37,23 @@ def index():
 # Route: query cages page
 @app.route("/live")
 def allcages():
-	r = requests.get('http://localhost:3000/api/queryallcages') 
+	r = requests.get('http://localhost:3000/api/queryallcages/0') 
 	if r.json()==None or r.json()=={}:
 		transactions = {}
 	else:
 		transactions = r.json()
 	return render_template('cages.html', title="Current state", transactions=transactions)
+
+# Route: query cages page 2
+@app.route("/live/<string:bookmark>")
+def allcages_pagination(bookmark):
+	r = requests.get(f'http://localhost:3000/api/queryallcages/{bookmark}') 
+	if r.json()==None or r.json()=={}:
+		transactions = {}
+	else:
+		transactions = r.json()
+	return render_template('cages.html', title="Current state", transactions=transactions)
+
 
 # Route: history page
 @app.route("/history/<string:cage_id>")

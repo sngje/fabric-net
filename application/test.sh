@@ -1,0 +1,3 @@
+VERSION=4
+OLD_V="SQA_$VERSION"
+echo $OLD_V

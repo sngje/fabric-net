@@ -52,9 +52,10 @@ async function main() {
 
 
 
-        const result = await contract.evaluateTransaction('queryWithPagination', JSON.stringify(queryString), 10, '');
+        let result = await contract.evaluateTransaction('queryWithPagination', JSON.stringify(queryString), 10, '');
         console.log('Transaction has been evaluated');
-        console.log(JSON.parse(result));
+        result = JSON.parse(result)
+        console.log(result.data[1]);
 
         // const query_result = await contract.evaluateTransaction('queryCage', 'Cage1');
         // // console.log(`Transaction has been evaluated, result is: ${query_result.toString()}`);

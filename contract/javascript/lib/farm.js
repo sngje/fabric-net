@@ -69,13 +69,8 @@ class Farm extends Contract {
         if (!cageAsBytes || cageAsBytes.length === 0) {
             throw new Error(`${cageId} does not exist`);
         }
-        const cage = JSON.parse(cageAsBytes.toString());
-        
-        // let int_age = parseInt(newAge);
-		// if (typeof int_age !== "number") {
-		// 	throw new Error("Age argument must be a numeric string");
-        // }
-        
+
+        const cage = JSON.parse(cageAsBytes.toString());        
         cage.age = cage.age + 1;
 
         await ctx.stub.putState(cageId, Buffer.from(JSON.stringify(cage)));
@@ -94,7 +89,6 @@ class Farm extends Contract {
 
         await ctx.stub.deleteState(cageId);
         console.info('============= END : deleteCage ===========');
-        // return ctx.stub.getTxID();
         return 'Deleted';
     }
 
@@ -224,25 +218,6 @@ class Farm extends Contract {
 
     }
 
-    // old way
-    async getHistory(ctx, id) {
-        console.info('============= START : Query History ===========');
-        let iterator = await ctx.stub.getHistoryForKey(id);
-        let result = [];
-        let res = await iterator.next();
-        while (!res.done) {
-            if (res.value) {
-                console.info(`found state update with value: ${res.value.value.toString('utf8')}`);
-                const obj = JSON.parse(res.value.value.toString('utf8'));
-                result.push(obj);
-            }
-            res = await iterator.next();
-        }
-        await iterator.close();
-        console.info('============= END : Query History ===========');
-        return result;  
-    }
-
     //new way
     async getFullHistory(ctx, key) {
         const promiseOfIterator = ctx.stub.getHistoryForKey(key);
@@ -250,8 +225,7 @@ class Farm extends Contract {
         for await (const keyMod of promiseOfIterator) {
             // const tx = keyMod.getTxId();
             const resp = {
-                timestamp: keyMod.timestamp,
-                txid: keyMod.tx_id
+                timestamp: keyMod.timestamp
             }
             if (keyMod.is_delete) {
                 resp.data = 'KEY DELETED';
@@ -265,82 +239,37 @@ class Farm extends Contract {
         return JSON.stringify(results);
     }
 
+    // get data from iterator
     async getAllResults(promiseOfIterator) {
         const allResults = [];
         for await (const res of promiseOfIterator) {
             // no more res.value.value ...
             // if not a getHistoryForKey iterator then key is contained in res.key
-            allResults.push(res.value.toString('utf8'));
+            const resp = {
+                key: res.key.toString('utf8'),
+            }
+            if (res.is_delete) {
+                resp.data = 'KEY DELETED';
+            } else {
+                resp.data = JSON.parse(res.value.toString('utf8'));
+            }
+            allResults.push(resp);
         }
     
         // iterator will be automatically closed on exit from the loop
         // either by reaching the end, or a break or throw terminated the loop
+        console.log(allResults);
         return allResults;
-    }
-    
-
-    //old style
-    async newGetAllResults(iterator, isHistory) {
-        let allResults = [];
-        while (true) {
-            let res = await iterator.next();
-    
-            if (res.value && res.value.value.toString()) {
-                let jsonRes = {};
-                console.log(res.value.value.toString('utf8'));
-    
-                if (isHistory && isHistory === true) {
-                    jsonRes.TxId = res.value.tx_id;
-                    jsonRes.Timestamp = res.value.timestamp;
-                    jsonRes.IsDelete = res.value.is_delete.toString();
-                    try {
-                        jsonRes.Value = JSON.parse(res.value.value.toString('utf8'));
-                    } catch (err) {
-                        console.log(err);
-                        jsonRes.Value = res.value.value.toString('utf8');
-                    }
-                } else {
-                    jsonRes.Key = res.value.key;
-                    try {
-                        jsonRes.Record = JSON.parse(res.value.value.toString('utf8'));
-                    } catch (err) {
-                        console.log(err);
-                        jsonRes.Record = res.value.value.toString('utf8');
-                    }
-                }
-                allResults.push(jsonRes);
-            }
-            if (res.done) {
-                console.log('end of data');
-                await iterator.close();
-                console.info(allResults);
-                return allResults;
-            }
-        }
-    }
-      
-    async queryWithPaginationNew(ctx, queryString, page_size, bookmark) {
-        let pageSize = parseInt(page_size);
-        let promiseOfIterator = ctx.stub.getQueryResultWithPagination(queryString, pageSize, bookmark);
-        let results = await this.getAllResults(promiseOfIterator);
-        const metadata = (await promiseOfIterator).metadata;
-        let ResponseMetadata = {
-            RecordsCount: metadata.fetched_records_count,
-            Bookmark: metadata.bookmark,
-        };
-        return JSON.stringify({data: results, meta: ResponseMetadata});
     }
 
     async queryWithPagination(ctx, queryString, page_size, bookmark) {
-        let pageSize = parseInt(page_size);
-        const { iterator, metadata } = await ctx.stub.getQueryResultWithPagination(queryString, pageSize, bookmark);
-        let results = await this.newGetAllResults(iterator, false);
-        // use RecordsCount and Bookmark to keep consistency with the go sample
-        results.ResponseMetadata = {
-            RecordsCount: metadata.fetched_records_count,
-            Bookmark: metadata.bookmark,
-        };
-        return JSON.stringify(results);
+        const pageSize = parseInt(page_size);
+        const promiseOfIterator = ctx.stub.getQueryResultWithPagination(queryString, pageSize, bookmark);
+        const results = await this.getAllResults(promiseOfIterator);
+        const metadata = (await promiseOfIterator).metadata;
+        const alldata = {data: results, meta_data: metadata};
+        console.log(allResults);
+        return JSON.stringify(alldata);
     }
     
     
