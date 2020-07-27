@@ -70,18 +70,69 @@ router.get('/history/:cage_id', async function (req, res) {
     }
 });
 
-router.get('/injection', async function (req, res) {
+router.get('/injection/:bookmark', async function (req, res) {
     try {
         // Get the contract from the network
         const {contract, gateway} = await fabricNetwork.connectNetwork();
 
-        let condition = false;
-        const result = await contract.evaluateTransaction('queryWithVaccination', condition);
-        let objects = JSON.parse(result);
+        // let condition = false;
+        // const result = await contract.evaluateTransaction('queryWithVaccination', condition);
+        // let objects = JSON.parse(result);
 
+        let queryString = {
+            selector: {
+                vaccination: false
+            }
+        };
+        let bookmark = (req.params.bookmark !== '0') ? req.params.bookmark : ''; 
+        const result = await contract.evaluateTransaction('queryWithPagination',
+                    JSON.stringify(queryString), 10,
+                    bookmark);
+        let objects = JSON.parse(result);
+       
         // check what we have
         if (objects.length === 0) {
             throw new Error('All cages are injected');
+        }
+
+        console.log(objects);
+        res.status(200).json(objects);
+
+        // disconnect the gateway
+        await gateway.disconnect();
+    } catch (error) {
+        console.error(`Failed to evaluate transaction: ${error}`);
+        res.status(500).json({error: 'Failed to evaluate transaction. Please try again'});
+    }
+});
+
+router.get('/search/:bookmark', async function (req, res) {
+    try {
+        // Get the contract from the network
+        const {contract, gateway} = await fabricNetwork.connectNetwork();
+
+        // let condition = false;
+        // const result = await contract.evaluateTransaction('queryWithVaccination', condition);
+        // let objects = JSON.parse(result);
+
+        const age = parseInt(req.body.age);
+        const condition = (req.body.vaccination === 'on') ? true : false;
+        let queryString = {
+            selector: {
+                age: age,
+                vaccination: condition
+            }
+        };
+        console.log(queryString);
+        let bookmark = (req.params.bookmark !== '0') ? req.params.bookmark : ''; 
+        const result = await contract.evaluateTransaction('queryWithPagination',
+                    JSON.stringify(queryString), 10,
+                    bookmark);
+        let objects = JSON.parse(result);
+       
+        // check what we have
+        if (objects.length === 0) {
+            throw new Error('Any data found for the parameter');
         }
 
         console.log(objects);

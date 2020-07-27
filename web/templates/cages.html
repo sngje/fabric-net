@@ -38,7 +38,15 @@
 
     <br />
     <ul class="pagination col center-align">
-      <li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>
+      {% if previous == True %}
+        <li class="waves-effect">
+          <a href="{{ url_for('allcages', next=previous) }}">
+            <i class="material-icons">chevron_left</i>
+          </a>
+        </li>
+      {% else %}
+        <li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>
+      {% endif %}
       <!-- <li class="active"><a href="#!">1</a></li>
       <li class="waves-effect"><a href="#!">2</a></li>
       <li class="waves-effect"><a href="#!">3</a></li>
@@ -46,7 +54,7 @@
       <li class="waves-effect"><a href="#!">5</a></li> -->
       {% if transactions['meta_data']['fetchedRecordsCount'] >= 10 %}
         <li class="waves-effect">
-          <a href="{{ url_for('allcages_pagination', bookmark=transactions['meta_data']['bookmark']) }}">
+          <a href="{{ url_for('allcages', next=transactions['meta_data']['bookmark'], previous=previous) }}">
             <i class="material-icons">chevron_right</i>
           </a>
         </li>

@@ -14,17 +14,44 @@
         </tr>
       </thead>
       <tbody>
-        {% for arr in transactions %}
+        {% for arr in transactions['data'] %}
         <tr>
-          <td>{{ arr['Key'] }}</td>
-          <td>{{ arr['Record']['age'] }}</td>
-          <td>{{ arr['Record']['vaccination'] }}</td>
-          <td><a href="/inject/{{ arr['Key'] }}">Perform</a></td>
+          <td>{{ arr['key'] }}</td>
+          <td>{{ arr['data']['age'] }}</td>
+          <td>{{ arr['data']['vaccination'] }}</td>
+          <td><a href="/inject/{{ arr['key'] }}">Perform</a></td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
     <!-- END TABLE -->
   </div>
+
+  <br />
+    <ul class="pagination col center-align">
+      {% if previous != None %}
+        <li class="waves-effect">
+          <a href="{{ url_for('injection', bookmark=previous) }}">
+            <i class="material-icons">chevron_left</i>
+          </a>
+        </li>
+      {% else %}
+        <li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>
+      {% endif %}
+      <!-- <li class="active"><a href="#!">1</a></li>
+      <li class="waves-effect"><a href="#!">2</a></li>
+      <li class="waves-effect"><a href="#!">3</a></li>
+      <li class="waves-effect"><a href="#!">4</a></li>
+      <li class="waves-effect"><a href="#!">5</a></li> -->
+      {% if transactions['meta_data']['fetchedRecordsCount'] >= 10 %}
+        <li class="waves-effect">
+          <a href="{{ url_for('injection', bookmark=transactions['meta_data']['bookmark']) }}">
+            <i class="material-icons">chevron_right</i>
+          </a>
+        </li>
+      {% else %}
+        <li class="disabled"><a href="#!"><i class="material-icons">chevron_right</i></a></li>
+      {% endif %}
+    </ul>
 {% endblock %}
 

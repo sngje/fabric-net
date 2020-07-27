@@ -258,17 +258,18 @@ class Farm extends Contract {
     
         // iterator will be automatically closed on exit from the loop
         // either by reaching the end, or a break or throw terminated the loop
-        console.log(allResults);
         return allResults;
     }
 
+    // Get data with pagination
     async queryWithPagination(ctx, queryString, page_size, bookmark) {
+        // convert to integer
         const pageSize = parseInt(page_size);
         const promiseOfIterator = ctx.stub.getQueryResultWithPagination(queryString, pageSize, bookmark);
         const results = await this.getAllResults(promiseOfIterator);
+        // exract meta data informations
         const metadata = (await promiseOfIterator).metadata;
         const alldata = {data: results, meta_data: metadata};
-        console.log(allResults);
         return JSON.stringify(alldata);
     }
     

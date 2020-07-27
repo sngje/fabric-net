@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, flash, url_for
+from flask import Flask, render_template, request, redirect, flash, url_for, session
 import requests, json, random, os, time, json
 
 app = Flask(__name__)
@@ -35,58 +35,43 @@ def index():
 	return render_template('index.html')
 
 # Route: query cages page
-@app.route("/live")
-def allcages():
-	r = requests.get('http://localhost:3000/api/queryallcages/0') 
-	if r.json()==None or r.json()=={}:
-		transactions = {}
-	else:
-		transactions = r.json()
-	return render_template('cages.html', title="Current state", transactions=transactions)
-
-# Route: query cages page 2
-@app.route("/live/<string:bookmark>")
-def allcages_pagination(bookmark):
+@app.route("/live/")
+@app.route("/live/<string:next>")
+@app.route("/live/<string:next>/<string:previous>")
+def allcages(next=0, previous=None):
+	bookmark = next if (previous != None) else next
 	r = requests.get(f'http://localhost:3000/api/queryallcages/{bookmark}') 
-	if r.json()==None or r.json()=={}:
-		transactions = {}
-	else:
-		transactions = r.json()
-	return render_template('cages.html', title="Current state", transactions=transactions)
+	transactions = r.json()
+	if (bookmark != 0):
+		session['previous'] = bookmark
+	previous = session.get('previous', None)
+	return render_template('cages.html', title="Current state", previous=previous, transactions=transactions)
 
 
 # Route: history page
 @app.route("/history/<string:cage_id>")
 def history(cage_id):
 	r = requests.get(f'http://localhost:3000/api/history/{cage_id}') 
-	if r.json()==None or r.json()=={}:
-		transactions = {}
-	else:
-		transactions = r.json()
+	transactions = r.json()
 	return render_template(f'history.html', title="History for {cage_id}", cage_id=cage_id, transactions=transactions)
 
 
 # Route: injection check up
 @app.route("/health_monitor")
-def injection():
-	r = requests.get('http://localhost:3000/api/injection') 
+@app.route("/health_monitor/<string:bookmark>")
+def injection(bookmark=0):
+	r = requests.get(f'http://localhost:3000/api/injection/{bookmark}') 
 	if r.status_code != 200:
 		flash("All cages are injected", "info")
 		return redirect(url_for('allcages'))
-	if r.json()==None or r.json()=={}:
-		transactions = {}
-	else:
-		transactions = r.json()
+	transactions = r.json()
 	return render_template('injection.html', title="Health monitor", transactions=transactions)
 
 # Route: inject
 @app.route("/inject/<string:cage_id>")
 def inject(cage_id):
 	r = requests.put(f'http://localhost:3000/api/inject/{cage_id}') 
-	if r.json()==None or r.json()=={}:
-		transactions = {}
-	else:
-		transactions = r.json()
+	transactions = r.json()
 	flash(transactions['response'], "success")
 	return render_template('transaction.html', title=f"Inject cage - {cage_id}", cage_id=cage_id, transactions=transactions)
 
@@ -94,11 +79,7 @@ def inject(cage_id):
 @app.route("/changeage/<string:cage_id>")
 def changeage(cage_id):
 	r = requests.put(f'http://localhost:3000/api/changeage/{cage_id}') 
-	if r.json()==None or r.json()=={}:
-		transactions = {}
-	else:
-		transactions = r.json()
-		
+	transactions = r.json()
 	flash(transactions['response'], "success")
 	return render_template('transaction.html', title=f"Change age - {cage_id}", cage_id=cage_id, transactions=transactions)
 
@@ -109,10 +90,7 @@ def delete(cage_id):
 	if r.status_code != 200:
 		flash('Cage not found', "warning")
 		return redirect(url_for('allcages'))
-	if r.json()==None or r.json()=={}:
-		transactions = {}
-	else:
-		transactions = r.json()
+	transactions = r.json()
 	flash(transactions['response'], "success")
 	return render_template('transaction.html', title=f"Deleted - {cage_id}", cage_id=cage_id, transactions=transactions)
 
@@ -131,17 +109,38 @@ def create_cage():
 			}
 		req = json.loads(json.dumps(req))
 		# send the data
-		r = requests.post(f'http://localhost:3000/api/addcage', json=req) 
+		r = requests.post('http://localhost:3000/api/addcage', json=req) 
 		if r.status_code != 200:
 			flash(req, "error")
 			return redirect(url_for('create_cage'))
-		if r.json()==None or r.json()=={}:
-			transactions = {}
-		else:
-			transactions = r.json()
+		transactions = r.json()
 		flash(transactions['response'], "success")
 		return redirect(url_for('allcages'))
 	return render_template('create_cage.html', title="Cerate cage")
+
+# Route: create cage
+@app.route("/search/", methods=["POST", "GET"])
+def search():
+
+	if request.method == "GET":
+		return render_template('search.html', title="Advanced search")
+
+	age = int(request.form['age'])
+	vaccination = request.form.get('vaccination', 'off')
+
+	req = {
+		'age': f'{age}',
+		'vaccination': f'{vaccination}'
+		}
+	req = json.loads(json.dumps(req))
+	# send the data
+	r = requests.get('http://localhost:3000/api/search/0/', json=req) 
+	if r.status_code != 200:
+		flash(req, "error")
+		return redirect(url_for('search'))
+	transactions = r.json()
+	flash("Founded results", "success")
+	return render_template('cages.html', title="Advanced search results", transactions=transactions)
 
 
 
