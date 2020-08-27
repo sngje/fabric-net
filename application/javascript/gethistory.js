@@ -43,7 +43,7 @@ async function main() {
         // Evaluate the specified transaction.
         // queryCage transaction - requires 1 argument, ex: ('queryCage', 'Cage1')
         // queryAllCages transaction - requires no arguments, ex: ('queryAllCages')
-        const result = await contract.evaluateTransaction('getFullHistory', 'Cage1');
+        const result = await contract.evaluateTransaction('getFullHistory', 'Cage0');
         console.log('Transaction has been evaluated, result is');
         let objects = JSON.parse(result);
         console.log(objects);

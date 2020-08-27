@@ -17,16 +17,19 @@ class Farm extends Contract {
                 docType: 'duck',
                 age: 2,
                 vaccination: false,
+                step: 1,
             },
             {
                 docType: 'duck',
                 age: 2,
                 vaccination: false,
+                step: 1,
             },
             {
                 docType: 'duck',
                 age: 2,
                 vaccination: true,
+                step: 1,
             },
         ];
 
@@ -55,6 +58,7 @@ class Farm extends Contract {
             docType: 'duck',
             age: int_age,
             vaccination: condition,
+            step: 1,
         };
 
         await ctx.stub.putState(cageId, Buffer.from(JSON.stringify(cage)));
@@ -262,18 +266,81 @@ class Farm extends Contract {
     }
 
     // Get data with pagination
-    async queryWithPagination(ctx, queryString, page_size, bookmark) {
+    async queryWithPagination(ctx, query_string, page_size, bookmark) {
         // convert to integer
         const pageSize = parseInt(page_size);
-        const promiseOfIterator = ctx.stub.getQueryResultWithPagination(queryString, pageSize, bookmark);
+        const promiseOfIterator = ctx.stub.getQueryResultWithPagination(query_string, pageSize, bookmark);
         const results = await this.getAllResults(promiseOfIterator);
         // exract meta data informations
         const metadata = (await promiseOfIterator).metadata;
         const alldata = {data: results, meta_data: metadata};
         return JSON.stringify(alldata);
     }
-    
-    
+
+    async processingPlant(ctx, cage_id, acceptable, deliverer) {
+        console.info('============= START : processingPlant ===========');
+
+        // check data if exists
+        const cageAsBytes = await ctx.stub.getState(cage_id); // get the cage from chaincode state
+        if (!cageAsBytes || cageAsBytes.length === 0) {
+            throw new Error(`${cageAsBytes} does not exist`);
+        }
+        
+        // get the data as json format
+        const cage = JSON.parse(cageAsBytes.toString());
+        let status;
+
+        switch(cage.step) {
+            case 1:
+                status = "RECEIVED";
+                break;
+            case 2:
+                status = "IN_PREPERATION";
+                break;
+            case 3:
+                status = "PACKAGING";
+                break;
+            case 4:
+                status = "SHIPPED";
+                break;
+            case 5:
+                status = "FINISHED";
+                break;
+            default:
+                status = "UNDEFINED_STATUS";
+        };
+
+        // add new dictinoary if not exists
+        if (typeof cage.processing_plant == 'undefined') {
+            cage.processing_plant = {};
+        }
+
+        //update status
+        cage.processing_plant.status = status;
+
+        // if it's PACKAGING status, set inspected to given condition
+        if (status === "PACKAGING") {
+            let condition = (String(acceptable) === 'true') ? true : false;
+            cage.processing_plant.inspected = condition;
+        }
+
+        // if it's SHIPPED status, set deliverer number
+        if (status === "SHIPPED") {
+            cage.processing_plant.deliverer = deliverer;
+        }
+
+        // control step and update if needed
+        if (cage.step < 5) {
+            cage.step = cage.step + 1;
+        } else {
+            throw new Error('Processing plant was finished');
+        }
+        
+        // update the state
+        await ctx.stub.putState(cage_id, Buffer.from(JSON.stringify(cage)));
+        console.info('============= END : processingPlant ===========');
+        return ctx.stub.getTxID();
+    }
 }
 
 module.exports = Farm;

@@ -47,7 +47,6 @@ def allcages(next=0, previous=None):
 	previous = session.get('previous', None)
 	return render_template('cages.html', title="Current state", previous=previous, transactions=transactions)
 
-
 # Route: history page
 @app.route("/history/<string:cage_id>")
 def history(cage_id):
@@ -142,6 +141,25 @@ def search():
 	flash("Founded results", "success")
 	return render_template('cages.html', title="Advanced search results", transactions=transactions)
 
+# Route: individual cage
+@app.route("/processing_plant/<string:cage_id>", methods=["POST", "GET"])
+def show_cage(cage_id):
+	if request.method == "POST":
+		acceptable = request.form['acceptable']
+		deliverer = request.form.get('vaccination', 'off')
+
+		req = {
+			'acceptable': f'{acceptable}',
+			'deliverer': f'{deliverer}'
+			}
+		req = json.loads(json.dumps(req))
+		r = requests.put(f'http://localhost:3000/api/processing_plant/{cage_id}', json=req) 
+		transactions = r.json()
+		return render_template(f'show_cage.html', title="Data - {cage_id}", cage_id=cage_id, transactions=transactions)
+	else:
+		r = requests.get(f'http://localhost:3000/api/query/{cage_id}') 
+		transactions = r.json()
+		return render_template(f'processing_plant.html', title="Data - {cage_id}", cage_id=cage_id, transactions=transactions)
 
 
 # When running this app on the local machine, default the port to 8000

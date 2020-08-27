@@ -247,6 +247,52 @@ router.delete('/delete/:cage_id', async function (req, res) {
     }
 });
 
-//process.exit(1);
+router.get('/processing_plant/:cage_id', async function (req, res) {
+    try {
+        // Get the contract from the network
+        const {contract, gateway} = await fabricNetwork.connectNetwork();
+
+        // Evaluate the specified transaction.
+        // queryCage transaction - requires 1 argument, ex: ('queryCage', 'Cage1')
+        let tx = await contract.submitTransaction('processingPlant', req.params.cage_id, req.body.acceptable, req.body.deliverer);
+        console.log('Transaction has been evaluated');
+        res.status(200).json({
+            response: 'Processing plant stage updated',
+            tx_id: tx.toString()
+        });
+        // console.log(JSON.parse(query_result));
+        // res.send('Transaction has been submitted');
+
+        // disconnect the gateway
+        await gateway.disconnect();
+    } catch (error) {
+        console.error(`Failed to evaluate transaction: ${error}`);
+        res.status(500).json({error: 'Failed to evaluate transaction. Please try again'});
+    }
+});
+
+router.put('/processing_plant/:cage_id', async function (req, res) {
+    try {
+        // Get the contract from the network
+        const {contract, gateway} = await fabricNetwork.connectNetwork();
+
+        // Evaluate the specified transaction.
+        // queryCage transaction - requires 1 argument, ex: ('queryCage', 'Cage1')
+        let tx = await contract.submitTransaction('processingPlant', req.params.cage_id, req.body.acceptable, req.body.deliverer);
+        console.log('Transaction has been evaluated');
+        res.status(200).json({
+            response: 'Processing plant stage updated',
+            tx_id: tx.toString()
+        });
+        // console.log(JSON.parse(query_result));
+        // res.send('Transaction has been submitted');
+
+        // disconnect the gateway
+        await gateway.disconnect();
+    } catch (error) {
+        console.error(`Failed to evaluate transaction: ${error}`);
+        res.status(500).json({error: 'Failed to evaluate transaction. Please try again'});
+    }
+});
 
 module.exports = router;
