@@ -66,16 +66,18 @@ class Farm extends Contract {
         return ctx.stub.getTxID();
     }
 
-    async changeCageAge(ctx, cageId) {
+    async changeCageAge(ctx, cageId, age) {
         console.info('============= START : changeCageAge ===========');
 
         const cageAsBytes = await ctx.stub.getState(cageId); // get the cage from chaincode state
         if (!cageAsBytes || cageAsBytes.length === 0) {
             throw new Error(`${cageId} does not exist`);
         }
-
+        
         const cage = JSON.parse(cageAsBytes.toString());        
-        cage.age = cage.age + 1;
+        
+        age = typeof age !== 'undefined' ? age : cage.age + 1
+        cage.age = age;
 
         await ctx.stub.putState(cageId, Buffer.from(JSON.stringify(cage)));
         console.info('============= END : changeCageAge ===========');
@@ -156,14 +158,14 @@ class Farm extends Contract {
 
     async queryWithAge(ctx, age) {
 
-        let int_age = parseInt(age);
+        age = typeof age !== 'undefined' ? parseInt(age) : 'undefined';
 		if (typeof int_age !== "number") {
 			throw new Error("Age argument must be a numeric string");
         }
         
         let queryString = {};
         queryString.selector = {};
-        queryString.selector.age = int_age;
+        queryString.selector.age = age;
         let queryResults = await this.queryWithQueryString(ctx, JSON.stringify(queryString));
         return queryResults;
 
@@ -340,6 +342,32 @@ class Farm extends Contract {
         // update the state
         await ctx.stub.putState(cage_id, Buffer.from(JSON.stringify(cage)));
         console.info('============= END : processingPlant ===========');
+        return ctx.stub.getTxID();
+    }
+
+    // update asset
+    async editAsset(ctx, cageId, age, vaccination, step) {
+        console.info('============= START : editAsset ===========');
+
+        // get data and check
+        const cageAsBytes = await ctx.stub.getState(cageId); // get the cage from chaincode state
+        if (!cageAsBytes || cageAsBytes.length === 0) {
+            throw new Error(`${cageId} does not exist`);
+        }
+        const cage = JSON.parse(cageAsBytes.toString()); 
+
+        // set default values if not defined
+        age = typeof age !== 'undefined' ? parseInt(age) : cage.age;
+        vaccination = typeof vaccination !== 'undefined' ? ((String(vaccination) === 'true') ? true : false) : cage.vaccination;
+        step = typeof step !== 'undefined' ? parseInt(step) : cage.step;
+        // update asset
+        cage.age = age;
+        cage.vaccination = vaccination;
+        cage.step = step;
+
+        // commit changes
+        await ctx.stub.putState(cageId, Buffer.from(JSON.stringify(cage)));
+        console.info('============= END : editAssett ===========');
         return ctx.stub.getTxID();
     }
 }

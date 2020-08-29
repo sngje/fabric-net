@@ -19,8 +19,9 @@
         <tbody>
           {% for arr in transactions['data'] %}
           <tr>
-            <td>{{ arr['key'] }}</td>
-            <td><a href="{{ url_for('changeage', cage_id=arr['key'])}}">{{ arr['data']['age'] }}</a></td>
+            <td style="text-transform:uppercase;"><a href="{{ url_for('edit', cage_id=arr['key'])}}" title="Edit">{{ arr['key'] }}</a></td>
+            <!-- <td><a href="{{ url_for('changeage', cage_id=arr['key'])}}">{{ arr['data']['age'] }}</a></td> -->
+            <td>{{ arr['data']['age'] }}</td>
             <td>{{ arr['data']['vaccination'] }}</td>
             <td>{{ arr['data']['step'] }}</td>
             <td><a href="{{ url_for('history', cage_id=arr['key'])}}" title="See history"><i class="material-icons md-30">&nbsp;track_changes</i></a></td>

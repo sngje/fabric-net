@@ -12,7 +12,7 @@ app.config.update(
     SESSION_COOKIE_SECURE=True,
 
     #Set the session cookie for our app to a unique name
-    SESSION_COOKIE_NAME='YourAppName-WebSession',
+    SESSION_COOKIE_NAME='Hyperledgerfabric-WebSession',
 
     #Set CSRF tokens to be valid for the duration of the session. This assumes you’re using WTF-CSRF protection
     WTF_CSRF_TIME_LIMIT=None
@@ -154,6 +154,7 @@ def processing_plant(cage_id):
 			'deliverer': f'{deliverer}'
 			}
 		req = json.loads(json.dumps(req))
+		
 		r = requests.put(f'http://localhost:3000/api/processing_plant/{cage_id}', json=req)
 		
 		# check for error
@@ -164,7 +165,7 @@ def processing_plant(cage_id):
 		transactions = r.json()
 		flash("Updated successfully", "success")
 		# return redirect(url_for('processing_plant', cage_id=cage_id, tx_id=transactions['tx_id']))
-		return render_template(f'processing_plant.html', title="Data - {cage_id}", cage_id=cage_id, transactions=transactions)
+		return render_template(f'processing_plant.html', title=f"Data - {cage_id}", cage_id=cage_id, transactions=transactions)
 	else:
 		r = requests.get(f'http://localhost:3000/api/query/{cage_id}') 
 		
@@ -174,7 +175,47 @@ def processing_plant(cage_id):
 			return redirect(url_for('processing_plant', cage_id=cage_id))
 
 		transactions = r.json()
-		return render_template(f'processing_plant.html', title="Processing plant - {cage_id}", cage_id=cage_id, transactions=transactions)
+		return render_template(f'processing_plant.html', title=f"Processing plant - {cage_id}", cage_id=cage_id, transactions=transactions)
+
+# Route: edit asset
+@app.route("/edit/<string:cage_id>", methods=["POST", "GET"])
+def edit(cage_id):
+	
+	if request.method == "POST":
+		age = request.form.get('age', 0)
+		vaccination = request.form.get('vaccination', 0)
+		step = request.form.get('step', 0)
+
+		req = {
+			'age': f'{age}',
+			'vaccination': f'{vaccination}',
+			'step': f'{step}'
+			}
+		req = json.loads(json.dumps(req))
+		# print(req)
+
+		r = requests.put(f'http://localhost:3000/api/edit/{cage_id}', json=req)
+		
+		# check for error
+		if r.status_code != 200:
+			flash(req, "error")
+			return redirect(url_for('allcages'))
+		
+		transactions = r.json()
+		flash("Updated successfully", "success")
+		flash(f"Transaction ID: {transactions['tx_id']}", "success")
+		# return redirect(url_for('processing_plant', cage_id=cage_id, tx_id=transactions['tx_id']))
+		return render_template(f'edit.html', title=f"Data - {cage_id}", cage_id=cage_id, transactions=transactions)
+	else:
+		r = requests.get(f'http://localhost:3000/api/query/{cage_id}') 
+		
+		# check for error
+		if r.status_code != 200:
+			flash("Cage not found", "error")
+			return redirect(url_for('allcages'))
+
+		transactions = r.json()
+		return render_template(f'edit.html', title=f"Edit - {cage_id}", cage_id=cage_id, transactions=transactions)
 
 
 # When running this app on the local machine, default the port to 8000

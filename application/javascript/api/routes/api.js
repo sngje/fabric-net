@@ -271,4 +271,26 @@ router.put('/processing_plant/:cage_id', async function (req, res) {
     }
 });
 
+router.put('/edit/:cage_id', async function (req, res) {
+    try {
+        // Get the contract from the network
+        const {contract, gateway} = await fabricNetwork.connectNetwork();
+
+        // Evaluate the specified transaction.
+        // queryCage transaction - requires 1 argument, ex: ('queryCage', 'Cage1')
+        let tx = await contract.submitTransaction('editAsset', req.params.cage_id, req.body.age, req.body.vaccination, req.body.step);
+        let data = await contract.evaluateTransaction('queryCage', req.params.cage_id);
+        let answer = JSON.parse(data);
+        answer.tx_id = tx.toString();
+        console.log('Transaction has been evaluated');
+        res.status(200).json(answer);
+        
+        // disconnect the gateway
+        await gateway.disconnect();
+    } catch (error) {
+        console.error(`Failed to evaluate transaction: ${error}`);
+        res.status(500).json({error: 'Failed to evaluate transaction. Please try again'});
+    }
+});
+
 module.exports = router;
