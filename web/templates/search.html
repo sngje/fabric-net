@@ -1,30 +1,30 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="create">
-      
-      <h4>Advanced search</h4>
-      <hr/>
-      <!-- START FORM -->
-        <div class="row">
-          <form class="col s12" action="{{ url_for('search') }}" method="POST">
-              <div class="row">
-                <div class="input-field col s6">
-                  <input placeholder="Age" name="age" type="text" >
-                </div>
-                <div class="row">
-                  </div><div class="switch col">
-                    <label>
-                      False
-                      <input type="checkbox" name="vaccination">
-                      <span class="lever"></span>
-                      True
-                    </label>
-                  </div>
-                </div>
+  <div class="content1">
+    <b>Advanced search</b>
+  </div>
+  <!-- START FORM -->
+    <div class="row">
+      <form class="col s12" action="{{ url_for('search') }}" method="POST">
+          <div class="row">
+            <div class="input-field col s6">
+              <input placeholder="Age" name="age" type="text" >
+            </div>
+            <div class="row">
+              </div><div class="switch col">
+                <label>
+                  False
+                  <input type="checkbox" name="vaccination">
+                  <span class="lever"></span>
+                  True
+                </label>
               </div>
-              <input class="waves-light btn our-colour" type="submit" value="Submit" name="">
-          </form>
-        </div>
-      <!-- END FORM -->
+            </div>
+          </div>
+          <input class="waves-light btn our-colour" type="submit" value="Submit" name="">
+      </form>
     </div>
+  <!-- END FORM -->
+</div>
 {% endblock %}

@@ -143,23 +143,38 @@ def search():
 
 # Route: individual cage
 @app.route("/processing_plant/<string:cage_id>", methods=["POST", "GET"])
-def show_cage(cage_id):
+def processing_plant(cage_id):
+	
 	if request.method == "POST":
-		acceptable = request.form['acceptable']
-		deliverer = request.form.get('vaccination', 'off')
+		acceptable = request.form.get('acceptable', 0)
+		deliverer = request.form.get('deliverer', 0)
 
 		req = {
 			'acceptable': f'{acceptable}',
 			'deliverer': f'{deliverer}'
 			}
 		req = json.loads(json.dumps(req))
-		r = requests.put(f'http://localhost:3000/api/processing_plant/{cage_id}', json=req) 
+		r = requests.put(f'http://localhost:3000/api/processing_plant/{cage_id}', json=req)
+		
+		# check for error
+		if r.status_code != 200:
+			flash(req, "error")
+			return redirect(url_for('allcages'))
+		
 		transactions = r.json()
-		return render_template(f'show_cage.html', title="Data - {cage_id}", cage_id=cage_id, transactions=transactions)
+		flash("Updated successfully", "success")
+		# return redirect(url_for('processing_plant', cage_id=cage_id, tx_id=transactions['tx_id']))
+		return render_template(f'processing_plant.html', title="Data - {cage_id}", cage_id=cage_id, transactions=transactions)
 	else:
 		r = requests.get(f'http://localhost:3000/api/query/{cage_id}') 
+		
+		# check for error
+		if r.status_code != 200:
+			flash("Cage not found", "error")
+			return redirect(url_for('processing_plant', cage_id=cage_id))
+
 		transactions = r.json()
-		return render_template(f'processing_plant.html', title="Data - {cage_id}", cage_id=cage_id, transactions=transactions)
+		return render_template(f'processing_plant.html', title="Processing plant - {cage_id}", cage_id=cage_id, transactions=transactions)
 
 
 # When running this app on the local machine, default the port to 8000
@@ -167,4 +182,4 @@ port = int(os.getenv('PORT', 8080))
 
 # Entry point to the program
 if __name__ == "__main__":
-    app.run(host='localhost', port=port, debug=True)
+    app.run(host='localhost', port=port, debug=True), SERVER_NAME

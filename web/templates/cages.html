@@ -1,22 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
-  <div class="transactions">
-      <h4>All cages 
-        <span style="text-align:right">
-          <a href="{{ url_for('create_cage') }}" class="btn-floating pulse btn waves-effect waves-light our-colour">
-            <i class="right-align material-icons">add</i>
-          </a>
-        </span>
-      </h4>
-      <hr/>
-      <!-- START TABLE -->
-      <table class="striped">
+  <div class="content1">
+    <b>All cages</b>
+  </div>
+      <table class="highlight responsive-table">
         <thead>
           <tr>
               <th>ID</th>
               <th>Age</th>
               <th>Vaccination</th>
+              <th>Stage</th>
               <th>Trace</th>
+              <th>Update</th>
               <th>Delete</th>
 
           </tr>
@@ -27,14 +22,16 @@
             <td>{{ arr['key'] }}</td>
             <td><a href="{{ url_for('changeage', cage_id=arr['key'])}}">{{ arr['data']['age'] }}</a></td>
             <td>{{ arr['data']['vaccination'] }}</td>
-            <td><a href="{{ url_for('history', cage_id=arr['key'])}}">See history</a></td>
-            <td><a href="{{ url_for('delete', cage_id=arr['key'])}}"><i class="material-icons md-30">&nbsp;delete</i></a></td>
+            <td>{{ arr['data']['step'] }}</td>
+            <td><a href="{{ url_for('history', cage_id=arr['key'])}}" title="See history"><i class="material-icons md-30">&nbsp;track_changes</i></a></td>
+            <td><a href="{{ url_for('processing_plant', cage_id=arr['key'])}}" title="Update"><i class="material-icons md-30">&nbsp;autorenew</i></a></td>
+            <td><a href="{{ url_for('delete', cage_id=arr['key'])}}" title="Delete"><i class="material-icons md-30">&nbsp;delete</i></a></td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
       <!-- END TABLE -->
-    </div>
+    <!-- </div> -->
 
     <br />
     <ul class="pagination col center-align">
@@ -62,6 +59,7 @@
         <li class="disabled"><a href="#!"><i class="material-icons">chevron_right</i></a></li>
       {% endif %}
     </ul>
+    <a class="waves-effect our-colour waves-light btn" href="{{ url_for('create_cage') }}"><i class="material-icons left">add_circle</i>Add cage</a>
     
 {% endblock %}
 

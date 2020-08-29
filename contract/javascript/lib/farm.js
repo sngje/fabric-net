@@ -283,13 +283,14 @@ class Farm extends Contract {
         // check data if exists
         const cageAsBytes = await ctx.stub.getState(cage_id); // get the cage from chaincode state
         if (!cageAsBytes || cageAsBytes.length === 0) {
-            throw new Error(`${cageAsBytes} does not exist`);
+            throw new Error(`${cage_id} does not exist`);
         }
         
         // get the data as json format
         const cage = JSON.parse(cageAsBytes.toString());
         let status;
 
+        // steps by definition
         switch(cage.step) {
             case 1:
                 status = "RECEIVED";
@@ -320,7 +321,7 @@ class Farm extends Contract {
 
         // if it's PACKAGING status, set inspected to given condition
         if (status === "PACKAGING") {
-            let condition = (String(acceptable) === 'true') ? true : false;
+            let condition = (String(acceptable) === 'true') ? 'VALID' : 'INVALID';
             cage.processing_plant.inspected = condition;
         }
 
@@ -330,7 +331,7 @@ class Farm extends Contract {
         }
 
         // control step and update if needed
-        if (cage.step < 5) {
+        if (cage.step < 6) {
             cage.step = cage.step + 1;
         } else {
             throw new Error('Processing plant was finished');
