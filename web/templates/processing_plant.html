@@ -1,9 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
   <div class="create">
-    <div class="content1">
-      <b>Processing plant: Update</b>
-    </div>
     <div class="container">
       <div class="timeline">
         <div class="timeline-event">
@@ -26,7 +23,7 @@
             <div class="card-reveal">
               <span class="card-title grey-text text-darken-4">Transaction ID<i class="material-icons right">close</i></span>
               {% if transactions['tx_id'] %}
-                <p>{{ transactions['tx_id'] }}</p>
+                <p style="word-wrap: break-word;">{{ transactions['tx_id'] }}</p>
               {% endif %}
             </div>
           </div>

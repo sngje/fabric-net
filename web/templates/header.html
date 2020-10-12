@@ -4,28 +4,14 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-alpha.2/css/materialize.min.css">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/body.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/addition.css') }}">
+  <!-- <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css"> -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   
   {% if title %}
-    <title>Supply chain management - {{ title }}!</title>
+    <title>{{ title }}</title>
   {% else %}
-    <title>Supply chain management!</title>
+    <title>Supply chain management</title>
   {% endif %}
-
-<!-- <script type="text/javascript">
-// For the DatePicker utility from MaterializeCSS :)
-  $(document).ready(function(){
-    $('.datepicker').datepicker({
-      container: 'body'
-    });
-  });
-  $(document).ready(function(){
-    $('select').select();
-  });
-  $(document).ready(function(){
-    $('.modal').modal();
-  });
-</script> -->
 
 </head>
 

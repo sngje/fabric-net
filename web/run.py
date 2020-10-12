@@ -11,6 +11,9 @@ app.config.update(
     #Set the session cookie to be secure
     SESSION_COOKIE_SECURE=True,
 
+	#Set templates to reload
+	TEMPLATES_AUTO_RELOAD = True,
+
     #Set the session cookie for our app to a unique name
     SESSION_COOKIE_NAME='Hyperledgerfabric-WebSession',
 
@@ -32,7 +35,11 @@ app.jinja_env.globals.update(myTimeFunc=myTimeFunc)
 @app.route("/")
 @app.route("/index")
 def index():
-	return render_template('index.html')
+	return render_template('index.html', title="Options")
+
+@app.route("/d")
+def test():
+	return render_template('dashboard.html')
 
 # Route: query cages page
 @app.route("/live/")
@@ -52,7 +59,7 @@ def allcages(next=0, previous=None):
 def history(cage_id):
 	r = requests.get(f'http://localhost:3000/api/history/{cage_id}') 
 	transactions = r.json()
-	return render_template(f'history.html', title="History for {cage_id}", cage_id=cage_id, transactions=transactions)
+	return render_template(f'history.html', title=f"History for {cage_id}", cage_id=cage_id, transactions=transactions)
 
 
 # Route: injection check up
@@ -115,7 +122,7 @@ def create_cage():
 		transactions = r.json()
 		flash(transactions['response'], "success")
 		return redirect(url_for('allcages'))
-	return render_template('create_cage.html', title="Cerate cage")
+	return render_template('create_cage.html', title="Create cage")
 
 # Route: create cage
 @app.route("/search/", methods=["POST", "GET"])
@@ -165,7 +172,7 @@ def processing_plant(cage_id):
 		transactions = r.json()
 		flash("Updated successfully", "success")
 		# return redirect(url_for('processing_plant', cage_id=cage_id, tx_id=transactions['tx_id']))
-		return render_template(f'processing_plant.html', title=f"Data - {cage_id}", cage_id=cage_id, transactions=transactions)
+		return render_template(f'processing_plant.html', title=f"Processing plant - {cage_id}", cage_id=cage_id, transactions=transactions)
 	else:
 		r = requests.get(f'http://localhost:3000/api/query/{cage_id}') 
 		
@@ -223,4 +230,4 @@ port = int(os.getenv('PORT', 8080))
 
 # Entry point to the program
 if __name__ == "__main__":
-    app.run(host='localhost', port=port, debug=True), SERVER_NAME
+    app.run(host='localhost', port=port, debug=True)

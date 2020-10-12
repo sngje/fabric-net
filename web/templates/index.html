@@ -1,30 +1,146 @@
-<html>
-  <head>
-    <!-- Compiled and minified CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-alpha.2/css/materialize.min.css">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/body.css') }}">
-    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!-- Compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-alpha.2/js/materialize.min.js"></script>
-    <title>Supply chain management!</title>
-  </head>
-  <body>
-      <h1 class="center">Hyperledger fabric- Supply chain management!</h1>
-      <br/>
-      <div id="welcome_icons">
-        <div class="row content">
-          <div class="col s6"><a href="{{ url_for('allcages') }}"><div class="circle-text">Current state</div></a></div>
-          <div class="col s6"><a href="{{ url_for('injection') }}"><div class="circle-text">Health monitor</div></a></div>
-        </div>
-        <div class="row content">
-          <div class="col s6"><a href="#"><div class="circle-text">Profit management</div></a></div>
-          <div class="col s6"><a href="#"><div class="circle-text">Product delivery</div></a></div>
+{% extends 'base.html' %}
+{% block content %}
+    <div class="row">
+      <div class="col s6">
+        <div style="padding: 35px;"  class="card center">
+          <div class="row">
+            <div class="left card-title">
+              <b>Grower farm</b>
+            </div>
+          </div>
+
+          <div class="row">
+            <a href="#!">
+              <div style="padding: 30px;" class="grey lighten-3 col s5 waves-effect waves-light">
+                <i class="indigo-text  large material-icons">person</i>
+                <span class="indigo-text "><b>Current state</b></span>
+              </div>
+            </a>
+            <div class="col s1">&nbsp;</div>
+            <div class="col s1">&nbsp;</div>
+
+            <a href="#!">
+              <div style="padding: 30px;" class="grey lighten-3 col s5 waves-effect waves-light">
+                <i class="indigo-text  large material-icons">people</i>
+                <span class="indigo-text "><b>Monitor</b></span>
+              </div>
+            </a>
+          </div>
         </div>
       </div>
 
-      <div class="center">
-        <h5>A web-application made with Python & MaterializeCSS.</h5>
+      <div class="col s6">
+        <div style="padding: 35px;" class="card center">
+          <div class="row">
+            <div class="left card-title">
+              <b>Product Management</b>
+            </div>
+          </div>
+          <div class="row">
+            <a href="#!">
+              <div style="padding: 30px;" class="grey lighten-3 col s5 waves-effect waves-light">
+                <i class="indigo-text  large material-icons">store</i>
+                <span class="indigo-text "><b>Product</b></span>
+              </div>
+            </a>
+
+            <div class="col s1">&nbsp;</div>
+            <div class="col s1">&nbsp;</div>
+
+            <a href="#!">
+              <div style="padding: 30px;" class="grey lighten-3 col s5 waves-effect waves-light">
+                <i class="indigo-text large material-icons">assignment</i>
+                <span class="indigo-text "><b>Orders</b></span>
+              </div>
+            </a>
+          </div>
+        </div>
       </div>
-  </body>
-</html>
+    </div>
+
+    <div class="row">
+      <div class="col s6">
+        <div style="padding: 35px;"  class="card center">
+          <div class="row">
+            <div class="left card-title">
+              <b>Brand Management</b>
+            </div>
+          </div>
+
+          <div class="row">
+            <a href="#!">
+              <div style="padding: 30px;" class="grey lighten-3 col s5 waves-effect waves-light">
+                <i class="indigo-text  large material-icons">local_offer</i>
+                <span class="indigo-text "><b>Brand</b></span>
+              </div>
+            </a>
+
+            <div class="col s1">&nbsp;</div>
+            <div class="col s1">&nbsp;</div>
+
+            <a href="#!">
+              <div style="padding: 30px;" class="grey lighten-3 col s5 waves-effect waves-light">
+                <i class="indigo-text  large material-icons">loyalty</i>
+                <span class="indigo-text "><b>Sub Brand</b></span>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col s6">
+        <div style="padding: 35px;"  class="card center">
+          <div class="row">
+            <div class="left card-title">
+              <b>Category Management</b>
+            </div>
+          </div>
+          <div class="row">
+            <a href="#!">
+              <div style="padding: 30px;" class="grey lighten-3 col s5 waves-effect waves-light">
+                <i class="indigo-text  large material-icons">view_list</i>
+                <span class="indigo-text "><b>Category</b></span>
+              </div>
+            </a>
+            <div class="col s1">&nbsp;</div>
+            <div class="col s1">&nbsp;</div>
+
+            <a href="#!">
+              <div style="padding: 30px;" class="grey lighten-3 col s5 waves-effect waves-light">
+                <i class="indigo-text  large material-icons">view_list</i>
+                <span class="truncate indigo-text tex t-lighten-1"><b>Sub Category</b></span>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- <div class="fixed-action-btn click-to-toggle" style="bottom: 45px; right: 24px;">
+      <a class="btn-floating btn-large pink waves-effect waves-light waves-light">
+        <i class="large material-icons">add</i>
+      </a>
+
+      <ul>
+        <li>
+          <a class="btn-floating red"><i class="material-icons">note_add</i></a>
+          <a href="" class="btn-floating fab-tip">Add a note</a>
+        </li>
+
+        <li>
+          <a class="btn-floating yellow darken-1"><i class="material-icons">add_a_photo</i></a>
+          <a href="" class="btn-floating fab-tip">Add a photo</a>
+        </li>
+
+        <li>
+          <a class="btn-floating green"><i class="material-icons">alarm_add</i></a>
+          <a href="" class="btn-floating fab-tip">Add an alarm</a>
+        </li>
+
+        <li>
+          <a class="btn-floating blue"><i class="material-icons">vpn_key</i></a>
+          <a href="" class="btn-floating fab-tip">Add a master password</a>
+        </li>
+      </ul>
+    </div> -->
+{% endblock %}

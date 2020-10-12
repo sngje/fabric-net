@@ -6,7 +6,54 @@
 body {
 	font-family: myfont, serif;
     overflow-x: hidden;
-    padding: 20px;
+    padding-left: 300px;
+}
+
+
+body {
+    background-color: white;
+}
+
+main {
+    margin: 14px;
+}
+
+@media only screen and (max-width: 992px) {
+    body,
+    header,
+    main,
+    footer {
+    padding-left: 0;
+    }
+}
+
+.responsive-table {
+    padding-left: 10px !important;
+}
+
+#credits li,
+#credits li a {
+    color: white;
+}
+
+#credits li a {
+    font-weight: bold;
+}
+
+.footer-copyright .container,
+.footer-copyright .container a {
+    color: #BCC2E2;
+}
+
+.fab-tip {
+    position: fixed;
+    right: 85px;
+    padding: 0px 0.5rem;
+    text-align: right;
+    background-color: #323232;
+    border-radius: 2px;
+    color: #FFF;
+    width: auto;
 }
 
 
@@ -83,8 +130,7 @@ body {
     position: relative;
     min-width: 150px;
     padding: 15px;
-    margin-bottom: 20px;
-    margin-top: 15px;
+    margin: 15px;
     border: 1px solid transparent;
     border-radius: 4px;
     transition: all 0.1s linear;
@@ -263,4 +309,18 @@ hr {
     .timeline .timeline-badge {
       left: 0;
     }
+}
+
+.card-reveal p {
+    word-wrap: break-word;
+}
+
+.dropdown-content{
+    width: max-content !important;
+    height:auto !important;
+}
+
+.material-icons{
+    display: inline-flex;
+    vertical-align: top;
 }
