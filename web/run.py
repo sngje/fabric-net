@@ -37,9 +37,17 @@ app.jinja_env.globals.update(myTimeFunc=myTimeFunc)
 def index():
 	return render_template('index.html', title="Options")
 
-@app.route("/d")
-def test():
-	return render_template('dashboard.html')
+# Route: login page
+@app.route("/login")
+@app.route("/login/")
+def login():
+	return render_template('login.html', title="Login page")
+
+# Route: registeration page
+@app.route("/register")
+@app.route("/register/")
+def register():
+	return render_template('register.html', title="Registration page")
 
 # Route: query cages page
 @app.route("/live/")
@@ -180,7 +188,6 @@ def processing_plant(cage_id):
 		if r.status_code != 200:
 			flash("Cage not found", "error")
 			return redirect(url_for('processing_plant', cage_id=cage_id))
-
 		transactions = r.json()
 		return render_template(f'processing_plant.html', title=f"Processing plant - {cage_id}", cage_id=cage_id, transactions=transactions)
 

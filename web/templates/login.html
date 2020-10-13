@@ -1,0 +1,30 @@
+{% include 'header.html' %}
+{% block content %}
+<div class="row valign-wrapper" style="width:100%;height:100%;position: absolute;">
+    <div class="col s12 l4 offset-m2 offset-l4">
+        <div class="card">
+
+            <div class="our-colour white-text center-align" style="padding: 5px;">
+                <h5>Login form</h5>
+            </div>
+            
+            <div class="row" style="margin: 10px">
+                <div class="input-field col s12">
+                    <input placeholder="Email" type="text" id="username">
+                    <!-- <label class="active">Email</label> -->
+                </div><br>
+
+                <div class="input-field col s12">
+                    <input placeholder="Password" type="password" id="password">
+                    <!-- <label class="active">Password</label> -->
+                </div><br>
+
+                <div class="input-field col s12">
+                    <button class="our-colour btn-large waves-effect waves-dark" style="width:100%;">Login</button>
+                </div><br>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

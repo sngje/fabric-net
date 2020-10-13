@@ -1,0 +1,51 @@
+{% include 'header.html' %}
+{% block content %}
+    <script>
+        $(document).ready(function(){
+            $('select').formSelect();
+        });
+        $(document).ready(function() {
+            M.updateTextFields();
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <div class="row valign-wrapper" style="width:100%;height:100%;position: absolute;">
+        <div class="col s12 l4 offset-m2 offset-l4" >
+            <div class="card">
+
+                <div class="our-colour white-text center-align" style="padding: 5px;">
+                    <h5>Registration form</h5>
+                </div>
+                
+                <div class="row" style="margin: 10px">
+                    <div class="input-field col s12">
+                        <input placeholder="Email" type="text" id="username">
+                        <!-- <label class="active">Email</label> -->
+                    </div><br>
+
+                    <div class="input-field col s12">
+                        <input placeholder="Password" type="password" id="password">
+                        <!-- <label class="active">Password</label> -->
+                    </div><br>
+
+                    <div class="input-field col s12">
+                        <select>
+                        <option value="" disabled selected>Please select one of them</option>
+                        <option value="1">Grower farm</option>
+                        <option value="2">Processing plant</option>
+                        <option value="3">Delivery</option>
+                        </select>
+                        <!-- <label>Your organization</label> -->
+                    </div>
+
+                    <div class="input-field col s12">
+                        <button class="our-colour btn-large waves-effect waves-dark" style="width:100%;">Login</button>
+                    </div><br>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
