@@ -1,5 +1,7 @@
-data_archive
-explorer
-system-genesis-block
-channel-artifacts
-application/javascript/wallet
+data_archive/
+explorer/
+system-genesis-block/
+channel-artifacts/
+application/javascript/wallet/
+bin/
+web/venv/
