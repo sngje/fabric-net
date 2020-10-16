@@ -1,3 +1,7 @@
+## WARNING
+Before using, inside home directory make `test` folder and run the following command inside `test` directory.
+`curl -sSL https://bit.ly/2ysbOFE | bash -s — -d -s` - this install binary packages which required to run the network. Next, move `test/bin` folder into home directory. This must be like this: `home/test`
+
 ## Start network and install chaincode:
 
 Alternatively, you can run the network with `./start.sh` file which located in `application`folder. It will install npm packages then install, instantiate and approve chaincode.
