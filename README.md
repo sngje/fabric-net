@@ -1,8 +1,3 @@
-## Running the test network:
-
-You can use the `./network.sh` script to stand up a simple Farm test network. The test network has two peer organizations with one peer each and a single node raft ordering service. You can also use the `./network.sh` script to create channels. 
-
-
 ## Start network and install chaincode:
 
 Alternatively, you can run the network with `./start.sh` file which located in `application`folder. It will install npm packages then install, instantiate and approve chaincode.

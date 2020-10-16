@@ -1,7 +1,7 @@
 /*
- * Copyright IBM Corp. All Rights Reserved.
- *
- * SPDX-License-Identifier: Apache-2.0
+ * Author: Kamoliddin Usmonov
+ * Contact: usmonov.me@gmail.com
+ * Chonnam National University
  */
 
 'use strict';
