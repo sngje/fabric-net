@@ -5,3 +5,4 @@ channel-artifacts/
 application/javascript/wallet/
 bin/
 web/venv/
+**/.DS_Store
