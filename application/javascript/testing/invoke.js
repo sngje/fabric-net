@@ -1,18 +1,17 @@
 'use strict';
 
 const { Gateway, Wallets } = require('fabric-network');
-const path = require('path');
 const fs = require('fs');
-
+const path = require('path');
 
 async function main() {
     try {
         // load the network configuration
-        const ccpPath = path.resolve(__dirname, '..', '..', 'organizations', 'peerOrganizations', 'org1.example.com', 'connection-org1.json');
-        const ccp = JSON.parse(fs.readFileSync(ccpPath, 'utf8'));
+        const ccpPath = path.resolve(__dirname, '..', '..', '..', 'organizations', 'peerOrganizations', 'org1.example.com', 'connection-org1.json');
+        let ccp = JSON.parse(fs.readFileSync(ccpPath, 'utf8'));
 
         // Create a new file system based wallet for managing identities.
-        const walletPath = path.join(process.cwd(), 'wallet');
+        const walletPath = path.join(process.cwd(), '../wallet');
         const wallet = await Wallets.newFileSystemWallet(walletPath);
         console.log(`Wallet path: ${walletPath}`);
 
@@ -34,29 +33,22 @@ async function main() {
         // Get the contract from the network.
         const contract = network.getContract('farm');
 
-        // get all cages from couchdb and convert to JSON object
-        const result = await contract.evaluateTransaction('queryAllCages');
-        let objects = JSON.parse(result);
-        
-        // check what we have
-        if (objects.length === 0) {
-            throw new Error('All cages are injected');
-        }
-        
-        // iterate objects to obtain key and age values
-        // increment age values + one, then update the ledger
-        for (let i = 0; i < objects.length; i++) {
-            let object = objects[i];
-            let key = object.Key;
-            // let age = +object.Record.age + 1;
-            let tx = await contract.submitTransaction('changeCageAge', key);
-            console.log(`OK - ${tx}`);
-        }
+        // Submit the specified transaction.
+        // let vaccination = Buffer.from(JSON.stringify({cholera: true, plague: false}));
+        // const values = {
+        //     age: parseInt(5),
+        //     vaccination: false
+        // };
 
-        // disconnect the geteaway
+        let tx = await contract.submitTransaction('createCage', 'Cage3', true, 5);
+        console.log('Transaction has been submitted');
+        console.log(tx.toString());
+
+        // Disconnect from the gateway.
         await gateway.disconnect();
+
     } catch (error) {
-        console.error(`Failed to evaluate transaction: ${error}`);
+        console.error(`Failed to submit transaction: ${error}`);
         process.exit(1);
     }
 }

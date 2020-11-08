@@ -8,11 +8,11 @@ const fs = require('fs');
 async function main() {
     try {
         // load the network configuration
-        const ccpPath = path.resolve(__dirname, '..', '..', 'organizations', 'peerOrganizations', 'org1.example.com', 'connection-org1.json');
+        const ccpPath = path.resolve(__dirname, '..', '..', '..', 'organizations', 'peerOrganizations', 'org1.example.com', 'connection-org1.json');
         const ccp = JSON.parse(fs.readFileSync(ccpPath, 'utf8'));
 
         // Create a new file system based wallet for managing identities.
-        const walletPath = path.join(process.cwd(), 'wallet');
+        const walletPath = path.join(process.cwd(), '../wallet');
         const wallet = await Wallets.newFileSystemWallet(walletPath);
         console.log(`Wallet path: ${walletPath}`);
 
@@ -33,28 +33,28 @@ async function main() {
 
         // Get the contract from the network.
         const contract = network.getContract('farm');
-        
-        // get all cages from couchdb from specified condition
-        // then convert to JSON object
-        let condition = false;
-        const result = await contract.evaluateTransaction('queryWithVaccination', condition);
-        let objects = JSON.parse(result);
 
-        // check what we have
-        if (objects.length === 0) {
-            throw new Error('All cages are injected');
-        }
+        // Evaluate the specified transaction.
+        // queryCage transaction - requires 1 argument, ex: ('queryCage', 'Cage1')
+        // queryAllCages transaction - requires no arguments, ex: ('queryAllCages')
 
-        // iterate objects to obtain key values
-        // then update vaccination condition, then submit transaction to the ledger
-        for (let i = 0; i < objects.length; i++) {
-            let object = objects[i];
-            let key = object.Key;
-            let tx = await contract.submitTransaction('changeCondition', key, true);
-            console.log(`OK - ${tx}`);
-        }
-        
-        // disconnect getaway
+        let queryString = {
+            selector: {
+                docType: 'duck'
+            }
+        };
+
+
+
+        let result = await contract.evaluateTransaction('queryWithPagination', JSON.stringify(queryString), 10, '');
+        console.log('Transaction has been evaluated');
+        result = JSON.parse(result)
+        console.log(result.data[1]);
+
+        // const query_result = await contract.evaluateTransaction('queryCage', 'Cage1');
+        // // console.log(`Transaction has been evaluated, result is: ${query_result.toString()}`);
+
+        // Disconnect from the gateway.
         await gateway.disconnect();
 
     } catch (error) {

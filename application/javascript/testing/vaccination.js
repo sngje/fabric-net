@@ -1,17 +1,18 @@
 'use strict';
 
 const { Gateway, Wallets } = require('fabric-network');
-const fs = require('fs');
 const path = require('path');
+const fs = require('fs');
+
 
 async function main() {
     try {
         // load the network configuration
-        const ccpPath = path.resolve(__dirname, '..', '..', 'organizations', 'peerOrganizations', 'org1.example.com', 'connection-org1.json');
-        let ccp = JSON.parse(fs.readFileSync(ccpPath, 'utf8'));
+        const ccpPath = path.resolve(__dirname, '..', '..', '..', 'organizations', 'peerOrganizations', 'org1.example.com', 'connection-org1.json');
+        const ccp = JSON.parse(fs.readFileSync(ccpPath, 'utf8'));
 
         // Create a new file system based wallet for managing identities.
-        const walletPath = path.join(process.cwd(), 'wallet');
+        const walletPath = path.join(process.cwd(), '../wallet');
         const wallet = await Wallets.newFileSystemWallet(walletPath);
         console.log(`Wallet path: ${walletPath}`);
 
@@ -33,27 +34,16 @@ async function main() {
         // Get the contract from the network.
         const contract = network.getContract('farm');
 
-        // Submit the specified transaction.
-        // let vaccination = Buffer.from(JSON.stringify({cholera: true, plague: false}));
-        // const values = {
-        //     age: parseInt(5),
-        //     vaccination: false
-        // };
+        // define condition for search
+        const condition = true;
 
-        const v_status = [true, false];
-
-        for (let i = 4; i < 100; i ++) {
-            let randomAge = Math.floor(Math.random() * 7);
-            let randomCondition = Math.floor(Math.random() * 2);
-            let tx = await contract.submitTransaction('createCage', 'Cage' + i, v_status[randomCondition], randomAge);
-            console.log(`${i} ok - ${tx.toString()}`);
-        }
-
-        // Disconnect from the gateway.
-        await gateway.disconnect();
+        // get the data from ledger
+        const result = await contract.evaluateTransaction('queryWithVaccination', condition);
+        console.log('Transaction has been evaluated, result is');
+        console.log(JSON.parse(result));
 
     } catch (error) {
-        console.error(`Failed to submit transaction: ${error}`);
+        console.error(`Failed to evaluate transaction: ${error}`);
         process.exit(1);
     }
 }

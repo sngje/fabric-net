@@ -3,6 +3,10 @@ explorer/
 system-genesis-block/
 channel-artifacts/
 application/javascript/wallet/
+application/javascript/org1-wallet/
+application/javascript/org2-wallet/
+.vscode/
 bin/
 web/venv/
 **/.DS_Store
+
