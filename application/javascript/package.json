@@ -1,7 +1,7 @@
 {
-    "name": "farm",
+    "name": "farm_0_1",
     "version": "1.0.0",
-    "description": "balance application implemented in JavaScript",
+    "description": "API service application implemented in NodeJS",
     "engines": {
         "node": ">=8",
         "npm": ">=5"
@@ -12,16 +12,17 @@
         "test": "nyc mocha --recursive"
     },
     "engineStrict": true,
-    "author": "Hyperledger",
+    "author": "Usmonov Kamoliddin",
     "license": "Apache-2.0",
     "dependencies": {
         "body-parser": "^1.19.0",
-        "express": "^4.17.1",
-        "fabric-ca-client": "^2.1.0",
-        "fabric-network": "^2.1.0",
         "cors": "^2.8.5",
+        "dotenv": "^8.2.0",
+        "express": "^4.17.1",
         "express-bearer-token": "^2.4.0",
         "express-jwt": "^5.3.0",
+        "fabric-ca-client": "^2.1.0",
+        "fabric-network": "^2.1.0",
         "http": "0.0.1-security",
         "js-yaml": "^3.13.1",
         "jsonwebtoken": "^8.5.1",

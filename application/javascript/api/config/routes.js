@@ -1,19 +1,11 @@
 const express = require('express');
 const fabricNetwork = require('./fabricNetwork');
 const log4js = require('log4js');
-const logger = log4js.getLogger('FabricNetwork');
+const logger = log4js.getLogger('FabricNetworkApplication');
 const jwt = require('jsonwebtoken');
+const helper = require('./helper');
 const router = express.Router();
 const constants = require('./constants.json');
-
-// Function to return errors
-function getErrorMessage(field) {
-    let response = {
-        success: false,
-        message: field + ' field is missing or Invalid in the request'
-    };
-    return response;
-}
 
 // Register and enroll user
 router.post('/users', async function (req, res) {
@@ -23,11 +15,18 @@ router.post('/users', async function (req, res) {
     logger.debug('User name : ' + username);
     logger.debug('Org name  : ' + orgName);
     if (!username) {
-        res.json(getErrorMessage('\'username\''));
+        res.json(helper('\'username\''));
         return;
     }
     if (!orgName) {
-        res.json(getErrorMessage('\'orgName\''));
+        res.json(helper('\'orgName\''));
+        return;
+    }
+
+    let isUserRegistered = await fabricNetwork.isUserRegistered(username, orgName);
+
+    if (isUserRegistered) {
+        res.json({ success: false, message: `Username ${username} is already registred. Pick another one.` });
         return;
     }
 
@@ -39,7 +38,7 @@ router.post('/users', async function (req, res) {
 
     logger.debug('Token: ' + token);
 
-    let response = await fabricNetwork.getRegisteredUser(username, orgName, true);
+    let response = await fabricNetwork.getRegisteredUser(username, orgName);
 
     logger.debug('-- returned from registering the username %s for organization %s', username, orgName);
     if (response && typeof response !== 'string') {
@@ -55,21 +54,22 @@ router.post('/users', async function (req, res) {
 
 // Login and get jwt
 router.post('/users/login', async function (req, res) {
-    var username = req.body.username;
-    var orgName = req.body.orgName;
+    let username = req.body.username;
+    let orgName = req.body.orgName;
     logger.debug('End point : /users');
     logger.debug('User name : ' + username);
     logger.debug('Org name  : ' + orgName);
+
     if (!username) {
-        res.json(getErrorMessage('\'username\''));
+        res.json(helper.getErrorMessage('\'username\''));
         return;
     }
     if (!orgName) {
-        res.json(getErrorMessage('\'orgName\''));
+        res.json(helper.getErrorMessage('\'orgName\''));
         return;
     }
 
-    var token = jwt.sign({
+    let token = jwt.sign({
         exp: Math.floor(Date.now() / 1000) + parseInt(constants.jwt_expiretime),
         username: username,
         orgName: orgName
@@ -79,12 +79,12 @@ router.post('/users/login', async function (req, res) {
 
     if (isUserRegistered) {
         res.json({ success: true, message: { token: token } });
-
     } else {
         res.json({ success: false, message: `User with username ${username} is not registered with ${orgName}, Please register first.` });
     }
 });
 
+// Query all data 
 router.get('/queryallcages/:bookmark', async function (req, res) {
     try {
         // Get the contract from the network
@@ -112,6 +112,7 @@ router.get('/queryallcages/:bookmark', async function (req, res) {
     }
 });
 
+// Query for individual data
 router.get('/query/:cage_id', async function (req, res) {
     try {
         // Get the contract from the network
@@ -132,6 +133,7 @@ router.get('/query/:cage_id', async function (req, res) {
     }
 });
 
+// Query for history for individual data
 router.get('/history/:cage_id', async function (req, res) {
     try {
         // Get the contract from the network
@@ -152,6 +154,7 @@ router.get('/history/:cage_id', async function (req, res) {
     }
 });
 
+// Query to get uninjected data
 router.get('/injection/:bookmark', async function (req, res) {
     try {
         // Get the contract from the network
@@ -188,6 +191,7 @@ router.get('/injection/:bookmark', async function (req, res) {
     }
 });
 
+// Search query with different parameters
 router.get('/search/:bookmark', async function (req, res) {
     try {
         // Get the contract from the network
@@ -228,6 +232,7 @@ router.get('/search/:bookmark', async function (req, res) {
     }
 });
 
+// Transaction - inject data
 router.put('/inject/:cage_id', async function (req, res) {
     try {
         // Get the contract from the network
@@ -259,7 +264,7 @@ router.put('/inject/:cage_id', async function (req, res) {
     }
 });
 
-
+// Adding new data
 router.post('/addcage/', async function (req, res) {
     try {
         // Get the contract from the network
@@ -281,6 +286,7 @@ router.post('/addcage/', async function (req, res) {
     }
 });
 
+// Transaction to change age
 router.put('/changeage/:cage_id', async function (req, res) {
     try {
         // Get the contract from the network
@@ -305,6 +311,7 @@ router.put('/changeage/:cage_id', async function (req, res) {
     }
 });
 
+// Transaction to delete
 router.delete('/delete/:cage_id', async function (req, res) {
     try {
         // Get the contract from the network
@@ -329,6 +336,7 @@ router.delete('/delete/:cage_id', async function (req, res) {
     }
 });
 
+// Prosessing plant steps
 router.put('/processing_plant/:cage_id', async function (req, res) {
     try {
         // Get the contract from the network
@@ -353,6 +361,7 @@ router.put('/processing_plant/:cage_id', async function (req, res) {
     }
 });
 
+// Edit data
 router.put('/edit/:cage_id', async function (req, res) {
     try {
         // Get the contract from the network
