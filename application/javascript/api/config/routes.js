@@ -8,22 +8,22 @@ const router = express.Router();
 const constants = require('./constants.json');
 
 // Register and enroll user
-router.post('/users', async function (req, res) {
+router.post('/register', async function (req, res) {
     let username = req.body.username;
-    let orgName = req.body.orgName;
+    let orgname = req.body.orgname;
     logger.debug('End point : /users');
     logger.debug('User name : ' + username);
-    logger.debug('Org name  : ' + orgName);
+    logger.debug('Org name  : ' + orgname);
     if (!username) {
         res.json(helper('\'username\''));
         return;
     }
-    if (!orgName) {
-        res.json(helper('\'orgName\''));
+    if (!orgname) {
+        res.json(helper('\'orgname\''));
         return;
     }
 
-    let isUserRegistered = await fabricNetwork.isUserRegistered(username, orgName);
+    let isUserRegistered = await fabricNetwork.isUserRegistered(username, orgname);
 
     if (isUserRegistered) {
         res.json({ success: false, message: `Username ${username} is already registred. Pick another one.` });
@@ -33,54 +33,53 @@ router.post('/users', async function (req, res) {
     let token = jwt.sign({
         exp: Math.floor(Date.now() / 1000) + parseInt(constants.jwt_expiretime),
         username: username,
-        orgName: orgName
+        orgname: orgname
     }, req.app.get('secret'));
 
     logger.debug('Token: ' + token);
 
-    let response = await fabricNetwork.getRegisteredUser(username, orgName);
+    let response = await fabricNetwork.getRegisteredUser(username, orgname);
 
-    logger.debug('-- returned from registering the username %s for organization %s', username, orgName);
+    logger.debug('-- returned from registering the username %s for organization %s', username, orgname);
     if (response && typeof response !== 'string') {
-        logger.debug('Successfully registered the username %s for organization %s', username, orgName);
+        logger.debug('Successfully registered the username %s for organization %s', username, orgname);
         response.token = token;
         res.json(response);
     } else {
-        logger.debug('Failed to register the username %s for organization %s with::%s', username, orgName, response);
+        logger.debug('Failed to register the username %s for organization %s with::%s', username, orgname, response);
         res.json({ success: false, message: response });
     }
 
 });
 
 // Login and get jwt
-router.post('/users/login', async function (req, res) {
+router.post('/login', async function (req, res) {
     let username = req.body.username;
-    let orgName = req.body.orgName;
+    let orgname = req.body.orgname;
     logger.debug('End point : /users');
     logger.debug('User name : ' + username);
-    logger.debug('Org name  : ' + orgName);
+    logger.debug('Org name  : ' + orgname);
 
     if (!username) {
         res.json(helper.getErrorMessage('\'username\''));
         return;
     }
-    if (!orgName) {
-        res.json(helper.getErrorMessage('\'orgName\''));
+    if (!orgname) {
+        res.json(helper.getErrorMessage('\'orgname\''));
         return;
     }
 
-    let token = jwt.sign({
-        exp: Math.floor(Date.now() / 1000) + parseInt(constants.jwt_expiretime),
-        username: username,
-        orgName: orgName
-    }, req.app.get('secret'));
-
-    let isUserRegistered = await fabricNetwork.isUserRegistered(username, orgName);
+    let isUserRegistered = await fabricNetwork.isUserRegistered(username, orgname);
 
     if (isUserRegistered) {
+        let token = jwt.sign({
+            exp: Math.floor(Date.now() / 1000) + parseInt(constants.jwt_expiretime),
+            username: username,
+            orgname: orgname
+        }, req.app.get('secret'));
         res.json({ success: true, message: { token: token } });
     } else {
-        res.json({ success: false, message: `User with username ${username} is not registered with ${orgName}, Please register first.` });
+        res.json({ success: false, message: `User with username ${username} is not registered with ${orgname}, Please register first.` });
     }
 });
 

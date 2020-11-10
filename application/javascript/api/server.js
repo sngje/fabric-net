@@ -30,8 +30,18 @@ app.set('secret', APP_SECRET);
 app.use(expressJWT({
     secret: APP_SECRET
 }).unless({
-    path: ['/api/users','/api/users/login']
+    path: ['/api/register','/api/login']
 }));
+
+// Error handling for 401 status
+app.use(function(err, req, res, next) {
+    if(err.name === 'UnauthorizedError') {
+      res.status(err.status).send({message:err.message});
+      logger.error({message:err.message});
+      return;
+    }
+ next();
+});
 
 // Use Bearer token and set logger level to debug
 app.use(bearerToken());
@@ -40,13 +50,15 @@ logger.level = 'debug';
 // Authorized routes without token
 app.use((req, res, next) => {
     logger.debug('New req for %s', req.originalUrl);
-    if (req.originalUrl.indexOf('/api/users') >= 0 || req.originalUrl.indexOf('/api/users/login') >= 0) {
+    if (req.originalUrl.indexOf('/api/register') >= 0 || req.originalUrl.indexOf('/api/login') >= 0) {
         return next();
     }
-    var token = req.token;
+    let token = req.token;
     jwt.verify(token, app.get('secret'), (err, decoded) => {
         if (err) {
-            console.log(`Error ================: ${err}`)
+            console.log(`Error ================: ${err}`);
+            // res.status(401).send('Unauthorized user');
+            // console.log(res);
             res.send({
                 success: false,
                 message: 'Failed to authenticate token. Make sure to include the ' +
@@ -56,8 +68,8 @@ app.use((req, res, next) => {
             return;
         } else {
             req.username = decoded.username;
-            req.orgname = decoded.orgName;
-            logger.debug(util.format('Decoded from JWT token: username - %s, orgname - %s', decoded.username, decoded.orgName));
+            req.orgname = decoded.orgname;
+            logger.debug(util.format('Decoded from JWT token: username - %s, orgname - %s', decoded.username, decoded.orgname));
             return next();
         }
     });

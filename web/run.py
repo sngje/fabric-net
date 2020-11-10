@@ -38,16 +38,53 @@ def index():
 	return render_template('index.html', title="Options")
 
 # Route: login page
-@app.route("/login")
-@app.route("/login/")
+@app.route("/login", methods=["POST", "GET"])
+@app.route("/login/", methods=["POST", "GET"])
 def login():
+	if request.method == "POST":
+		username = request.form['username']
+		orgname = request.form['orgname']
+
+		req = {
+			'username': f'{username}',
+			'orgname': f'{orgname}'
+			}
+		req = json.loads(json.dumps(req))
+		# send the data
+		r = requests.post('http://localhost:3000/api/login', json=req) 
+		if r.status_code != 200:
+			flash(req, "error")
+			return redirect(url_for('login'))
+		response = r.json()
+		print(response)
+		flash("response['message']['token']", "success") #response['message']['token']
+		return redirect(url_for('index'))
 	return render_template('login.html', title="Login page")
 
 # Route: registeration page
-@app.route("/register")
-@app.route("/register/")
+@app.route("/register", methods=["POST", "GET"])
+@app.route("/register/", methods=["POST", "GET"])
 def register():
+	if request.method == "POST":
+		username = request.form['username']
+		orgname = request.form['orgname']
+
+		req = {
+			'username': f'{username}',
+			'orgname': f'{orgname}'
+			}
+		req = json.loads(json.dumps(req))
+		# send the data
+		r = requests.post('http://localhost:3000/api/register', json=req) 
+		if r.status_code != 200:
+			flash(req, "error")
+			return redirect(url_for('register'))
+		response = r.json()
+		print(response)
+		flash(response['token'], "success")
+		return redirect(url_for('register'))
 	return render_template('register.html', title="Registration page")
+
 
 # Route: query cages page
 @app.route("/live/")
