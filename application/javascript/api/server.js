@@ -35,7 +35,7 @@ app.use(expressJWT({
 
 // Error handling for 401 status
 app.use(function(err, req, res, next) {
-    if(err.name === 'UnauthorizedError') {
+    if (err.name === 'UnauthorizedError') {
       res.status(err.status).send({message:err.message});
       logger.error({message:err.message});
       return;
@@ -56,8 +56,8 @@ app.use((req, res, next) => {
     let token = req.token;
     jwt.verify(token, app.get('secret'), (err, decoded) => {
         if (err) {
-            console.log(`Error ================: ${err}`);
-            // res.status(401).send('Unauthorized user');
+            logger.error(`Error ================: ${err}`);
+            // res.stajwt tokentus(401).send('Unauthorized user');
             // console.log(res);
             res.send({
                 success: false,

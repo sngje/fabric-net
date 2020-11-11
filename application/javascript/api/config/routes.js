@@ -23,6 +23,7 @@ router.post('/register', async function (req, res) {
         return;
     }
 
+    // Check to see if the username is taken or not
     let isUserRegistered = await fabricNetwork.isUserRegistered(username, orgname);
 
     if (isUserRegistered) {
@@ -30,30 +31,34 @@ router.post('/register', async function (req, res) {
         return;
     }
 
+    // Generate token
     let token = jwt.sign({
         exp: Math.floor(Date.now() / 1000) + parseInt(constants.jwt_expiretime),
         username: username,
         orgname: orgname
     }, req.app.get('secret'));
 
+    // Output token on console
     logger.debug('Token: ' + token);
 
+    // request to fabric to enroll
     let response = await fabricNetwork.getRegisteredUser(username, orgname);
 
     logger.debug('-- returned from registering the username %s for organization %s', username, orgname);
     if (response && typeof response !== 'string') {
         logger.debug('Successfully registered the username %s for organization %s', username, orgname);
         response.token = token;
-        res.json(response);
+        res.status(200).json(response);
     } else {
-        logger.debug('Failed to register the username %s for organization %s with::%s', username, orgname, response);
-        res.json({ success: false, message: response });
+        logger.error('Failed to register the username %s for organization %s with::%s', username, orgname, response);
+        res.status(200).json({ success: false, message: response });
     }
 
 });
 
 // Login and get jwt
 router.post('/login', async function (req, res) {
+    logger.debug('End point : /login');
     let username = req.body.username;
     let orgname = req.body.orgname;
     logger.debug('End point : /users');
@@ -77,14 +82,15 @@ router.post('/login', async function (req, res) {
             username: username,
             orgname: orgname
         }, req.app.get('secret'));
-        res.json({ success: true, message: { token: token } });
+        res.status(200).json({ success: true, message: { token: token } });
     } else {
-        res.json({ success: false, message: `User with username ${username} is not registered with ${orgname}, Please register first.` });
+        res.status(200).json({ success: false, message: `User with username ${username} is not registered with ${orgname}, Please register first.` });
     }
 });
 
 // Query all data 
 router.get('/queryallcages/:bookmark', async function (req, res) {
+    logger.debug('End point : /queryallcages');
     try {
         // Get the contract from the network
         const {contract, gateway} = await fabricNetwork.connectNetwork();
@@ -97,22 +103,21 @@ router.get('/queryallcages/:bookmark', async function (req, res) {
             }
         };
         let bookmark = (req.params.bookmark !== '0') ? req.params.bookmark : ''; 
-        const result = await contract.evaluateTransaction('queryWithPagination',
-                    JSON.stringify(queryString), 10,
-                    bookmark);
-        console.log(JSON.parse(result));
+        const result = await contract.evaluateTransaction('queryWithPagination',JSON.stringify(queryString), 10,bookmark);
+        logger.debug('Response : ok');
         res.status(200).json(JSON.parse(result));
 
         // disconnect the gateway
         await gateway.disconnect();
     } catch (error) {
-        console.error(`Failed to evaluate transaction: ${error}`);
+        logger.error('Failed to evaluate transaction: ' + error);
         res.status(500).json({error: 'Failed to evaluate transaction. Please try again'});
     }
 });
 
 // Query for individual data
 router.get('/query/:cage_id', async function (req, res) {
+    logger.debug('End point : /queryallcages');
     try {
         // Get the contract from the network
         const {contract, gateway} = await fabricNetwork.connectNetwork();
@@ -120,8 +125,8 @@ router.get('/query/:cage_id', async function (req, res) {
         // Evaluate the specified transaction.
         // queryCage transaction - requires 1 argument, ex: ('queryCage', 'Cage1')
         const result = await contract.evaluateTransaction('queryCage', req.params.cage_id);
-        console.log('Transaction has been evaluated');
-        console.log(JSON.parse(result));
+        logger.debug('Transaction has been evaluated');
+        logger.debug('Result : ' + JSON.parse(result));
         res.status(200).json(JSON.parse(result));
 
         // disconnect the gateway

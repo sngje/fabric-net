@@ -13,9 +13,10 @@ const getCCP = async (org) => {
     let ccpPath;
     if (org == "Org1") {
         ccpPath = path.resolve(__dirname, '..', '..', '..', '..', 'organizations', 'peerOrganizations', 'org1.example.com', 'connection-org1.json');
-
     } else if (org == "Org2") {
         ccpPath = path.resolve(__dirname, '..', '..', '..', '..', 'organizations', 'peerOrganizations', 'org2.example.com', 'connection-org2.json');
+    } else if (org == "Org3") {
+        ccpPath = path.resolve(__dirname, '..', '..', '..', '..', 'organizations', 'peerOrganizations', 'org3.example.com', 'connection-org3.json');
     } else {
         return null;
     }
@@ -27,9 +28,10 @@ const getCaUrl = async (org, ccp) => {
     let caURL;
     if (org == "Org1") {
         caURL = ccp.certificateAuthorities['ca.org1.example.com'].url;
-
     } else if (org == "Org2") {
         caURL = ccp.certificateAuthorities['ca.org2.example.com'].url;
+    } else if (org == "Org3") {
+        caURL = ccp.certificateAuthorities['ca.org3.example.com'].url;
     } else {
         return null;
     }
@@ -41,9 +43,10 @@ const getWalletPath = async (org) => {
     let walletPath;
     if (org == "Org1") {
         walletPath = path.join(process.cwd(), '../org1-wallet');
-
     } else if (org == "Org2") {
         walletPath = path.join(process.cwd(), '../org2-wallet');
+    } else if (org == "Org3") {
+        walletPath = path.join(process.cwd(), '../org3-wallet');
     } else {
         return null;
     }
@@ -53,7 +56,15 @@ const getWalletPath = async (org) => {
 
 
 const getAffiliation = async (org) => {
-    return org == "Org1" ? 'org1.department1' : 'org2.department1';
+    if (org == "Org1") {
+        return "org1.department1";
+    } else if (org == "Org2") {
+        return "org2.department1";
+    } else if (org == "Org3") {
+        return "org3.department1";
+    } else {
+        return null;
+    }
 }
 
 const getRegisteredUser = async (username, userOrg) => {
@@ -66,10 +77,11 @@ const getRegisteredUser = async (username, userOrg) => {
     const wallet = await Wallets.newFileSystemWallet(walletPath);
     console.log(`Wallet path: ${walletPath}`);
 
+    // Check to see if username enrolled already
     const userIdentity = await wallet.get(username);
     if (userIdentity) {
         console.log(`An identity for the user ${username} already exists in the wallet`);
-        var response = {
+        let response = {
             success: true,
             message: username + ' enrolled Successfully',
         };
@@ -119,12 +131,21 @@ const getRegisteredUser = async (username, userOrg) => {
             mspId: 'Org2MSP',
             type: 'X.509',
         };
+    } else if (userOrg == "Org3") {
+        x509Identity = {
+            credentials: {
+                certificate: enrollment.certificate,
+                privateKey: enrollment.key.toBytes(),
+            },
+            mspId: 'Org3MSP',
+            type: 'X.509',
+        };
     }
 
     await wallet.put(username, x509Identity);
     console.log(`Successfully registered and enrolled admin user ${username} and imported it into the wallet`);
 
-    var response = {
+    let response = {
         success: true,
         message: username + ' enrolled Successfully',
     };
@@ -146,11 +167,13 @@ const isUserRegistered = async  (username, userOrg) => {
 
 
 const getCaInfo = async (org, ccp) => {
-    let caInfo
+    let caInfo;
     if (org == "Org1") {
         caInfo = ccp.certificateAuthorities['ca.org1.example.com'];
     } else if (org == "Org2") {
         caInfo = ccp.certificateAuthorities['ca.org2.example.com'];
+    } else if (org == "Org3") {
+        caInfo = ccp.certificateAuthorities['ca.org3.example.com'];
     } else {
         return null;
     }
@@ -199,6 +222,15 @@ const enrollAdmin = async (org, ccp) => {
                     privateKey: enrollment.key.toBytes(),
                 },
                 mspId: 'Org2MSP',
+                type: 'X.509',
+            };
+        } else if (org == "Org3") {
+            x509Identity = {
+                credentials: {
+                    certificate: enrollment.certificate,
+                    privateKey: enrollment.key.toBytes(),
+                },
+                mspId: 'Org3MSP',
                 type: 'X.509',
             };
         }
