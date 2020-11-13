@@ -8,5 +8,6 @@ application/javascript/org2-wallet/
 .vscode/
 bin/
 web/venv/
+web/__pycache__/
 **/.DS_Store
 
