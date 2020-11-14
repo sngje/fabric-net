@@ -12,14 +12,14 @@
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <div class="row valign-wrapper" style="width:100%;height:100%;position: absolute;">
-        <div class="col s12 l4 offset-m2 offset-l4" >
+        <div class="col s12 l4 offset-m2 offset-l4">
             <div class="card">
 
                 <div class="our-colour white-text center-align" style="padding: 5px;">
                     <h5>Registration form</h5>
                 </div>
-                <form class="col s12" action="{{ url_for('register') }}" method="POST">
-                    <div class="row" style="border:1px solid #cccccc;" style="margin: 10px">
+                <div class="row">
+                    <form class="col s12" action="{{ url_for('register') }}" method="POST">
                         <div class="input-field col s12">
                             <input placeholder="Username" type="text" name="username">
                             <!-- <label class="active">Email</label> -->
@@ -41,10 +41,10 @@
 
                         <div class="input-field col s12">
                             <button class="our-colour btn-large waves-effect waves-dark" style="width:100%;">Register</button>
-                        </div><br>
-                    </div>
-                </form>
-
+                        </div>
+                    </form>
+                    <div style="padding:0px 5px 15px 10px; margin-left:15px; font-size:16px;">Do you have an account? <a href="{{ url_for('login') }}">Yes, login</a></div>
+                </div>
             </div>
         </div>
     </div>

@@ -92,8 +92,13 @@
 
       <header>
         <ul class="dropdown-content" id="dropdown1">
-          <li><a class="indigo-text" href="{{ url_for('login') }}"><i class="material-icons">person</i> Profile</a></li>
-          <li><a class="indigo-text" href="#!"><i class="material-icons">cancel</i> Logout</a></li>
+          {% if current_user.is_authenticated %}
+            <!-- <li><a class="indigo-text" href="{{ url_for('login') }}"><i class="material-icons">person</i> Profile</a></li> -->
+            <li><a class="indigo-text" href="{{ url_for('logout') }}""><i class="material-icons">cancel</i> Logout</a></li>
+          {% else %}
+            <li><a class="indigo-text" href="{{ url_for('register') }}"><i class="material-icons">person</i> Register</a></li>
+            <li><a class="indigo-text" href="{{ url_for('login') }}""><i class="material-icons">person</i> Login</a></li>
+          {% endif %}
         </ul>
     
         <nav class="our-colour" role="navigation"> 

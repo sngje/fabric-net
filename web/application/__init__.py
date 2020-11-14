@@ -27,6 +27,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 # )
 
 db = SQLAlchemy(app)
+db.create_all()
 bcrpyt = Bcrypt(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
@@ -37,7 +38,17 @@ def myTimeFunc(timestamp):
 	t = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(timestamp))
 	return t
 
+# Helper function to return header information with token
+def header_info(token):
+	headers = {
+				'Access-Control-Allow-Origin': '*',
+				'Content-Type': 'application/json',
+				'Authorization': f'Bearer {token}'
+			}
+	return headers
+
 # This allows using the above 3 functions in-line from the HTML templates 
 app.jinja_env.globals.update(myTimeFunc=myTimeFunc) 
+app.jinja_env.globals.update(header_info=header_info) 
 
 from application import routes

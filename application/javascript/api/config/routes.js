@@ -3,6 +3,7 @@ const fabricNetwork = require('./fabricNetwork');
 const log4js = require('log4js');
 const logger = log4js.getLogger('FabricNetworkApplication');
 const jwt = require('jsonwebtoken');
+const jwt_decode = require('jwt-decode');
 const helper = require('./helper');
 const router = express.Router();
 const constants = require('./constants.json');
@@ -82,6 +83,8 @@ router.post('/login', async function (req, res) {
             username: username,
             orgname: orgname
         }, req.app.get('secret'));
+        var decoded = jwt_decode(token);
+        console.log(decoded);
         res.status(200).json({ success: true, message: { token: token } });
     } else {
         res.status(200).json({ success: false, message: `User with username ${username} is not registered with ${orgname}, Please register first.` });
@@ -91,6 +94,10 @@ router.post('/login', async function (req, res) {
 // Query all data 
 router.get('/queryallcages/:bookmark', async function (req, res) {
     logger.debug('End point : /queryallcages');
+    // console.log(req.headers['authorization']);
+
+    var decoded = helper.decode_jwt(req.headers['authorization']);
+    console.log(decoded);
     try {
         // Get the contract from the network
         const {contract, gateway} = await fabricNetwork.connectNetwork();
