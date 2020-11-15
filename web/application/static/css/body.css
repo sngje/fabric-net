@@ -4,7 +4,7 @@
 }
 
 body {
-	font-family: myfont, serif;
+	font-family: 'Open Sans';
     overflow-x: hidden;
     /* padding-left: 300px; */
 }
@@ -26,10 +26,11 @@ main {
     header,
     main,
     footer {
-    padding-left: 0;
+        padding-left: 0;
     }
     .materialert {
-        margin: 15px 15px 15px 15px;
+        padding-left: 0;
+        margin: 15px 15px 15px 15px !important;
     }
 }
 

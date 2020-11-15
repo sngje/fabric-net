@@ -38,8 +38,8 @@ def login():
 				flash(req, "error")
 				return redirect(url_for('login'))
 			if response['success']:
-				flash("Login successfully!", "success")
-				user.token = response['message']['token']
+				flash(response['message'], "success")
+				user.token = response['token']
 				db.session.commit()
 				next_page = request.args.get('next')
 				return redirect(next_page) if next_page else redirect(url_for('index'))
@@ -65,7 +65,7 @@ def register():
 		req = {
 			'username': f'{username}',
 			'orgname': f'{orgname}'
-			}
+		}
 		req = json.loads(json.dumps(req))
 		# send the data
 		r = requests.post('http://localhost:3000/api/register', json=req) 
@@ -75,6 +75,7 @@ def register():
 		response = r.json()
 		if response['success']:
 			flash("You have successfully registred in our system!", "success")
+			# Create user object and add into database with returned token
 			user = User(username=username, orgname=orgname, token=response['token'])
 			db.session.add(user)
 			db.session.commit()

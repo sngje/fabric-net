@@ -7,6 +7,9 @@ from flask_login import LoginManager
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'c18caca2c8ecee93eda44c67b08c6ec1'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_ECHO'] = False
+
 # app.config.update(
 
 #     #Set the secret key to a sufficiently random value

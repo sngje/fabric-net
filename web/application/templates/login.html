@@ -11,56 +11,80 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <div class="row valign-wrapper" style="width:100%;height:100%;position: absolute;">
-        <div class="col s12 l4 offset-m2 offset-l4">
-            <div class="card">
+    <div style="max-width: 550px; position: relative; top: 50%; left: 50%; -moz-transform: translateX(-50%) translateY(-50%); -webkit-transform: translateX(-50%) translateY(-50%); transform: translateX(-50%) translateY(-50%);">
+        <div class="card">
 
-                <div class="our-colour white-text center-align" style="padding: 5px;">
-                    <h5>Login form</h5>
-                </div>
-                
-                <div class="row">
-                    <form class="col s12" action="{{ url_for('login') }}" method="POST">
-                        <div class="input-field col s12">
-                            <input placeholder="Username" type="text" name="username">
-                            <!-- <label class="active">Email</label> -->
-                        </div><br>
+            <div class="our-colour white-text center-align" style="padding: 5px;">
+                <h5>Login form</h5>
+            </div>
+            
+            <div class="row">
+                <form class="col s12" action="{{ url_for('login') }}" method="POST">
+                    <div class="input-field col s12">
+                        <input placeholder="Username" type="text" name="username">
+                        <!-- <label class="active">Email</label> -->
+                    </div><br>
 
-                        <!-- <div class="input-field col s12">
-                            <input placeholder="Password" type="password" id="password">
-                        </div><br> -->
+                    <!-- <div class="input-field col s12">
+                        <input placeholder="Password" type="password" id="password">
+                    </div><br> -->
 
-                        <div class="input-field col s12">
-                            <select name="orgname">
-                            <option value="" disabled selected>Please select one of them</option>
-                            <option value="Org1">Grower farm</option>
-                            <option value="Org2">Processing plant</option>
-                            <option value="Org3">Delivery</option>
-                            </select>
-                            <!-- <label>Your organization</label> -->
-                        </div>
+                    <div class="input-field col s12">
+                        <select name="orgname">
+                        <option value="" disabled selected>Please select one of them</option>
+                        <option value="Org1">Grower farm</option>
+                        <option value="Org2">Processing plant</option>
+                        <option value="Org3">Delivery</option>
+                        </select>
+                        <!-- <label>Your organization</label> -->
+                    </div>
 
-                        <div class="input-field col s12">
-                            <button class="our-colour btn-large waves-effect waves-dark" style="width:100%;">Login</button>
-                        </div>
-                    </form>
-                    <div style="padding:0px 5px 15px 10px; margin-left:15px; font-size:16px;">Don't you have an account? <a href="{{ url_for('register') }}">Register now</a></div>
-                </div>
-
+                    <div class="input-field col s12">
+                        <button class="our-colour btn-large waves-effect waves-dark" style="width:100%;">Login</button>
+                    </div>
+                </form>
+                <div style="padding:0px 5px 15px 10px; margin-left:15px; font-size:16px;">Don't you have an account? <a href="{{ url_for('register') }}">Register now</a></div>
             </div>
         </div>
+        {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div id="alter-box" class="materialert {{ category }}" style="margin: 5px !important;">
+                    <i class="material-icons">check</i> {{ message }}
+                    <!-- info_outline, check, warning, error_outline -->
+                    <button type="button" id="close-alert" class="close-alert">×</button>
+                </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
     </div>
-    
-    {% with messages = get_flashed_messages(with_categories=True) %}
-        {% if messages %}
-            {% for category, message in messages %}
-            <div id="alter-box" class="materialert {{ category }}">
-                <i class="material-icons">check</i> {{ message }}
-                <!-- info_outline, check, warning, error_outline -->
-                <button type="button" id="close-alert" class="close-alert">×</button>
-            </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-      
+
+    <script type="text/javascript">
+        $('#close-alert').click(function(){
+            $( "#alter-box" ).fadeOut( "slow", function() {
+          });
+        });
+      </script>
+
+      <script type="text/javascript">
+        $(function() {
+          $('.sidenav').sidenav();
+        })
+      </script>
+
+      <script type="text/javascript">
+        $(document).ready(function(){
+          $('.modal').modal();
+          $('.dropdown-trigger').dropdown();
+        });
+      </script>
+
+      <script type="text/javascript">
+        $(document).ready(function() {
+          $('.button-collapse').sidenav();
+          $('.collapsible').collapsible();
+          $('select').material_select();
+        });
+      </script>
+
 {% endblock %}

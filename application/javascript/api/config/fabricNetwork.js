@@ -3,7 +3,6 @@
 // Setting for Hyperledger Fabric
 const {  Wallets,  Gateway} = require('fabric-network');
 const FabricCAServices = require('fabric-ca-client');
-const IDENTITY = 'appUser';
 const CHANNEL = 'mychannel';
 const CONTRACT = 'farm';
 const path = require('path');
@@ -67,13 +66,13 @@ const getAffiliation = async (org) => {
     }
 }
 
-const getRegisteredUser = async (username, userOrg) => {
-    let ccp = await getCCP(userOrg);
+const getRegisteredUser = async (username, orgname) => {
+    let ccp = await getCCP(orgname);
 
-    const caURL = await getCaUrl(userOrg, ccp);
+    const caURL = await getCaUrl(orgname, ccp);
     const ca = new FabricCAServices(caURL);
 
-    const walletPath = await getWalletPath(userOrg);
+    const walletPath = await getWalletPath(orgname);
     const wallet = await Wallets.newFileSystemWallet(walletPath);
     console.log(`Wallet path: ${walletPath}`);
 
@@ -92,7 +91,7 @@ const getRegisteredUser = async (username, userOrg) => {
     let adminIdentity = await wallet.get('admin');
     if (!adminIdentity) {
         console.log('An identity for the admin user "admin" does not exist in the wallet');
-        await enrollAdmin(userOrg, ccp);
+        await enrollAdmin(orgname, ccp);
         adminIdentity = await wallet.get('admin');
         console.log("Admin Enrolled Successfully");
     }
@@ -103,7 +102,7 @@ const getRegisteredUser = async (username, userOrg) => {
     let secret;
     try {
         // Register the user, enroll the user, and import the new identity into the wallet.
-        secret = await ca.register({ affiliation: await getAffiliation(userOrg), enrollmentID: username, role: 'client' }, adminUser);
+        secret = await ca.register({ affiliation: await getAffiliation(orgname), enrollmentID: username, role: 'client' }, adminUser);
         // const secret = await ca.register({ affiliation: 'org1.department1', enrollmentID: username, role: 'client', attrs: [{ name: 'role', value: 'approver', ecert: true }] }, adminUser);
     } catch (error) {
         return error.message;
@@ -113,7 +112,7 @@ const getRegisteredUser = async (username, userOrg) => {
     // const enrollment = await ca.enroll({ enrollmentID: username, enrollmentSecret: secret, attr_reqs: [{ name: 'role', optional: false }] });
 
     let x509Identity;
-    if (userOrg == "Org1") {
+    if (orgname == "Org1") {
         x509Identity = {
             credentials: {
                 certificate: enrollment.certificate,
@@ -122,7 +121,7 @@ const getRegisteredUser = async (username, userOrg) => {
             mspId: 'Org1MSP',
             type: 'X.509',
         };
-    } else if (userOrg == "Org2") {
+    } else if (orgname == "Org2") {
         x509Identity = {
             credentials: {
                 certificate: enrollment.certificate,
@@ -131,7 +130,7 @@ const getRegisteredUser = async (username, userOrg) => {
             mspId: 'Org2MSP',
             type: 'X.509',
         };
-    } else if (userOrg == "Org3") {
+    } else if (orgname == "Org3") {
         x509Identity = {
             credentials: {
                 certificate: enrollment.certificate,
@@ -152,8 +151,8 @@ const getRegisteredUser = async (username, userOrg) => {
     return response;
 }
 
-const isUserRegistered = async  (username, userOrg) => {
-    const walletPath = await getWalletPath(userOrg);
+const isUserRegistered = async  (username, orgname) => {
+    const walletPath = await getWalletPath(orgname);
     const wallet = await Wallets.newFileSystemWallet(walletPath);
     console.log(`Wallet path: ${walletPath}`);
 
@@ -244,27 +243,25 @@ const enrollAdmin = async (org, ccp) => {
 }
 
 
-async function connectNetwork() {
-    const ccpPath = path.resolve(__dirname, '..', '..', '..', '..', 'organizations', 'peerOrganizations', 'org1.example.com', 'connection-org1.json');
-    const ccp = JSON.parse(fs.readFileSync(ccpPath, 'utf8'));
+async function connectNetwork(username, orgname) {
+    const ccp = await getCCP(orgname);
 
     // Create a new file system based wallet for managing identities.
-    const walletPath = path.join(process.cwd(), '../wallet');
+    const walletPath = await getWalletPath(orgname);
     const wallet = await Wallets.newFileSystemWallet(walletPath);
-    console.log(`Wallet path: ${walletPath}`);
+    console.debug(`Wallet path: ${walletPath}`);
 
     // Check to see if we've already enrolled the user.
-    const userExists = await wallet.get(IDENTITY);
+    const userExists = await wallet.get(username);
     if (!userExists) {
-        console.log('An identity for the user "appUser" does not exist in the wallet');
-        console.log('Run the registerUser.js application before retrying');
+        console.log('An identity for the user "%s" does not exist in the wallet', username);
         return;
     }
     // Create a new gateway for connecting to our peer node.
     const gateway = new Gateway();
     await gateway.connect(ccp, {
         wallet,
-        identity: IDENTITY,
+        identity: username,
         discovery: {
             enabled: true,
             asLocalhost: true

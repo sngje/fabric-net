@@ -3,7 +3,6 @@ const fabricNetwork = require('./fabricNetwork');
 const log4js = require('log4js');
 const logger = log4js.getLogger('FabricNetworkApplication');
 const jwt = require('jsonwebtoken');
-const jwt_decode = require('jwt-decode');
 const helper = require('./helper');
 const router = express.Router();
 const constants = require('./constants.json');
@@ -16,11 +15,11 @@ router.post('/register', async function (req, res) {
     logger.debug('User name : ' + username);
     logger.debug('Org name  : ' + orgname);
     if (!username) {
-        res.json(helper('\'username\''));
+        res.json(helper.getErrorMessage('\'username\''));
         return;
     }
     if (!orgname) {
-        res.json(helper('\'orgname\''));
+        res.json(helper.getErrorMessage('\'orgname\''));
         return;
     }
 
@@ -28,7 +27,10 @@ router.post('/register', async function (req, res) {
     let isUserRegistered = await fabricNetwork.isUserRegistered(username, orgname);
 
     if (isUserRegistered) {
-        res.json({ success: false, message: `Username ${username} is already registred. Pick another one.` });
+        res.json({
+            success: false,
+            message: `Username ${username} is already registred. Pick another one.`
+        });
         return;
     }
 
@@ -49,10 +51,14 @@ router.post('/register', async function (req, res) {
     if (response && typeof response !== 'string') {
         logger.debug('Successfully registered the username %s for organization %s', username, orgname);
         response.token = token;
+        console.log(response);
         res.status(200).json(response);
     } else {
         logger.error('Failed to register the username %s for organization %s with::%s', username, orgname, response);
-        res.status(200).json({ success: false, message: response });
+        res.status(200).json({
+            success: false,
+            message: response
+        });
     }
 
 });
@@ -83,11 +89,16 @@ router.post('/login', async function (req, res) {
             username: username,
             orgname: orgname
         }, req.app.get('secret'));
-        var decoded = jwt_decode(token);
-        console.log(decoded);
-        res.status(200).json({ success: true, message: { token: token } });
+        res.status(200).json({ 
+            success: true,
+            message: `${username} successfully logged in`,
+            token: token
+        });
     } else {
-        res.status(200).json({ success: false, message: `User with username ${username} is not registered with ${orgname}, Please register first.` });
+        res.status(200).json({
+            success: false,
+            message: `User with username ${username} is not registered with ${orgname}, Please register first.`
+        });
     }
 });
 
@@ -95,12 +106,12 @@ router.post('/login', async function (req, res) {
 router.get('/queryallcages/:bookmark', async function (req, res) {
     logger.debug('End point : /queryallcages');
     // console.log(req.headers['authorization']);
-
-    var decoded = helper.decode_jwt(req.headers['authorization']);
-    console.log(decoded);
+    const decoded = helper.decode_jwt(req.headers['authorization']);
+    // console.log(decoded);
+    
     try {
         // Get the contract from the network
-        const {contract, gateway} = await fabricNetwork.connectNetwork();
+        const {contract, gateway} = await fabricNetwork.connectNetwork(decoded['username'], decoded['orgname']);
 
         // Evaluate the specified transaction.
         // queryAllCages transaction - requires no arguments, ex: ('queryAllCages')
@@ -125,9 +136,10 @@ router.get('/queryallcages/:bookmark', async function (req, res) {
 // Query for individual data
 router.get('/query/:cage_id', async function (req, res) {
     logger.debug('End point : /queryallcages');
+    const decoded = helper.decode_jwt(req.headers['authorization']);
     try {
         // Get the contract from the network
-        const {contract, gateway} = await fabricNetwork.connectNetwork();
+        const {contract, gateway} = await fabricNetwork.connectNetwork(decoded['username'], decoded['orgname']);
 
         // Evaluate the specified transaction.
         // queryCage transaction - requires 1 argument, ex: ('queryCage', 'Cage1')
@@ -146,9 +158,10 @@ router.get('/query/:cage_id', async function (req, res) {
 
 // Query for history for individual data
 router.get('/history/:cage_id', async function (req, res) {
+    const decoded = helper.decode_jwt(req.headers['authorization']);
     try {
         // Get the contract from the network
-        const {contract, gateway} = await fabricNetwork.connectNetwork();
+        const {contract, gateway} = await fabricNetwork.connectNetwork(decoded['username'], decoded['orgname']);
 
         // Evaluate the specified transaction.
         // queryCage transaction - requires 1 argument, ex: ('queryCage', 'Cage1')
@@ -167,9 +180,10 @@ router.get('/history/:cage_id', async function (req, res) {
 
 // Query to get uninjected data
 router.get('/injection/:bookmark', async function (req, res) {
+    const decoded = helper.decode_jwt(req.headers['authorization']);
     try {
         // Get the contract from the network
-        const {contract, gateway} = await fabricNetwork.connectNetwork();
+        const {contract, gateway} = await fabricNetwork.connectNetwork(decoded['username'], decoded['orgname']);
 
         // let condition = false;
         // const result = await contract.evaluateTransaction('queryWithVaccination', condition);
@@ -204,9 +218,10 @@ router.get('/injection/:bookmark', async function (req, res) {
 
 // Search query with different parameters
 router.get('/search/:bookmark', async function (req, res) {
+    const decoded = helper.decode_jwt(req.headers['authorization']);
     try {
         // Get the contract from the network
-        const {contract, gateway} = await fabricNetwork.connectNetwork();
+        const {contract, gateway} = await fabricNetwork.connectNetwork(decoded['username'], decoded['orgname']);
 
         // let condition = false;
         // const result = await contract.evaluateTransaction('queryWithVaccination', condition);
@@ -245,9 +260,10 @@ router.get('/search/:bookmark', async function (req, res) {
 
 // Transaction - inject data
 router.put('/inject/:cage_id', async function (req, res) {
+    const decoded = helper.decode_jwt(req.headers['authorization']);
     try {
         // Get the contract from the network
-        const {contract, gateway} = await fabricNetwork.connectNetwork();
+        const {contract, gateway} = await fabricNetwork.connectNetwork(decoded['username'], decoded['orgname']);
 
         // let condition = false;
         // const result = await contract.evaluateTransaction('queryCage', req.params.cage_id);
@@ -277,9 +293,10 @@ router.put('/inject/:cage_id', async function (req, res) {
 
 // Adding new data
 router.post('/addcage/', async function (req, res) {
+    const decoded = helper.decode_jwt(req.headers['authorization']);
     try {
         // Get the contract from the network
-        const {contract, gateway} = await fabricNetwork.connectNetwork();
+        const {contract, gateway} = await fabricNetwork.connectNetwork(decoded['username'], decoded['orgname']);
 
         // Submit the specified transaction.
         let tx = await contract.submitTransaction('createCage', req.body.id, req.body.vaccination, req.body.age);
@@ -299,9 +316,10 @@ router.post('/addcage/', async function (req, res) {
 
 // Transaction to change age
 router.put('/changeage/:cage_id', async function (req, res) {
+    const decoded = helper.decode_jwt(req.headers['authorization']);
     try {
         // Get the contract from the network
-        const {contract, gateway} = await fabricNetwork.connectNetwork();
+        const {contract, gateway} = await fabricNetwork.connectNetwork(decoded['username'], decoded['orgname']);
 
         // Evaluate the specified transaction.
         // queryCage transaction - requires 1 argument, ex: ('queryCage', 'Cage1')
@@ -324,9 +342,10 @@ router.put('/changeage/:cage_id', async function (req, res) {
 
 // Transaction to delete
 router.delete('/delete/:cage_id', async function (req, res) {
+    const decoded = helper.decode_jwt(req.headers['authorization']);
     try {
         // Get the contract from the network
-        const {contract, gateway} = await fabricNetwork.connectNetwork();
+        const {contract, gateway} = await fabricNetwork.connectNetwork(decoded['username'], decoded['orgname']);
 
         // Evaluate the specified transaction.
         // queryCage transaction - requires 1 argument, ex: ('queryCage', 'Cage1')
@@ -349,9 +368,10 @@ router.delete('/delete/:cage_id', async function (req, res) {
 
 // Prosessing plant steps
 router.put('/processing_plant/:cage_id', async function (req, res) {
+    const decoded = helper.decode_jwt(req.headers['authorization']);
     try {
         // Get the contract from the network
-        const {contract, gateway} = await fabricNetwork.connectNetwork();
+        const {contract, gateway} = await fabricNetwork.connectNetwork(decoded['username'], decoded['orgname']);
 
         // Evaluate the specified transaction.
         // queryCage transaction - requires 1 argument, ex: ('queryCage', 'Cage1')
@@ -374,9 +394,10 @@ router.put('/processing_plant/:cage_id', async function (req, res) {
 
 // Edit data
 router.put('/edit/:cage_id', async function (req, res) {
+    const decoded = helper.decode_jwt(req.headers['authorization']);
     try {
         // Get the contract from the network
-        const {contract, gateway} = await fabricNetwork.connectNetwork();
+        const {contract, gateway} = await fabricNetwork.connectNetwork(decoded['username'], decoded['orgname']);
 
         // Evaluate the specified transaction.
         // queryCage transaction - requires 1 argument, ex: ('queryCage', 'Cage1')

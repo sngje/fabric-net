@@ -37,7 +37,10 @@ app.use(expressJWT({
 app.use(function(err, req, res, next) {
     if (err.name === 'UnauthorizedError') {
       res.status(err.status).send({message:err.message});
-      logger.error({message:err.message});
+      logger.error({
+            success: false,
+            message:err.message
+        });
       return;
     }
  next();
