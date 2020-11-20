@@ -33,7 +33,7 @@ db = SQLAlchemy(app)
 db.create_all()
 bcrpyt = Bcrypt(app)
 login_manager = LoginManager(app)
-login_manager.login_view = 'login'
+login_manager.login_view = 'signin'
 login_manager.login_message_category = 'info'
 
 # Helper function to parse a raw timestamp to a desired format of "H:M:S dd/mm/yyy"

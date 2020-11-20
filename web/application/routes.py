@@ -1,6 +1,7 @@
 from flask import render_template, url_for, flash, redirect, request, abort, session
 from application import app, db, bcrpyt, header_info
 from application.models import User
+from application.forms import RegistirationForm, LoginForm
 from flask_login import login_user, current_user, logout_user, login_required
 import requests, json, random, os, time, json, secrets
 
@@ -51,8 +52,70 @@ def login():
 		# return redirect(url_for('index'))
 	return render_template('login.html', title="Login page")
 
+# Route: login page
+@app.route("/signin", methods=["POST", "GET"])
+def signin():
+	if current_user.is_authenticated:
+		return redirect(url_for('index'))
+	form  = LoginForm()
+	if form.validate_on_submit():
+		user = User.query.filter_by(username=form.username.data).first()
+		if user and bcrpyt.check_password_hash(user.password, form.password.data):
+			login_user(user, remember=True)
+			req = {
+				'username': f'{user.username}',
+				'orgname': f'{user.orgname}'
+			}
+			req = json.loads(json.dumps(req))
+			# send the data to get new token
+			r = requests.post('http://localhost:3000/api/login', json=req)
+			response = r.json()
+			print(response)
+			if r.status_code != 200:
+				flash(req, "error")
+				return redirect(url_for('signin'))
+			if response['success']:
+				flash(response['message'], "success")
+				user.token = response['token']
+				db.session.commit()
+				next_page = request.args.get('next')
+				return redirect(next_page) if next_page else redirect(url_for('index'))
+			else:
+				flash(response['message'], "error")
+			return redirect(url_for('signin'))
+		else:
+			flash('Login Unsuccessful. Please check username and password', 'danger')
+	return render_template('signin.html', title="Login", form=form)
+
 # Route: registeration page
-@app.route("/register", methods=["POST", "GET"])
+@app.route("/signup", methods=["POST", "GET"])
+def signup():
+	if current_user.is_authenticated:
+		return redirect(url_for('index'))
+	form = RegistirationForm()
+	if form.validate_on_submit():
+		req = {
+			'username': f'{form.username.data}',
+			'orgname': f'{form.orgname.data}'
+		}
+		req = json.loads(json.dumps(req))
+		# send the data
+		r = requests.post('http://localhost:3000/api/register', json=req) 
+		if r.status_code != 200:
+			flash(req, "error")
+			return redirect(url_for('signup'))
+		response = r.json()
+		if response['success']:
+			hashed_password = bcrpyt.generate_password_hash(form.password.data).decode('utf-8')
+			user = User(username=form.username.data, orgname=form.orgname.data, password=hashed_password, token=response['token'])
+			db.session.add(user)
+			db.session.commit()
+			flash('Your account has been created, please log in!', 'success')
+			return redirect(url_for('signin'))
+		else:
+			flash(response['message'], "error")
+	return render_template('signup.html', title='Registration', form=form)
+
 @app.route("/register/", methods=["POST", "GET"])
 def register():
 	if current_user.is_authenticated:
