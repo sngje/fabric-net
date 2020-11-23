@@ -1,5 +1,7 @@
 import os
-from flask import Flask
+import time
+from datetime import timedelta
+from flask import Flask, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
@@ -35,6 +37,15 @@ bcrpyt = Bcrypt(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'signin'
 login_manager.login_message_category = 'info'
+# login_manager.refresh_view = 'relogin'
+# login_manager.needs_refresh_message = (u"Session timedout, please re-login")
+# login_manager.needs_refresh_message_category = "info"
+
+
+# @app.before_request
+# def before_request():
+#     session.permanent = True
+#     app.permanent_session_lifetime = timedelta(minutes=1)
 
 # Helper function to parse a raw timestamp to a desired format of "H:M:S dd/mm/yyy"
 def myTimeFunc(timestamp):

@@ -1,7 +1,7 @@
 {
     "host": "localhost",
     "port": "3000",
-    "jwt_expiretime": "36000",
+    "jwt_expiretime": "216000",
     "channelName": "mychannel",
     "eventWaitTime": "30000",
     "admins": [

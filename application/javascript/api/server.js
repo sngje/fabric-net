@@ -33,7 +33,7 @@ app.use(expressJWT({
     path: ['/api/register','/api/login']
 }));
 
-// Error handling for 401 status
+// Error handling for errors status
 app.use(function(err, req, res, next) {
     if (err.name === 'UnauthorizedError') {
       res.status(err.status).send({message:err.message});
@@ -57,6 +57,7 @@ app.use((req, res, next) => {
         return next();
     }
     let token = req.token;
+    // console.log(req);
     jwt.verify(token, app.get('secret'), (err, decoded) => {
         if (err) {
             logger.error(`Error ================: ${err}`);
