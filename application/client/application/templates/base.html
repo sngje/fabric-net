@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+     
+{% include 'header.html' %}
+<body>
+  <div id="loading"></div>
+  <div id="contents-show">
+    <ul id="slide-out" class="sidenav sidenav-fixed">
+        <li class="center no-padding">
+          <div class="our-colour darken-2 white-text" style="height: 180px;">
+            <div class="row">
+              <i class="material-icons large" style="margin-top: 5%;">all_inclusive</i>
+              <p style="margin-top: -5%;">
+                Company name
+              </p>
+            </div>
+          </div>
+        </li>
+
+        <ul class="collapsible" data-collapsible="accordion">
+          <li id="dash_users">
+            <div id="dash_users_header" class="collapsible-header waves-effect waves-light"><i class="material-icons">menu</i> <b> Grower farm</b></div>
+            <div id="dash_users_body" class="collapsible-body">
+              <ul>
+                <li id="users_seller">
+                  <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('allcages') }}">Current state</a>
+                </li>
+    
+                <li id="users_customer">
+                  <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('injection') }}">Health monitor</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+
+          <li id="dash_products">
+            <div id="dash_products_header" class="collapsible-header waves-effect waves-light"><i class="material-icons">menu</i> <b> Processing plant</b></div>
+            <div id="dash_products_body" class="collapsible-body">
+              <ul>
+                <li id="products_product">
+                  <a class="waves-effect waves-light" style="text-decoration: none;" href="#!">Current state</a>
+                  <a class="waves-effect waves-light" style="text-decoration: none;" href="#!">Finished products</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+          
+          <li id="dash_users">
+            <div id="dash_users_header" class="collapsible-header waves-effect waves-light"><i class="material-icons">menu</i> <b> Product management</b></div>
+            <div id="dash_users_body" class="collapsible-body">
+              <ul>
+                <li id="users_customer">
+                  <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('create_cage') }}">Create cage</a>
+                </li>
+                
+                <li id="users_customer">
+                  <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('search') }}">Search tool</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+
+          <li id="dash_categories">
+            <div id="dash_categories_header" class="collapsible-header waves-effect waves-light"><i class="material-icons">menu</i> <b>Categories</b></div>
+            <div id="dash_categories_body" class="collapsible-body">
+              <ul>
+                <li id="categories_category">
+                  <a class="waves-effect waves-light" style="text-decoration: none;" href="#!">Category</a>
+                </li>
+    
+                <li id="categories_sub_category">
+                  <a class="waves-effect waves-light" style="text-decoration: none;" href="#!">Sub Category</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+    
+          <li id="dash_brands">
+            <div id="dash_brands_header" class="collapsible-header waves-effect waves-light"><b></b></div>
+            <div id="dash_brands_body" class="collapsible-body">
+              <ul>
+                <li id="brands_brand">
+                  <a class="waves-effect waves-light" style="text-decoration: none;" href="#!">Brand</a>
+                </li>
+    
+                <li id="brands_sub_brand">
+                  <a class="waves-effect waves-light" style="text-decoration: none;" href="#!">Sub Brand</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </ul>
+
+      <header>
+        <ul class="dropdown-content" id="dropdown1">
+          {% if current_user.is_authenticated %}
+            <!-- <li><a class="indigo-text" href="{{ url_for('login') }}"><i class="material-icons">person</i> Profile</a></li> -->
+            <li><a class="indigo-text" href="{{ url_for('logout') }}""><i class="material-icons">cancel</i> Logout</a></li>
+          {% else %}
+            <li><a class="indigo-text" href="{{ url_for('register') }}"><i class="material-icons">person</i> Register</a></li>
+            <li><a class="indigo-text" href="{{ url_for('login') }}""><i class="material-icons">person</i> Login</a></li>
+          {% endif %}
+        </ul>
+    
+        <nav class="our-colour" role="navigation"> 
+          <div class="nav-wrapper">
+            <ul id="nav-mobile" class="right hide-on-large">
+              <a href="#" data-target="slide-out" class="sidenav-trigger right">
+                <i class="material-icons">menu</i>
+              </a>
+            </ul>
+            <!-- <a data-activates="slide-out" class="button-collapse show-on-large" style="font-size: 20px; margin-left: 20px;" href="{{ url_for('index') }}">System management</a> -->
+            <ul class="right">
+              <li>
+                <a class='dropdown-trigger' href='' data-target='dropdown1'><i class='material-icons'>account_circle</i></a>
+              </li>
+            </ul>
+            </div>
+        </nav>    
+        <nav>
+          <div class="nav-wrapper our-colour darken-2">
+            <a style="margin-left: 20px;font-size: 14.5px;" class="breadcrumb" href="{{ url_for('index') }}">Home</a>
+            <a style="font-size: 14.5px;" class="breadcrumb" href="#">{{ title }}</a>
+    
+            <div style="margin-right: 20px;" id="timestamp" class="right"></div>
+          </div>
+        </nav>
+      </header>
+      <main>
+        {% block content %}
+        {% endblock %}
+      </main>
+      
+      {% with messages = get_flashed_messages(with_categories=True) %}
+          {% if messages %}
+              {% for category, message in messages %}
+                <div id="alter-box" class="materialert {{ category }}">
+                    <i class="material-icons">check</i> {{ message }}
+                    <!-- info_outline, check, warning, error_outline -->
+                    <button type="button" id="close-alert" class="close-alert">×</button>
+                </div>
+              {% endfor %}
+          {% endif %}
+      {% endwith %}
+      
+      <!-- <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>   -->
+      <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script> -->
+      
+      <!-- <div id="loading" style="display:none;"><img src="{{ url_for('static', filename='image/loading.gif') }}" alt="" />Loading!</div> -->
+      <script type="text/javascript">
+        document.onreadystatechange = function () {
+          var state = document.readyState
+          if (state == 'interactive') {
+              document.getElementById('contents-show').style.visibility="hidden";
+          } else if (state == 'complete') {
+              setTimeout(function(){
+                document.getElementById('interactive');
+                document.getElementById('loading').style.visibility="hidden";
+                document.getElementById('contents-show').style.visibility="visible";
+              },500);
+          }
+        }
+      </script>
+      <script type="text/javascript">
+        $('#close-alert').click(function(){
+            $( "#alter-box" ).fadeOut( "slow", function() {
+          });
+        });
+      </script>
+
+      <script type="text/javascript">
+        $(function() {
+          $('.sidenav').sidenav();
+        })
+      </script>
+
+      <script type="text/javascript">
+        $(document).ready(function(){
+          $('.modal').modal();
+          $('.dropdown-trigger').dropdown();
+        });
+      </script>
+
+      <script type="text/javascript">
+        $(document).ready(function() {
+          $('.button-collapse').sidenav();
+          $('.collapsible').collapsible();
+          $('select').material_select();
+        });
+      </script>
+  </div>
+</body>
+</html>
+
