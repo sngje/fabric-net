@@ -12,7 +12,7 @@ class RegistirationForm(FlaskForm):
     # email = StringField('Email', validators=[DataRequired(), Email(), ])
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm password', validators=[DataRequired(), EqualTo('password')])
-    orgname = SelectField('Please choose your organization', [DataRequired()],
+    orgname = SelectField('Please choose your organization', validators=[DataRequired()],
                         choices=[('Org1', 'Grower farm'),
                                  ('Org2', 'Processing plant'),
                                  ('Org3 ', 'Delivery')])

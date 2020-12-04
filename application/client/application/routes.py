@@ -13,48 +13,49 @@ def index():
 	return render_template('index.html', title="Options")
 
 # Route: login page
+# @app.route("/signin", methods=["POST", "GET"])
+# @app.route("/signin/", methods=["POST", "GET"])
+# def signin():
+# 	if current_user.is_authenticated:
+# 		return redirect(url_for('index'))
+# 	if request.method == "POST":
+# 		username = request.form['username']
+# 		orgname = request.form['orgname']
+
+# 		# Check from database
+# 		user = User.query.filter_by(username=username, orgname=orgname).first()
+# 		if user:
+# 			login_user(user, remember=True)
+# 			req = {
+# 				'username': f'{username}',
+# 				'orgname': f'{orgname}'
+# 			}
+
+# 			req = json.loads(json.dumps(req))
+# 			# send the data to get new token
+# 			r = requests.post('http://localhost:3000/api/login', json=req)
+# 			response = r.json()
+# 			if r.status_code != 200:
+# 				flash(req, "error")
+# 				return redirect(url_for('login'))
+# 			if response['success']:
+# 				flash(response['message'], "success")
+# 				user.token = response['token']
+# 				db.session.commit()
+# 				next_page = request.args.get('next')
+# 				return redirect(next_page) if next_page else redirect(url_for('index'))
+# 			else:
+# 				flash(response['message'], "error")
+# 			return redirect(url_for('login'))
+# 		else:
+# 			flash('Login Unsuccessful. Please check username and password', 'danger')
+# 		# return redirect(url_for('index'))
+# 	return render_template('login.html', title="Login page")
+
+# Route: login page
 @app.route("/login", methods=["POST", "GET"])
 @app.route("/login/", methods=["POST", "GET"])
 def login():
-	if current_user.is_authenticated:
-		return redirect(url_for('index'))
-	if request.method == "POST":
-		username = request.form['username']
-		orgname = request.form['orgname']
-
-		# Check from database
-		user = User.query.filter_by(username=username, orgname=orgname).first()
-		if user:
-			login_user(user, remember=True)
-			req = {
-				'username': f'{username}',
-				'orgname': f'{orgname}'
-			}
-
-			req = json.loads(json.dumps(req))
-			# send the data to get new token
-			r = requests.post('http://localhost:3000/api/login', json=req)
-			response = r.json()
-			if r.status_code != 200:
-				flash(req, "error")
-				return redirect(url_for('login'))
-			if response['success']:
-				flash(response['message'], "success")
-				user.token = response['token']
-				db.session.commit()
-				next_page = request.args.get('next')
-				return redirect(next_page) if next_page else redirect(url_for('index'))
-			else:
-				flash(response['message'], "error")
-			return redirect(url_for('login'))
-		else:
-			flash('Login Unsuccessful. Please check username and password', 'danger')
-		# return redirect(url_for('index'))
-	return render_template('login.html', title="Login page")
-
-# Route: login page
-@app.route("/signin", methods=["POST", "GET"])
-def signin():
 	if current_user.is_authenticated:
 		return redirect(url_for('index'))
 	form  = LoginForm()
@@ -85,11 +86,12 @@ def signin():
 			return redirect(url_for('signin'))
 		else:
 			flash('Login Unsuccessful. Please check username and password', 'danger')
-	return render_template('signin.html', title="Login", form=form)
+	return render_template('login.html', title="Login", form=form)
 
 # Route: registeration page
-@app.route("/signup", methods=["POST", "GET"])
-def signup():
+@app.route("/register", methods=["POST", "GET"])
+@app.route("/register/", methods=["POST", "GET"])
+def register():
 	if current_user.is_authenticated:
 		return redirect(url_for('index'))
 	form = RegistirationForm()
@@ -103,7 +105,7 @@ def signup():
 		r = requests.post('http://localhost:3000/api/register', json=req) 
 		if r.status_code != 200:
 			flash(req, "error")
-			return redirect(url_for('signup'))
+			return redirect(url_for('register'))
 		response = r.json()
 		if response['success']:
 			hashed_password = bcrpyt.generate_password_hash(form.password.data).decode('utf-8')
@@ -111,42 +113,37 @@ def signup():
 			db.session.add(user)
 			db.session.commit()
 			flash('Your account has been created, please log in!', 'success')
-			return redirect(url_for('signin'))
-		else:
-			flash(response['message'], "error")
-	return render_template('signup.html', title='Registration', form=form)
-
-@app.route("/register/", methods=["POST", "GET"])
-def register():
-	if current_user.is_authenticated:
-		flash("You're already in our system", "warning")
-		return redirect(url_for('index'))
-	if request.method == "POST":
-		username = request.form['username']
-		orgname = request.form['orgname']
-
-		req = {
-			'username': f'{username}',
-			'orgname': f'{orgname}'
-		}
-		req = json.loads(json.dumps(req))
-		# send the data
-		r = requests.post('http://localhost:3000/api/register', json=req) 
-		if r.status_code != 200:
-			flash(req, "error")
-			return redirect(url_for('register'))
-		response = r.json()
-		if response['success']:
-			flash("You have successfully registred in our system!", "success")
-			# Create user object and add into database with returned token
-			user = User(username=username, orgname=orgname, token=response['token'])
-			db.session.add(user)
-			db.session.commit()
 			return redirect(url_for('login'))
 		else:
 			flash(response['message'], "error")
-		# return redirect(url_for('register'))
-	return render_template('register.html', title="Registration page")
+	return render_template('register.html', title='Registration', form=form)
+
+# @app.route("/signin/", methods=["POST", "GET"])
+# def signup():
+# 	if current_user.is_authenticated:
+# 		flash("You're already in our system", "warning")
+# 		return redirect(url_for('index'))
+# 	if request.method == "POST":
+# 		username = request.form['username']register
+# 		}
+# 		req = json.loads(json.dumps(req))
+# 		# send the data
+# 		r = requests.post('http://localhost:3000/api/register', json=req) 
+# 		if r.status_code != 200:
+# 			flash(req, "error")
+# 			return redirect(url_for('register'))
+# 		response = r.json()
+# 		if response['success']:
+# 			flash("You have successfully registred in our system!", "success")
+# 			# Create user object and add into database with returned token
+# 			user = User(username=username, orgname=orgname, token=response['token'])
+# 			db.session.add(user)
+# 			db.session.commit()
+# 			return redirect(url_for('login'))
+# 		else:
+# 			flash(response['message'], "error")
+# 		# return redirect(url_for('register'))
+# 	return render_template('register.html', title="Registration page")
 
 # Route: Logout
 @app.route("/logout")

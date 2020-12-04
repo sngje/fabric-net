@@ -3,7 +3,7 @@
 const { Gateway, Wallets } = require('fabric-network');
 const fs = require('fs');
 const path = require('path');
-const user = 'Tester';
+const user = 'Kamol';
 
 async function main() {
     try {
