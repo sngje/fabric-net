@@ -4,9 +4,10 @@ system-genesis-block/
 channel-artifacts/
 application/server/org1-wallet/
 application/server/org2-wallet/
+application/server/node_modules/
 .vscode/
 bin/
-applicationclient/venv/
+application/client/venv/
 **/__pycache__/
 **/.DS_Store
 **/.bin
