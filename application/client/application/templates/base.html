@@ -11,7 +11,7 @@
             <div class="row">
               <i class="material-icons large" style="margin-top: 5%;">all_inclusive</i>
               <p style="margin-top: -5%;">
-                Company name
+                Product management
               </p>
             </div>
           </div>
@@ -38,8 +38,8 @@
             <div id="dash_products_body" class="collapsible-body">
               <ul>
                 <li id="products_product">
-                  <a class="waves-effect waves-light" style="text-decoration: none;" href="#!">Current state</a>
-                  <a class="waves-effect waves-light" style="text-decoration: none;" href="#!">Finished products</a>
+                  <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('processing_getall') }}">Current state</a>
+                  <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('processing_finished') }}">Finished products</a>
                 </li>
               </ul>
             </div>
@@ -158,7 +158,7 @@
                 document.getElementById('interactive');
                 document.getElementById('loading').style.visibility="hidden";
                 document.getElementById('contents-show').style.visibility="visible";
-              },500);
+              },300);
           }
         }
       </script>

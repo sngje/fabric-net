@@ -13,48 +13,7 @@ def index():
 	return render_template('index.html', title="Options")
 
 # Route: login page
-# @app.route("/signin", methods=["POST", "GET"])
-# @app.route("/signin/", methods=["POST", "GET"])
-# def signin():
-# 	if current_user.is_authenticated:
-# 		return redirect(url_for('index'))
-# 	if request.method == "POST":
-# 		username = request.form['username']
-# 		orgname = request.form['orgname']
-
-# 		# Check from database
-# 		user = User.query.filter_by(username=username, orgname=orgname).first()
-# 		if user:
-# 			login_user(user, remember=True)
-# 			req = {
-# 				'username': f'{username}',
-# 				'orgname': f'{orgname}'
-# 			}
-
-# 			req = json.loads(json.dumps(req))
-# 			# send the data to get new token
-# 			r = requests.post('http://localhost:3000/api/login', json=req)
-# 			response = r.json()
-# 			if r.status_code != 200:
-# 				flash(req, "error")
-# 				return redirect(url_for('login'))
-# 			if response['success']:
-# 				flash(response['message'], "success")
-# 				user.token = response['token']
-# 				db.session.commit()
-# 				next_page = request.args.get('next')
-# 				return redirect(next_page) if next_page else redirect(url_for('index'))
-# 			else:
-# 				flash(response['message'], "error")
-# 			return redirect(url_for('login'))
-# 		else:
-# 			flash('Login Unsuccessful. Please check username and password', 'danger')
-# 		# return redirect(url_for('index'))
-# 	return render_template('login.html', title="Login page")
-
-# Route: login page
 @app.route("/login", methods=["POST", "GET"])
-@app.route("/login/", methods=["POST", "GET"])
 def login():
 	if current_user.is_authenticated:
 		return redirect(url_for('index'))
@@ -90,7 +49,6 @@ def login():
 
 # Route: registeration page
 @app.route("/register", methods=["POST", "GET"])
-@app.route("/register/", methods=["POST", "GET"])
 def register():
 	if current_user.is_authenticated:
 		return redirect(url_for('index'))
@@ -118,32 +76,6 @@ def register():
 			flash(response['message'], "error")
 	return render_template('register.html', title='Registration', form=form)
 
-# @app.route("/signin/", methods=["POST", "GET"])
-# def signup():
-# 	if current_user.is_authenticated:
-# 		flash("You're already in our system", "warning")
-# 		return redirect(url_for('index'))
-# 	if request.method == "POST":
-# 		username = request.form['username']register
-# 		}
-# 		req = json.loads(json.dumps(req))
-# 		# send the data
-# 		r = requests.post('http://localhost:3000/api/register', json=req) 
-# 		if r.status_code != 200:
-# 			flash(req, "error")
-# 			return redirect(url_for('register'))
-# 		response = r.json()
-# 		if response['success']:
-# 			flash("You have successfully registred in our system!", "success")
-# 			# Create user object and add into database with returned token
-# 			user = User(username=username, orgname=orgname, token=response['token'])
-# 			db.session.add(user)
-# 			db.session.commit()
-# 			return redirect(url_for('login'))
-# 		else:
-# 			flash(response['message'], "error")
-# 		# return redirect(url_for('register'))
-# 	return render_template('register.html', title="Registration page")
 
 # Route: Logout
 @app.route("/logout")
@@ -188,6 +120,32 @@ def injection(bookmark=0):
 		return redirect(url_for('allcages'))
 	transactions = r.json()
 	return render_template('injection.html', title="Health monitor", transactions=transactions)
+
+# Route: show all processing plant data
+@app.route("/processing_plant/getall")
+@app.route("/processing_plant/getall/<string:bookmark>")
+@login_required
+def processing_getall(bookmark=0):
+	headers = header_info(current_user.token)
+	r = requests.get(f'http://localhost:3000/api/processing_plant/getall/{bookmark}', headers=headers) 
+	if r.status_code != 200:
+		flash("List is currently empty", "info")
+		return redirect(url_for('index'))
+	transactions = r.json()
+	return render_template('processing_getall.html', title="Processing plant - current state", transactions=transactions)
+
+# Route: show all processing plant data
+@app.route("/processing_plant/finished")
+@app.route("/processing_plant/finished/<string:bookmark>")
+@login_required
+def processing_finished(bookmark=0):
+	headers = header_info(current_user.token)
+	r = requests.get(f'http://localhost:3000/api/processing_plant/finished/{bookmark}', headers=headers) 
+	if r.status_code != 200:
+		flash("List is currently empty", "info")
+		return redirect(url_for('index'))
+	transactions = r.json()
+	return render_template('processing_finished.html', title="Processing plant - finished products", transactions=transactions)
 
 # Route: inject
 @app.route("/inject/<string:cage_id>")

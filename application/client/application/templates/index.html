@@ -10,7 +10,7 @@
           </div>
 
           <div class="row text-centered">
-            <a href="#!">
+            <a href="{{ url_for('allcages') }}">
               <div class="col s6" style="border-right: 1px solid #d8d3d3;">
                 <i class="indigo-text medium material-icons">person</i><br />
                 <span class="indigo-text "><b>Current state</b></span>
@@ -19,7 +19,7 @@
             <!-- <div class="col s1">&nbsp;</div>
             <div class="col s1">&nbsp;</div> -->
 
-            <a href="#!">
+            <a href="{{ url_for('injection') }}">
               <div class="col s6">
                 <i class="indigo-text medium material-icons">people</i><br />
                 <span class="indigo-text "><b>Monitor</b></span>
@@ -33,21 +33,21 @@
         <div style="padding: 20px 35px 10px 35px;" class="card center">
           <div class="row" style="border-bottom: 0px solid #d8d3d3; padding-bottom: 5px;">
             <div class="left card-title">
-              <b>Product Management</b>
+              <b>Processing plant</b>
             </div>
           </div>
           <div class="row">
-            <a href="#!">
+            <a href="{{ url_for('processing_getall') }}">
               <div class="col s6" style="border-right: 1px solid #d8d3d3;">
-                <i class="indigo-text medium material-icons">store</i><br />
-                <span class="indigo-text "><b>Product</b></span>
+                <i class="indigo-text medium material-icons">insert_chart</i><br />
+                <span class="indigo-text "><b>Current state</b></span>
               </div>
             </a>
 
-            <a href="#!">
+            <a href="{{ url_for('processing_finished') }}">
               <div class="col s6">
-                <i class="indigo-text medium material-icons">assignment</i><br />
-                <span class="indigo-text "><b>Orders</b></span>
+                <i class="indigo-text medium material-icons">check_box</i><br />
+                <span class="indigo-text "><b>Finished products</b></span>
               </div>
             </a>
           </div>
@@ -60,22 +60,22 @@
         <div style="padding: 20px 35px 10px 35px;"  class="card center">
           <div class="row" style="border-bottom: 0px solid #d8d3d3; padding-bottom: 5px;">
             <div class="left card-title">
-              <b>Brand Management</b>
+              <b>Product management</b>
             </div>
           </div>
 
           <div class="row">
-            <a href="#!">
+            <a href="{{ url_for('create_cage') }}">
               <div class="col s6" style="border-right: 1px solid #d8d3d3;">
-                <i class="indigo-text medium material-icons">local_offer</i><br />
-                <span class="indigo-text "><b>Brand</b></span>
+                <i class="indigo-text medium material-icons">note_add</i><br />
+                <span class="indigo-text "><b>Create cage</b></span>
               </div>
             </a>
 
-            <a href="#!">
+            <a href="{{ url_for('search') }}">
               <div class="col s6">
-                <i class="indigo-text medium material-icons">loyalty</i><br />
-                <span class="indigo-text "><b>Sub Brand</b></span>
+                <i class="indigo-text medium material-icons">find_in_page</i><br />
+                <span class="indigo-text "><b>Search</b></span>
               </div>
             </a>
           </div>

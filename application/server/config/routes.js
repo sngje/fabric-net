@@ -216,6 +216,74 @@ router.get('/injection/:bookmark', async function (req, res) {
     }
 });
 
+// Query to get processing plant data
+router.get('/processing_plant/getall/:bookmark', async function (req, res) {
+    const decoded = helper.decode_jwt(req.headers['authorization']);
+    try {
+        // Get the contract from the network
+        const {contract, gateway} = await fabricNetwork.connectNetwork(decoded['username'], decoded['orgname']);
+
+        let queryString = {
+            selector: {
+                step: {"$gt": 1}
+            }
+        };
+        let bookmark = (req.params.bookmark !== '0') ? req.params.bookmark : ''; 
+        const result = await contract.evaluateTransaction('queryWithPagination',
+                    JSON.stringify(queryString), 10,
+                    bookmark);
+        let objects = JSON.parse(result);
+       
+        // check what we have
+        if (objects.length === 0) {
+            throw new Error('Nothing found');
+        }
+
+        console.log(objects);
+        res.status(200).json(objects);
+
+        // disconnect the gateway
+        await gateway.disconnect();
+    } catch (error) {
+        console.error(`Failed to evaluate transaction: ${error}`);
+        res.status(500).json({error: 'Failed to evaluate transaction. Please try again'});
+    }
+});
+
+// Query to get finished processing plant data
+router.get('/processing_plant/finished/:bookmark', async function (req, res) {
+    const decoded = helper.decode_jwt(req.headers['authorization']);
+    try {
+        // Get the contract from the network
+        const {contract, gateway} = await fabricNetwork.connectNetwork(decoded['username'], decoded['orgname']);
+
+        let queryString = {
+            selector: {
+                step: {"$eq": 6}
+            }
+        };
+        let bookmark = (req.params.bookmark !== '0') ? req.params.bookmark : ''; 
+        const result = await contract.evaluateTransaction('queryWithPagination',
+                    JSON.stringify(queryString), 10,
+                    bookmark);
+        let objects = JSON.parse(result);
+       
+        // check what we have
+        if (objects.length === 0) {
+            throw new Error('Nothing found');
+        }
+
+        console.log(objects);
+        res.status(200).json(objects);
+
+        // disconnect the gateway
+        await gateway.disconnect();
+    } catch (error) {
+        console.error(`Failed to evaluate transaction: ${error}`);
+        res.status(500).json({error: 'Failed to evaluate transaction. Please try again'});
+    }
+});
+
 // Search query with different parameters
 router.get('/search/:bookmark', async function (req, res) {
     const decoded = helper.decode_jwt(req.headers['authorization']);

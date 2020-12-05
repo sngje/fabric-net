@@ -6,10 +6,9 @@
       <thead>
         <tr>
             <th>ID</th>
-            <th>Age</th>
-            <th>Vaccination</th>
-            <th>Inject</th>
-            <th>Update</th>
+            <th>Deliverer</th>
+            <th>Inspection</th>
+            <th>Stage</th>
             <th>Delete</th>
         </tr>
       </thead>
@@ -17,11 +16,10 @@
         {% for arr in transactions['data'] %}
         <tr>
           <td style="text-transform:uppercase;">{{ arr['key'] }}</td>
-          <td>{{ arr['data']['age'] }}</td>
-          <td>{{ arr['data']['vaccination'] }}</td>
-          <td><a href="/inject/{{ arr['key'] }}" title="Inject"><i class="material-icons md-30">&nbsp;colorize</i></a></td>
-          <td><a href="{{ url_for('processing_plant', cage_id=arr['key'])}}" title="Update"><i class="material-icons md-30">&nbsp;autorenew</i></a></td>
-          <td><a href="{{ url_for('delete', cage_id=arr['key'])}}" title="Delete"><i class="material-icons md-30">&nbsp;delete</i></a></td>
+          <td>{{ arr['data']['processing_plant']['deliverer'] }}</td>
+          <td>{{ arr['data']['processing_plant']['inspected'] }}</td>
+          <td>{{ arr['data']['processing_plant']['status'] }}</td>
+          <td><a href="{{ url_for('delete', cage_id=arr['key']) }}" title="Delete"><i class="material-icons md-30">&nbsp;delete</i></a></td>
         </tr>
         {% endfor %}
       </tbody>
@@ -33,7 +31,7 @@
     <ul class="pagination col center-align">
       {% if previous != None %}
         <li class="waves-effect">
-          <a href="{{ url_for('injection', bookmark=previous) }}">
+          <a href="{{ url_for('processing_finished', bookmark=previous) }}">
             <i class="material-icons">chevron_left</i>
           </a>
         </li>
@@ -47,7 +45,7 @@
       <li class="waves-effect"><a href="#!">5</a></li> -->
       {% if transactions['meta_data']['fetchedRecordsCount'] >= 10 %}
         <li class="waves-effect">
-          <a href="{{ url_for('injection', bookmark=transactions['meta_data']['bookmark']) }}">
+          <a href="{{ url_for('processing_finished', bookmark=transactions['meta_data']['bookmark']) }}">
             <i class="material-icons">chevron_right</i>
           </a>
         </li>

@@ -11,7 +11,7 @@ app.config['SECRET_KEY'] = 'c18caca2c8ecee93eda44c67b08c6ec1'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
-
+app.url_map.strict_slashes = False
 # app.config.update(
 
 #     #Set the secret key to a sufficiently random value
@@ -40,7 +40,6 @@ login_manager.login_message_category = 'info'
 # login_manager.refresh_view = 'relogin'
 # login_manager.needs_refresh_message = (u"Session timedout, please re-login")
 # login_manager.needs_refresh_message_category = "info"
-
 
 # @app.before_request
 # def before_request():
