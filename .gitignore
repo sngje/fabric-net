@@ -9,4 +9,4 @@ bin/
 applicationclient/venv/
 **/__pycache__/
 **/.DS_Store
-
+**/.bin
