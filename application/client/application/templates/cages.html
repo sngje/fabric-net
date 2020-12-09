@@ -33,23 +33,18 @@
 
     <br />
     <ul class="pagination col center-align">
-      {% if previous == True %}
+      {% if bookmark != 0 %}
         <li class="waves-effect">
-          <a href="{{ url_for('allcages', next=previous) }}">
+          <a href="javascript:history.go(-1)"">
             <i class="material-icons">chevron_left</i>
           </a>
         </li>
       {% else %}
         <li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>
       {% endif %}
-      <!-- <li class="active"><a href="#!">1</a></li>
-      <li class="waves-effect"><a href="#!">2</a></li>
-      <li class="waves-effect"><a href="#!">3</a></li>
-      <li class="waves-effect"><a href="#!">4</a></li>
-      <li class="waves-effect"><a href="#!">5</a></li> -->
       {% if transactions['meta_data']['fetchedRecordsCount'] >= 10 %}
         <li class="waves-effect">
-          <a href="{{ url_for('allcages', next=transactions['meta_data']['bookmark'], previous=previous) }}">
+          <a href="{{ url_for('allcages', bookmark=transactions['meta_data']['bookmark']) }}">
             <i class="material-icons">chevron_right</i>
           </a>
         </li>

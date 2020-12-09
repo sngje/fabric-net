@@ -34,15 +34,15 @@ router.post('/register', async function (req, res) {
         return;
     }
 
-    // Generate token
-    let token = jwt.sign({
-        exp: Math.floor(Date.now() / 1000) + parseInt(constants.jwt_expiretime),
-        username: username,
-        orgname: orgname
-    }, req.app.get('secret'));
+    // // Generate token
+    // let token = jwt.sign({
+    //     exp: Math.floor(Date.now() / 1000) + parseInt(constants.jwt_expiretime),
+    //     username: username,
+    //     orgname: orgname
+    // }, req.app.get('secret'));
 
-    // Output token on console
-    logger.debug('Token: ' + token);
+    // // Output token on console
+    // logger.debug('Token: ' + token);
 
     // request to fabric to enroll
     let response = await fabricNetwork.getRegisteredUser(username, orgname);
@@ -50,7 +50,7 @@ router.post('/register', async function (req, res) {
     logger.debug('-- returned from registering the username %s for organization %s', username, orgname);
     if (response && typeof response !== 'string') {
         logger.debug('Successfully registered the username %s for organization %s', username, orgname);
-        response.token = token;
+        // response.token = token;
         console.log(response);
         res.status(200).json(response);
     } else {

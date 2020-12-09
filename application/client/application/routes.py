@@ -5,7 +5,7 @@ from application.forms import RegistirationForm, LoginForm
 from flask_login import login_user, current_user, logout_user, login_required
 import requests, json, random, os, time, json, secrets
 
-# Route: index page
+# Route: home page
 @app.route("/")
 @app.route("/index")
 @login_required
@@ -62,12 +62,12 @@ def register():
 		# send the data
 		r = requests.post('http://localhost:3000/api/register', json=req) 
 		if r.status_code != 200:
-			flash(req, "error")
+			flash("Something went wrong, please try again (", "error")
 			return redirect(url_for('register'))
 		response = r.json()
 		if response['success']:
 			hashed_password = bcrpyt.generate_password_hash(form.password.data).decode('utf-8')
-			user = User(username=form.username.data, orgname=form.orgname.data, password=hashed_password, token=response['token'])
+			user = User(username=form.username.data, orgname=form.orgname.data, password=hashed_password)
 			db.session.add(user)
 			db.session.commit()
 			flash('Your account has been created, please log in!', 'success')
@@ -85,18 +85,16 @@ def logout():
 
 # Route: query cages page
 @app.route("/live/")
-@app.route("/live/<string:next>")
-@app.route("/live/<string:next>/<string:previous>")
+@app.route("/live/<string:bookmark>")
 @login_required
-def allcages(next=0, previous=None):
-	bookmark = next if (previous != None) else next
+def allcages(bookmark=0):
 	headers = header_info(current_user.token)
 	r = requests.get(f'http://localhost:3000/api/queryallcages/{bookmark}', headers=headers) 
 	transactions = r.json()
-	if (bookmark != 0):
-		session['previous'] = bookmark
-	previous = session.get('previous', None)
-	return render_template('cages.html', title="Current state", previous=previous, transactions=transactions)
+	print(transactions)
+	if len(transactions['data']) == 0:
+		return render_template('empty_list.html', title="Current state", text="Nothing found")
+	return render_template('cages.html', title="Current state", bookmark=bookmark, transactions=transactions)
 
 # Route: history page
 @app.route("/history/<string:cage_id>")
@@ -119,7 +117,9 @@ def injection(bookmark=0):
 		flash("All cages are injected", "info")
 		return redirect(url_for('allcages'))
 	transactions = r.json()
-	return render_template('injection.html', title="Health monitor", transactions=transactions)
+	if len(transactions['data']) == 0:
+		return render_template('empty_list.html', title="Health monitor", text="Nothing found")
+	return render_template('injection.html', title="Health monitor", bookmark=bookmark, transactions=transactions)
 
 # Route: show all processing plant data
 @app.route("/processing_plant/getall")
@@ -132,7 +132,9 @@ def processing_getall(bookmark=0):
 		flash("List is currently empty", "info")
 		return redirect(url_for('index'))
 	transactions = r.json()
-	return render_template('processing_getall.html', title="Processing plant - current state", transactions=transactions)
+	if len(transactions['data']) == 0:
+		return render_template('empty_list.html', title="Processing plant", text="Nothing found")
+	return render_template('processing_getall.html', title="Processing plant - current state", bookmark=bookmark, transactions=transactions)
 
 # Route: show all processing plant data
 @app.route("/processing_plant/finished")
@@ -142,10 +144,12 @@ def processing_finished(bookmark=0):
 	headers = header_info(current_user.token)
 	r = requests.get(f'http://localhost:3000/api/processing_plant/finished/{bookmark}', headers=headers) 
 	if r.status_code != 200:
-		flash("List is currently empty", "info")
+		flash("Error occured, please ask from back-end team", "info")
 		return redirect(url_for('index'))
 	transactions = r.json()
-	return render_template('processing_finished.html', title="Processing plant - finished products", transactions=transactions)
+	if len(transactions['data']) == 0:
+		return render_template('empty_list.html', title="Processing plant - finished products", text="Finished products not found")
+	return render_template('processing_finished.html', title="Processing plant - finished products", bookmark=bookmark, transactions=transactions)
 
 # Route: inject
 @app.route("/inject/<string:cage_id>")
@@ -199,7 +203,7 @@ def create_cage():
 		# send the data
 		r = requests.post('http://localhost:3000/api/addcage', json=req, headers=headers) 
 		if r.status_code != 200:
-			flash(req, "error")
+			flash("Something went wrong, please try again (", "error")
 			return redirect(url_for('create_cage'))
 		transactions = r.json()
 		flash(transactions['response'], "success")
@@ -228,6 +232,8 @@ def search():
 		flash(req, "error")
 		return redirect(url_for('search'))
 	transactions = r.json()
+	if len(transactions['data']) == 0:
+		return render_template('empty_list.html', title="Advanced search results", text="Nothing found")
 	flash("Founded results", "success")
 	return render_template('cages.html', title="Advanced search results", transactions=transactions)
 

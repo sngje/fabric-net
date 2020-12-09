@@ -16,7 +16,7 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
     orgname = db.Column(db.String(50), nullable=False)
-    token = db.Column(db.String(250), nullable=False)
+    token = db.Column(db.String(250), nullable=True)
 
     # Model representor
     def __repr__(self):

@@ -29,9 +29,9 @@
 
   <br />
     <ul class="pagination col center-align">
-      {% if previous != None %}
+      {% if bookmark != 0 %}
         <li class="waves-effect">
-          <a href="{{ url_for('processing_finished', bookmark=previous) }}">
+          <a href="javascript:history.go(-1)">
             <i class="material-icons">chevron_left</i>
           </a>
         </li>
