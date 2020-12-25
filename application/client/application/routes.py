@@ -59,6 +59,7 @@ def register():
 			'orgname': f'{form.orgname.data}'
 		}
 		req = json.loads(json.dumps(req))
+		print(req)
 		# send the data
 		r = requests.post('http://localhost:3000/api/register', json=req) 
 		if r.status_code != 200:

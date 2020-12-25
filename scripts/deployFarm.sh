@@ -107,7 +107,7 @@ approveForMyOrg() {
   ORG=$1
   setGlobals $ORG
   set -x
-  peer lifecycle chaincode approveformyorg -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile $ORDERER_CA --channelID $CHANNEL_NAME --name farm --version ${VERSION} --init-required --package-id ${PACKAGE_ID} --sequence ${VERSION} >&log.txt
+  peer lifecycle chaincode approveformyorg -o localhost:7050 --ordererTLSHostnameOverride orderer0.example.com --tls --cafile $ORDERER_CA --channelID $CHANNEL_NAME --name farm --version ${VERSION} --init-required --package-id ${PACKAGE_ID} --sequence ${VERSION} >&log.txt
   set +x
   cat log.txt
   verifyResult $res "Chaincode definition approved on peer0.org${ORG} on channel '$CHANNEL_NAME' failed"
@@ -159,7 +159,7 @@ commitChaincodeDefinition() {
   # peer (if join was successful), let's supply it directly as we know
   # it using the "-o" option
   set -x
-  peer lifecycle chaincode commit -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile $ORDERER_CA --channelID $CHANNEL_NAME --name farm $PEER_CONN_PARMS --version ${VERSION} --sequence ${VERSION} --init-required >&log.txt
+  peer lifecycle chaincode commit -o localhost:7050 --ordererTLSHostnameOverride orderer0.example.com --tls --cafile $ORDERER_CA --channelID $CHANNEL_NAME --name farm $PEER_CONN_PARMS --version ${VERSION} --sequence ${VERSION} --init-required >&log.txt
   res=$?
   set +x
   cat log.txt
@@ -210,7 +210,7 @@ chaincodeInvokeInit() {
   # peer (if join was successful), let's supply it directly as we know
   # it using the "-o" option
   set -x
-  peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n farm $PEER_CONN_PARMS --isInit -c '{"function":"initLedger","Args":[]}' >&log.txt
+  peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer0.example.com --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n farm $PEER_CONN_PARMS --isInit -c '{"function":"initLedger","Args":[]}' >&log.txt
   res=$?
   set +x
   cat log.txt
@@ -255,8 +255,24 @@ packageChaincode 1
 ## Install chaincode on peer0.org1 and peer0.org2
 echo "Installing chaincode on peer0.org1..."
 installChaincode 1
+# echo "Installing chaincode on peer1.org1..."
+# installChaincode 11
+# echo "Installing chaincode on peer2.org1..."
+# installChaincode 12
+
 echo "Install chaincode on peer0.org2..."
 installChaincode 2
+# echo "Install chaincode on peer1.org2..."
+# installChaincode 21
+# echo "Install chaincode on peer2.org2..."
+# installChaincode 22
+
+echo "Install chaincode on peer0.org3..."
+installChaincode 3
+# echo "Install chaincode on peer1.org3..."
+# installChaincode 31
+# echo "Install chaincode on peer2.org3..."
+# installChaincode 32
 
 ## query whether the chaincode is installed
 queryInstalled 1
@@ -266,26 +282,38 @@ approveForMyOrg 1
 
 ## check whether the chaincode definition is ready to be committed
 ## expect org1 to have approved and org2 not to
-checkCommitReadiness 1 "\"Org1MSP\": true" "\"Org2MSP\": false"
-checkCommitReadiness 2 "\"Org1MSP\": true" "\"Org2MSP\": false"
+checkCommitReadiness 1 "\"Org1MSP\": true" "\"Org2MSP\": false" "\"Org3MSP\": false"
+checkCommitReadiness 2 "\"Org1MSP\": true" "\"Org2MSP\": false" "\"Org3MSP\": false"
+checkCommitReadiness 3 "\"Org1MSP\": true" "\"Org2MSP\": false" "\"Org3MSP\": false"
 
 ## now approve also for org2
 approveForMyOrg 2
 
 ## check whether the chaincode definition is ready to be committed
 ## expect them both to have approved
-checkCommitReadiness 1 "\"Org1MSP\": true" "\"Org2MSP\": true"
-checkCommitReadiness 2 "\"Org1MSP\": true" "\"Org2MSP\": true"
+checkCommitReadiness 1 "\"Org1MSP\": true" "\"Org2MSP\": true" "\"Org3MSP\": false"
+checkCommitReadiness 2 "\"Org1MSP\": true" "\"Org2MSP\": true" "\"Org3MSP\": false"
+checkCommitReadiness 3 "\"Org1MSP\": true" "\"Org2MSP\": true" "\"Org3MSP\": false"
+
+## now approve also for org2
+approveForMyOrg 3
+
+## check whether the chaincode definition is ready to be committed
+## expect them both to have approved
+checkCommitReadiness 1 "\"Org1MSP\": true" "\"Org2MSP\": true" "\"Org3MSP\": true"
+checkCommitReadiness 2 "\"Org1MSP\": true" "\"Org2MSP\": true" "\"Org3MSP\": true"
+checkCommitReadiness 3 "\"Org1MSP\": true" "\"Org2MSP\": true" "\"Org3MSP\": true"
 
 ## now that we know for sure both orgs have approved, commit the definition
-commitChaincodeDefinition 1 2
+commitChaincodeDefinition 1 2 3
 
 ## query on both orgs to see that the definition committed successfully
 queryCommitted 1
 queryCommitted 2
+queryCommitted 3
 
 ## Invoke the chaincode
-chaincodeInvokeInit 1 2
+chaincodeInvokeInit 1 2 3
 
 sleep 10
 
