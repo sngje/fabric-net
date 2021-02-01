@@ -41,6 +41,10 @@ login_manager.login_message_category = 'info'
 # login_manager.needs_refresh_message = (u"Session timedout, please re-login")
 # login_manager.needs_refresh_message_category = "info"
 
+@app.before_first_request
+def create_user():
+    db.create_all()
+
 # @app.before_request
 # def before_request():
 #     session.permanent = True

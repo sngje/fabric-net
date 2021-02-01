@@ -8,8 +8,8 @@ from application.models import User
 
 
 class RegistirationForm(FlaskForm):
-    username = StringField('Username',validators=[DataRequired(), Length(min=2, max=20)])
-    # email = StringField('Email', validators=[DataRequired(), Email(), ])
+    # username = StringField('Username',validators=[DataRequired(), Length(min=2, max=20)])
+    email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm password', validators=[DataRequired(), EqualTo('password')])
     orgname = SelectField('Please choose your organization', validators=[DataRequired()],
@@ -18,14 +18,19 @@ class RegistirationForm(FlaskForm):
                                  ('Org3 ', 'Delivery')])
     submit = SubmitField('Sign Up')
 
-    def validate_username(self, username):
-        user = User.query.filter_by(username=username.data).first()
+    # def validate_username(self, username):
+    #     user = User.query.filter_by(username=username.data).first()
+    #     if user:
+    #         raise ValidationError('Tha username is taken for chosen organization, please choose another one!')
+        
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
         if user:
-            raise ValidationError('Tha username is taken for chosen organization, please choose another one!')
+            raise ValidationError('Tha email is taken, please choose another one!')
 
 
 class LoginForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     remember = BooleanField('Remember me')
     submit = SubmitField('Login')

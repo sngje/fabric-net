@@ -3,7 +3,7 @@
 const { Gateway, Wallets } = require('fabric-network');
 const fs = require('fs');
 const path = require('path');
-const user = 'Kamol';
+const user = 'usmonov.me@gmail.com';
 
 async function main() {
     try {
@@ -43,8 +43,8 @@ async function main() {
 
         const v_status = [true, false];
 
-        for (let i = 4; i < 100; i ++) {
-            let randomAge = Math.floor(Math.random() * 7);
+        for (let i = 11; i < 100; i ++) {
+            let randomAge = Math.floor(Math.random() * (5 - 1 + 1));
             let randomCondition = Math.floor(Math.random() * 2);
             let tx = await contract.submitTransaction('createCage', 'Cage' + i, v_status[randomCondition], randomAge);
             console.log(`${i} ok - ${tx.toString()}`);

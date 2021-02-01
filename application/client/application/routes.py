@@ -1,7 +1,7 @@
 from flask import render_template, url_for, flash, redirect, request, abort, session
 from application import app, db, bcrpyt, header_info
-from application.models import User
-from application.forms import RegistirationForm, LoginForm
+from .models import User
+from .forms import RegistirationForm, LoginForm
 from flask_login import login_user, current_user, logout_user, login_required
 import requests, json, random, os, time, json, secrets
 
@@ -10,7 +10,19 @@ import requests, json, random, os, time, json, secrets
 @app.route("/index")
 @login_required
 def index():
-	return render_template('index.html', title="Options")
+	if current_user.orgname == 'Org1':
+		return redirect(url_for('allcages'));
+	elif current_user.orgname == 'Org2':
+		return redirect(url_for('processing_getall'));
+	elif current_user.orgname == 'Org3':
+		return redirect(url_for('processing_getall'));
+	else:
+		return redirect(url_for('register'));
+
+# @app.route("/index")
+# @login_required
+# def index():
+# 	return render_template('index.html', title="Options")
 
 # Route: login page
 @app.route("/login", methods=["POST", "GET"])
@@ -19,11 +31,11 @@ def login():
 		return redirect(url_for('index'))
 	form  = LoginForm()
 	if form.validate_on_submit():
-		user = User.query.filter_by(username=form.username.data).first()
+		user = User.query.filter_by(email=form.email.data).first()
 		if user and bcrpyt.check_password_hash(user.password, form.password.data):
 			login_user(user, remember=True)
 			req = {
-				'username': f'{user.username}',
+				'username': f'{user.email}',
 				'orgname': f'{user.orgname}'
 			}
 			req = json.loads(json.dumps(req))
@@ -33,18 +45,26 @@ def login():
 			print(response)
 			if r.status_code != 200:
 				flash(req, "error")
-				return redirect(url_for('signin'))
+				return redirect(url_for('register'))
 			if response['success']:
 				flash(response['message'], "success")
 				user.token = response['token']
 				db.session.commit()
-				next_page = request.args.get('next')
-				return redirect(next_page) if next_page else redirect(url_for('index'))
+				# next_page = request.args.get('next')
+				if user.orgname == 'Org1':
+					return redirect(url_for('allcages'));
+				elif user.orgname == 'Org2':
+					return redirect(url_for('processing_getall'));
+				elif user.orgname == 'Org3':
+					return redirect(url_for('processing_getall'));
+				else:
+					return redirect(url_for(index));
+				# return redirect(next_page) if next_page else redirect(url_for('index'))
 			else:
 				flash(response['message'], "error")
 			return redirect(url_for('signin'))
 		else:
-			flash('Login Unsuccessful. Please check username and password', 'danger')
+			flash('Login Unsuccessful. Please check email and password', 'danger')
 	return render_template('login.html', title="Login", form=form)
 
 # Route: registeration page
@@ -55,7 +75,7 @@ def register():
 	form = RegistirationForm()
 	if form.validate_on_submit():
 		req = {
-			'username': f'{form.username.data}',
+			'username': f'{form.email.data}',
 			'orgname': f'{form.orgname.data}'
 		}
 		req = json.loads(json.dumps(req))
@@ -67,7 +87,7 @@ def register():
 		response = r.json()
 		if response['success']:
 			hashed_password = bcrpyt.generate_password_hash(form.password.data).decode('utf-8')
-			user = User(username=form.username.data, orgname=form.orgname.data, password=hashed_password)
+			user = User(email=form.email.data, orgname=form.orgname.data, password=hashed_password)
 			db.session.add(user)
 			db.session.commit()
 			flash('Your account has been created, please log in!', 'success')
@@ -281,7 +301,7 @@ def edit(cage_id):
 	if request.method == "POST":
 		age = request.form.get('age', 0)
 		vaccination = request.form.get('vaccination', 0)
-		step = request.form.get('step', 0)
+		step = request.form.get('step', 1)
 
 		req = {
 			'age': f'{age}',

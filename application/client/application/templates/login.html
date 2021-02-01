@@ -22,16 +22,16 @@
                 <form class="col s12" action="{{ url_for('login') }}" method="POST">
                     {{ form.hidden_tag() }}
                     <div class="input-field col s12">
-                        <!-- {{ form.username.label(class="form-control-label") }} -->
-                        {% if form.username.errors %}
-                            {{ form.username(placeholder="Username") }}
+                        <!-- {{ form.email.label(class="form-control-label") }} -->
+                        {% if form.email.errors %}
+                            {{ form.email(placeholder="Email") }}
                             <div class="invalid-feedback">
-                                {% for error in form.username.errors %}
+                                {% for error in form.email.errors %}
                                     <span>{{ error }}</span>
                                 {% endfor %}
                             </div>
                         {% else %}
-                            {{ form.username(placeholder="Username") }}
+                            {{ form.email(placeholder="Email") }}
                         {% endif %}
                     </div>
                     <div class="input-field col s12">
