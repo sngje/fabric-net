@@ -42,7 +42,9 @@ Organizations:
                 Rule: "OR('OrdererMSP.admin')"
 
         OrdererEndpoints:
-            - orderer.example.com:7050
+            - orderer0.example.com:7050
+            - orderer1.example.com:8050
+            - orderer2.example.com:9050
 
     - &Org1
         # DefaultOrg defines the organization which is used in the sampleconfig
@@ -111,7 +113,41 @@ Organizations:
             # for cross org gossip communication.  Note, this value is only
             # encoded in the genesis block in the Application section context
             - Host: peer0.org2.example.com
-              Port: 9051
+              Port: 10051
+
+    - &Org3
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: Org3MSP
+
+        # ID to load the MSP definition as
+        ID: Org3MSP
+
+        MSPDir: ../organizations/peerOrganizations/org3.example.com/msp
+
+        # Policies defines the set of policies at this level of the config tree
+        # For organization policies, their canonical path is usually
+        #   /Channel/<Application|Orderer>/<OrgName>/<PolicyName>
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('Org3MSP.admin', 'Org3MSP.peer', 'Org3MSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('Org3MSP.admin', 'Org3MSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('Org3MSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('Org3MSP.peer')"
+
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.  Note, this value is only
+            # encoded in the genesis block in the Application section context
+            - Host: peer0.org3.example.com
+              Port: 13051
 
 ################################################################################
 #
@@ -220,10 +256,18 @@ Orderer: &OrdererDefaults
 
     EtcdRaft:
         Consenters:
-        - Host: orderer.example.com
+        - Host: orderer0.example.com
           Port: 7050
-          ClientTLSCert: ../organizations/ordererOrganizations/example.com/orderers/orderer.example.com/tls/server.crt
-          ServerTLSCert: ../organizations/ordererOrganizations/example.com/orderers/orderer.example.com/tls/server.crt
+          ClientTLSCert: ../organizations/ordererOrganizations/example.com/orderers/orderer0.example.com/tls/server.crt
+          ServerTLSCert: ../organizations/ordererOrganizations/example.com/orderers/orderer0.example.com/tls/server.crt
+        - Host: orderer1.example.com
+          Port: 8050
+          ClientTLSCert: ../organizations/ordererOrganizations/example.com/orderers/orderer1.example.com/tls/server.crt
+          ServerTLSCert: ../organizations/ordererOrganizations/example.com/orderers/orderer1.example.com/tls/server.crt
+        - Host: orderer2.example.com
+          Port: 9050
+          ClientTLSCert: ../organizations/ordererOrganizations/example.com/orderers/orderer2.example.com/tls/server.crt
+          ServerTLSCert: ../organizations/ordererOrganizations/example.com/orderers/orderer2.example.com/tls/server.crt
 
     # Batch Timeout: The amount of time to wait before creating a batch
     BatchTimeout: 2s
@@ -321,6 +365,7 @@ Profiles:
                 Organizations:
                     - *Org1
                     - *Org2
+                    - *Org3
     TwoOrgsChannel:
         Consortium: SampleConsortium
         <<: *ChannelDefaults
@@ -329,5 +374,6 @@ Profiles:
             Organizations:
                 - *Org1
                 - *Org2
+                - *Org3
             Capabilities:
                 <<: *ApplicationCapabilities

@@ -28,7 +28,8 @@ app.set('secret', APP_SECRET);
 
 // Set tokenized authorization
 app.use(expressJWT({
-    secret: APP_SECRET
+    secret: APP_SECRET,
+    algorithms: ['HS256']
 }).unless({
     path: ['/api/register','/api/login']
 }));

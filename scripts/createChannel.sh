@@ -33,7 +33,7 @@ createChannelTx() {
 
 createAncorPeerTx() {
 
-	for orgmsp in Org1MSP Org2MSP; do
+	for orgmsp in Org1MSP Org2MSP Org3MSP; do
 
 	echo "#######    Generating anchor peer update transaction for ${orgmsp}  ##########"
 	set -x
@@ -56,7 +56,7 @@ createChannel() {
 	while [ $rc -ne 0 -a $COUNTER -lt $MAX_RETRY ] ; do
 		sleep $DELAY
 		set -x
-		peer channel create -o localhost:7050 -c $CHANNEL_NAME --ordererTLSHostnameOverride orderer.example.com -f ./channel-artifacts/${CHANNEL_NAME}.tx --outputBlock ./channel-artifacts/${CHANNEL_NAME}.block --tls --cafile $ORDERER_CA >&log.txt
+		peer channel create -o localhost:7050 -c $CHANNEL_NAME --ordererTLSHostnameOverride orderer0.example.com -f ./channel-artifacts/${CHANNEL_NAME}.tx --outputBlock ./channel-artifacts/${CHANNEL_NAME}.block --tls --cafile $ORDERER_CA >&log.txt
 		res=$?
 		set +x
 		let rc=$res
@@ -99,7 +99,7 @@ updateAnchorPeers() {
 	while [ $rc -ne 0 -a $COUNTER -lt $MAX_RETRY ] ; do
     sleep $DELAY
     set -x
-		peer channel update -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com -c $CHANNEL_NAME -f ./channel-artifacts/${CORE_PEER_LOCALMSPID}anchors.tx --tls --cafile $ORDERER_CA >&log.txt
+		peer channel update -o localhost:7050 --ordererTLSHostnameOverride orderer0.example.com -c $CHANNEL_NAME -f ./channel-artifacts/${CORE_PEER_LOCALMSPID}anchors.tx --tls --cafile $ORDERER_CA >&log.txt
     res=$?
     set +x
 		let rc=$res
@@ -139,14 +139,24 @@ createChannel
 ## Join all the peers to the channel
 echo "Join Org1 peers to the channel..."
 joinChannel 1
+joinChannel 11
+joinChannel 12
 echo "Join Org2 peers to the channel..."
 joinChannel 2
+joinChannel 21
+joinChannel 22
+echo "Join Org3 peers to the channel..."
+joinChannel 3
+joinChannel 31
+joinChannel 32
 
 ## Set the anchor peers for each org in the channel
 echo "Updating anchor peers for org1..."
 updateAnchorPeers 1
 echo "Updating anchor peers for org2..."
 updateAnchorPeers 2
+echo "Updating anchor peers for org3..."
+updateAnchorPeers 3
 
 echo
 echo "========= Channel successfully joined =========== "
