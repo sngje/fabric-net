@@ -6,9 +6,9 @@
               <th>ID</th>
               <th>Age</th>
               <th>Vaccination</th>
-              <th>Stage</th>
+              <th>Update age</th>
               <th>Trace</th>
-              <th>Update</th>
+              <th>Next stage</th>
               <th>Delete</th>
 
           </tr>
@@ -16,14 +16,18 @@
         <tbody>
           {% for arr in transactions['data'] %}
           <tr>
-            <td style="text-transform:uppercase;"><a href="{{ url_for('edit', cage_id=arr['key'])}}" title="Edit">{{ arr['key'] }}</a></td>
-            <!-- <td><a href="{{ url_for('changeage', cage_id=arr['key'])}}">{{ arr['data']['age'] }}</a></td> -->
+            <td style="text-transform:uppercase;"><a href="{{ url_for('edit', cage_id=arr['key']) }}" title="Edit">{{ arr['key'] }}</a></td>
             <td>{{ arr['data']['age'] }}</td>
             <td>{{ arr['data']['vaccination'] }}</td>
-            <td>{{ arr['data']['step'] }}</td>
-            <td><a href="{{ url_for('history', cage_id=arr['key'])}}" title="See history"><i class="material-icons md-30">&nbsp;track_changes</i></a></td>
-            <td><a href="{{ url_for('processing_plant', cage_id=arr['key'])}}" title="Update"><i class="material-icons md-30">&nbsp;autorenew</i></a></td>
-            <td><a href="{{ url_for('delete', cage_id=arr['key'])}}" title="Delete"><i class="material-icons md-30">&nbsp;delete</i></a></td>
+            <!-- <td>{{ arr['data']['step'] }}</td> -->
+            <td><a href="{{ url_for('changeage', cage_id=arr['key'], new_age=arr['data']['age']|int + 1) }}" title="Update"><i class="material-icons md-30">&nbsp;update</i></a></td>
+            <td><a href="{{ url_for('history', cage_id=arr['key']) }}" title="See history"><i class="material-icons md-30">&nbsp;track_changes</i></a></td>
+            {% if arr['data']['age']|int >= 5 and arr['data']['vaccination'] %}
+              <td><a href="{{ url_for('processing_plant', cage_id=arr['key']) }}" title="Update"><i class="material-icons md-30">&nbsp;autorenew</i></a></td>
+            {% else %}
+              <td><i class="material-icons md-30">&nbsp;autorenew</i></td>
+            {% endif %}
+            <td><a href="{{ url_for('delete', cage_id=arr['key']) }}" title="Delete"><i class="material-icons md-30">&nbsp;delete</i></a></td>
           </tr>
           {% endfor %}
         </tbody>

@@ -391,7 +391,7 @@ router.put('/changeage/:cage_id', async function (req, res) {
 
         // Evaluate the specified transaction.
         // queryCage transaction - requires 1 argument, ex: ('queryCage', 'Cage1')
-        let tx = await contract.submitTransaction('changeCageAge', req.params.cage_id);
+        let tx = await contract.submitTransaction('changeCageAge', req.params.cage_id, req.body.new_age);
         console.log('Transaction has been evaluated');
         res.status(200).json({
             response: 'Age successfully increased',

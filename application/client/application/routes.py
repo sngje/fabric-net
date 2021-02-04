@@ -180,17 +180,27 @@ def inject(cage_id):
 	r = requests.put(f'http://localhost:3000/api/inject/{cage_id}', headers=headers) 
 	transactions = r.json()
 	flash(transactions['response'], "success")
-	return render_template('transaction.html', title=f"Inject cage - {cage_id}", cage_id=cage_id, transactions=transactions)
+	return redirect(url_for('injection'))
+	# return render_template('transaction.html', title=f"Inject cage - {cage_id}", cage_id=cage_id, transactions=transactions)
 
 # Route: changeage
-@app.route("/changeage/<string:cage_id>")
+@app.route("/changeage/<string:cage_id>/<int:new_age>")
 @login_required
-def changeage(cage_id):
+def changeage(cage_id, new_age):
 	headers = header_info(current_user.token)
-	r = requests.put(f'http://localhost:3000/api/changeage/{cage_id}', headers=headers) 
+	req = {
+			'new_age': int(new_age)
+		}
+	req = json.loads(json.dumps(req))
+	r = requests.put(f'http://localhost:3000/api/changeage/{cage_id}', headers=headers, json=req) 
 	transactions = r.json()
+	print(transactions)
+	if r.status_code != 200:
+		flash(transactions['error'], "error")
+		return redirect(url_for('allcages'))
 	flash(transactions['response'], "success")
-	return render_template('transaction.html', title=f"Change age - {cage_id}", cage_id=cage_id, transactions=transactions)
+	return redirect(url_for('allcages'))
+	# return render_template('transaction.html', title=f"Change age - {cage_id}", cage_id=cage_id, transactions=transactions)
 
 # Route: delete
 @app.route("/delete/<string:cage_id>")

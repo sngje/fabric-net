@@ -328,8 +328,13 @@ hr {
 }
 
 .material-icons{
+    font-size: 21px;
     display: inline-flex;
     vertical-align: top;
+}
+
+thead {
+    background-color: lavender;
 }
 
 /* .input-field input[type=date]:focus + label,
