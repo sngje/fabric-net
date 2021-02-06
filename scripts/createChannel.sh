@@ -140,15 +140,15 @@ createChannel
 echo "Join Org1 peers to the channel..."
 joinChannel 1
 joinChannel 11
-joinChannel 12
+# joinChannel 12
 echo "Join Org2 peers to the channel..."
 joinChannel 2
 joinChannel 21
-joinChannel 22
+# joinChannel 22
 echo "Join Org3 peers to the channel..."
 joinChannel 3
 joinChannel 31
-joinChannel 32
+# joinChannel 32
 
 ## Set the anchor peers for each org in the channel
 echo "Updating anchor peers for org1..."

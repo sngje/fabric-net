@@ -110,7 +110,7 @@ def logout():
 @login_required
 def allcages(bookmark=0):
 	headers = header_info(current_user.token)
-	r = requests.get(f'http://localhost:3000/api/queryallcages/{bookmark}', headers=headers) 
+	r = requests.get(f'http://localhost:3000/api/queryallassets/{bookmark}', headers=headers) 
 	transactions = r.json()
 	print(transactions)
 	if len(transactions['data']) == 0:
@@ -133,7 +133,7 @@ def history(cage_id):
 @login_required
 def injection(bookmark=0):
 	headers = header_info(current_user.token)
-	r = requests.get(f'http://localhost:3000/api/injection/{bookmark}', headers=headers) 
+	r = requests.get(f'http://localhost:3000/api/show-uninjected-assets/{bookmark}', headers=headers) 
 	if r.status_code != 200:
 		flash("All cages are injected", "info")
 		return redirect(url_for('allcages'))
@@ -148,7 +148,7 @@ def injection(bookmark=0):
 @login_required
 def processing_getall(bookmark=0):
 	headers = header_info(current_user.token)
-	r = requests.get(f'http://localhost:3000/api/processing_plant/getall/{bookmark}', headers=headers) 
+	r = requests.get(f'http://localhost:3000/api/processing-plant/all/{bookmark}', headers=headers) 
 	if r.status_code != 200:
 		flash("List is currently empty", "info")
 		return redirect(url_for('index'))
@@ -163,7 +163,7 @@ def processing_getall(bookmark=0):
 @login_required
 def processing_finished(bookmark=0):
 	headers = header_info(current_user.token)
-	r = requests.get(f'http://localhost:3000/api/processing_plant/finished/{bookmark}', headers=headers) 
+	r = requests.get(f'http://localhost:3000/api/processing-plant/finished/{bookmark}', headers=headers) 
 	if r.status_code != 200:
 		flash("Error occured, please ask from back-end team", "info")
 		return redirect(url_for('index'))
@@ -192,7 +192,7 @@ def changeage(cage_id, new_age):
 			'new_age': int(new_age)
 		}
 	req = json.loads(json.dumps(req))
-	r = requests.put(f'http://localhost:3000/api/changeage/{cage_id}', headers=headers, json=req) 
+	r = requests.put(f'http://localhost:3000/api/update-asset-age/{cage_id}', headers=headers, json=req) 
 	transactions = r.json()
 	print(transactions)
 	if r.status_code != 200:
@@ -232,7 +232,7 @@ def create_cage():
 			}
 		req = json.loads(json.dumps(req))
 		# send the data
-		r = requests.post('http://localhost:3000/api/addcage', json=req, headers=headers) 
+		r = requests.post('http://localhost:3000/api/create-asset', json=req, headers=headers) 
 		if r.status_code != 200:
 			flash("Something went wrong, please try again (", "error")
 			return redirect(url_for('create_cage'))
@@ -283,7 +283,7 @@ def processing_plant(cage_id):
 			}
 		req = json.loads(json.dumps(req))
 		
-		r = requests.put(f'http://localhost:3000/api/processing_plant/{cage_id}', json=req, headers=headers)
+		r = requests.put(f'http://localhost:3000/api/processing-plant/{cage_id}', json=req, headers=headers)
 		
 		# check for error
 		if r.status_code != 200:
@@ -295,7 +295,7 @@ def processing_plant(cage_id):
 		# return redirect(url_for('processing_plant', cage_id=cage_id, tx_id=transactions['tx_id']))
 		return render_template(f'processing_plant.html', title=f"Processing plant - {cage_id}", cage_id=cage_id, transactions=transactions)
 	else:
-		r = requests.get(f'http://localhost:3000/api/query/{cage_id}', headers=headers) 
+		r = requests.get(f'http://localhost:3000/api/get-asset/{cage_id}', headers=headers) 
 		
 		# check for error
 		if r.status_code != 200:
@@ -322,7 +322,7 @@ def edit(cage_id):
 		req = json.loads(json.dumps(req))
 		# print(req)
 
-		r = requests.put(f'http://localhost:3000/api/edit/{cage_id}', json=req, headers=headers)
+		r = requests.put(f'http://localhost:3000/api/update-asset/{cage_id}', json=req, headers=headers)
 		
 		# check for error
 		if r.status_code != 200:
@@ -335,7 +335,7 @@ def edit(cage_id):
 		# return redirect(url_for('processing_plant', cage_id=cage_id, tx_id=transactions['tx_id']))
 		return render_template(f'edit.html', title=f"Data - {cage_id}", cage_id=cage_id, transactions=transactions)
 	else:
-		r = requests.get(f'http://localhost:3000/api/query/{cage_id}', headers=headers) 
+		r = requests.get(f'http://localhost:3000/api/get-asset/{cage_id}', headers=headers) 
 		
 		# check for error
 		if r.status_code != 200:

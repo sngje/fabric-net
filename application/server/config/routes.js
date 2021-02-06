@@ -103,7 +103,7 @@ router.post('/login', async function (req, res) {
 });
 
 // Query all data 
-router.get('/queryallcages/:bookmark', async function (req, res) {
+router.get('/queryallassets/:bookmark', async function (req, res) {
     logger.debug('End point : /queryallcages');
     // console.log(req.headers['authorization']);
     const decoded = helper.decode_jwt(req.headers['authorization']);
@@ -134,7 +134,7 @@ router.get('/queryallcages/:bookmark', async function (req, res) {
 });
 
 // Query for individual data
-router.get('/query/:cage_id', async function (req, res) {
+router.get('/get-asset/:cage_id', async function (req, res) {
     logger.debug('End point : /queryallcages');
     const decoded = helper.decode_jwt(req.headers['authorization']);
     try {
@@ -142,8 +142,8 @@ router.get('/query/:cage_id', async function (req, res) {
         const {contract, gateway} = await fabricNetwork.connectNetwork(decoded['username'], decoded['orgname']);
 
         // Evaluate the specified transaction.
-        // queryCage transaction - requires 1 argument, ex: ('queryCage', 'Cage1')
-        const result = await contract.evaluateTransaction('queryCage', req.params.cage_id);
+        // getAsset transaction - requires 1 argument, ex: ('getAsset', 'Cage1')
+        const result = await contract.evaluateTransaction('getAsset', req.params.cage_id);
         logger.debug('Transaction has been evaluated');
         logger.debug('Result : ' + JSON.parse(result));
         res.status(200).json(JSON.parse(result));
@@ -164,7 +164,7 @@ router.get('/history/:cage_id', async function (req, res) {
         const {contract, gateway} = await fabricNetwork.connectNetwork(decoded['username'], decoded['orgname']);
 
         // Evaluate the specified transaction.
-        // queryCage transaction - requires 1 argument, ex: ('queryCage', 'Cage1')
+        // getAsset transaction - requires 1 argument, ex: ('getAsset', 'Cage1')
         const result = await contract.evaluateTransaction('getFullHistory', req.params.cage_id);
         console.log('Transaction has been evaluated');
         console.log(JSON.parse(result));
@@ -179,7 +179,7 @@ router.get('/history/:cage_id', async function (req, res) {
 });
 
 // Query to get uninjected data
-router.get('/injection/:bookmark', async function (req, res) {
+router.get('/show-uninjected-assets/:bookmark', async function (req, res) {
     const decoded = helper.decode_jwt(req.headers['authorization']);
     try {
         // Get the contract from the network
@@ -217,7 +217,7 @@ router.get('/injection/:bookmark', async function (req, res) {
 });
 
 // Query to get processing plant data
-router.get('/processing_plant/getall/:bookmark', async function (req, res) {
+router.get('/processing-plant/all/:bookmark', async function (req, res) {
     const decoded = helper.decode_jwt(req.headers['authorization']);
     try {
         // Get the contract from the network
@@ -251,7 +251,7 @@ router.get('/processing_plant/getall/:bookmark', async function (req, res) {
 });
 
 // Query to get finished processing plant data
-router.get('/processing_plant/finished/:bookmark', async function (req, res) {
+router.get('/processing-plant/finished/:bookmark', async function (req, res) {
     const decoded = helper.decode_jwt(req.headers['authorization']);
     try {
         // Get the contract from the network
@@ -334,7 +334,7 @@ router.put('/inject/:cage_id', async function (req, res) {
         const {contract, gateway} = await fabricNetwork.connectNetwork(decoded['username'], decoded['orgname']);
 
         // let condition = false;
-        // const result = await contract.evaluateTransaction('queryCage', req.params.cage_id);
+        // const result = await contract.evaluateTransaction('getAsset', req.params.cage_id);
         // let objects = JSON.parse(result);
 
         // // check what we have
@@ -344,7 +344,7 @@ router.put('/inject/:cage_id', async function (req, res) {
 
         // iterate objects to obtain key values
         // then update vaccination condition, then submit transaction to the ledger
-        let tx = await contract.submitTransaction('changeCondition', req.params.cage_id, true);
+        let tx = await contract.submitTransaction('updateAssetInjectionStatus', req.params.cage_id, true);
         console.log(`OK - ${tx}`);
         res.status(200).json({
             response: 'Successfully injected',
@@ -360,14 +360,14 @@ router.put('/inject/:cage_id', async function (req, res) {
 });
 
 // Adding new data
-router.post('/addcage/', async function (req, res) {
+router.post('/create-asset/', async function (req, res) {
     const decoded = helper.decode_jwt(req.headers['authorization']);
     try {
         // Get the contract from the network
         const {contract, gateway} = await fabricNetwork.connectNetwork(decoded['username'], decoded['orgname']);
 
         // Submit the specified transaction.
-        let tx = await contract.submitTransaction('createCage', req.body.id, req.body.vaccination, req.body.age);
+        let tx = await contract.submitTransaction('createAsset', req.body.id, req.body.vaccination, req.body.age);
         console.log('Transaction has been submitted');
         res.status(200).json({
             response: 'Successfully added',
@@ -383,15 +383,15 @@ router.post('/addcage/', async function (req, res) {
 });
 
 // Transaction to change age
-router.put('/changeage/:cage_id', async function (req, res) {
+router.put('/update-asset-age/:cage_id', async function (req, res) {
     const decoded = helper.decode_jwt(req.headers['authorization']);
     try {
         // Get the contract from the network
         const {contract, gateway} = await fabricNetwork.connectNetwork(decoded['username'], decoded['orgname']);
 
         // Evaluate the specified transaction.
-        // queryCage transaction - requires 1 argument, ex: ('queryCage', 'Cage1')
-        let tx = await contract.submitTransaction('changeCageAge', req.params.cage_id, req.body.new_age);
+        // getAsset transaction - requires 1 argument, ex: ('getAsset', 'Cage1')
+        let tx = await contract.submitTransaction('updateAssetAge', req.params.cage_id, req.body.new_age);
         console.log('Transaction has been evaluated');
         res.status(200).json({
             response: 'Age successfully increased',
@@ -416,8 +416,8 @@ router.delete('/delete/:cage_id', async function (req, res) {
         const {contract, gateway} = await fabricNetwork.connectNetwork(decoded['username'], decoded['orgname']);
 
         // Evaluate the specified transaction.
-        // queryCage transaction - requires 1 argument, ex: ('queryCage', 'Cage1')
-        let tx = await contract.submitTransaction('deleteCage', req.params.cage_id);
+        // getAsset transaction - requires 1 argument, ex: ('getAsset', 'Cage1')
+        let tx = await contract.submitTransaction('deleteAsset', req.params.cage_id);
         console.log('Transaction has been evaluated');
         res.status(200).json({
             response: 'Cage successfully deleted',
@@ -435,16 +435,16 @@ router.delete('/delete/:cage_id', async function (req, res) {
 });
 
 // Prosessing plant steps
-router.put('/processing_plant/:cage_id', async function (req, res) {
+router.put('/processing-plant/:cage_id', async function (req, res) {
     const decoded = helper.decode_jwt(req.headers['authorization']);
     try {
         // Get the contract from the network
         const {contract, gateway} = await fabricNetwork.connectNetwork(decoded['username'], decoded['orgname']);
 
         // Evaluate the specified transaction.
-        // queryCage transaction - requires 1 argument, ex: ('queryCage', 'Cage1')
-        let tx = await contract.submitTransaction('processingPlant', req.params.cage_id, req.body.acceptable, req.body.deliverer);
-        let data = await contract.evaluateTransaction('queryCage', req.params.cage_id);
+        // getAsset transaction - requires 1 argument, ex: ('getAsset', 'Cage1')
+        let tx = await contract.submitTransaction('upgradeAssetToProsessingPlant', req.params.cage_id, req.body.acceptable, req.body.deliverer);
+        let data = await contract.evaluateTransaction('getAsset', req.params.cage_id);
         let answer = JSON.parse(data);
         answer.tx_id = tx.toString();
         console.log('Transaction has been evaluated');
@@ -461,16 +461,16 @@ router.put('/processing_plant/:cage_id', async function (req, res) {
 });
 
 // Edit data
-router.put('/edit/:cage_id', async function (req, res) {
+router.put('/update-asset/:cage_id', async function (req, res) {
     const decoded = helper.decode_jwt(req.headers['authorization']);
     try {
         // Get the contract from the network
         const {contract, gateway} = await fabricNetwork.connectNetwork(decoded['username'], decoded['orgname']);
 
         // Evaluate the specified transaction.
-        // queryCage transaction - requires 1 argument, ex: ('queryCage', 'Cage1')
-        let tx = await contract.submitTransaction('editAsset', req.params.cage_id, req.body.age, req.body.vaccination, req.body.step);
-        let data = await contract.evaluateTransaction('queryCage', req.params.cage_id);
+        // getAsset transaction - requires 1 argument, ex: ('getAsset', 'Cage1')
+        let tx = await contract.submitTransaction('updateAsset', req.params.cage_id, req.body.age, req.body.vaccination, req.body.step);
+        let data = await contract.evaluateTransaction('getAsset', req.params.cage_id);
         let answer = JSON.parse(data);
         answer.tx_id = tx.toString();
         console.log('Transaction has been evaluated');

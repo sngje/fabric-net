@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-     
 {% include 'header.html' %}
 <body>
   <div id="loading"></div>
@@ -27,60 +26,60 @@
 
         <ul class="collapsible" data-collapsible="accordion">
           {% if current_user.orgname == "Org1" %}
-          <li id="dash_users" class="active">
-            <div id="dash_users_header" class="collapsible-header waves-effect waves-light">
-              <span class="valign-wrapper">
-                <i class="material-icons">view_list</i> <b> Grower farm</b>
-              </span>
-            </div>
-            <div id="dash_users_body" class="collapsible-body">
-              <ul>
-                <li id="users_seller">
-                  <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('allcages') }}">Current state</a>
-                </li>
-                <li id="users_customer">
-                  <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('injection') }}">Health monitor</a>
-                </li>
-              </ul>
-            </div>
-          </li>
+            <li id="dash_users" class="active">
+              <div id="dash_users_header" class="collapsible-header waves-effect waves-light">
+                <span class="valign-wrapper">
+                  <i class="material-icons">view_list</i> <b> Grower farm</b>
+                </span>
+              </div>
+              <div id="dash_users_body" class="collapsible-body">
+                <ul>
+                  <li id="users_seller">
+                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('allcages') }}">Current state</a>
+                  </li>
+                  <li id="users_customer">
+                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('injection') }}">Health monitor</a>
+                  </li>
+                </ul>
+              </div>
+            </li>
           {% endif %}
           {% if current_user.orgname == "Org2" %}
-          <li id="dash_products" class="active">
-            <div id="dash_products_header" class="collapsible-header waves-effect waves-light">
-              <span class="valign-wrapper">
-                <i class="material-icons">view_list</i> <b> Processing plant</b>
-              </span>
-            </div>
-            <div id="dash_products_body" class="collapsible-body">
-              <ul>
-                <li id="products_product">
-                  <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('processing_getall') }}">Current state</a>
-                  <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('processing_finished') }}">Finished products</a>
-                </li>
-              </ul>
-            </div>
-          </li>
+            <li id="dash_products" class="active">
+              <div id="dash_products_header" class="collapsible-header waves-effect waves-light">
+                <span class="valign-wrapper">
+                  <i class="material-icons">view_list</i> <b> Processing plant</b>
+                </span>
+              </div>
+              <div id="dash_products_body" class="collapsible-body">
+                <ul>
+                  <li id="products_product">
+                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('processing_getall') }}">Current state</a>
+                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('processing_finished') }}">Finished products</a>
+                  </li>
+                </ul>
+              </div>
+            </li>
           {% endif %}
-          {% if current_user.orgname == "Org1" || if current_user.orgname == "Org3" %}
-          <li id="dash_users">
-            <div id="dash_users_header" class="collapsible-header waves-effect waves-light">
-              <span class="valign-wrapper">
-                <i class="material-icons">view_list</i> <b> Product management</b>
-              </span>
-            </div>
-            <div id="dash_users_body" class="collapsible-body">
-              <ul>
-                <li id="users_customer">
-                  <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('create_cage') }}">Create cage</a>
-                </li>
-                
-                <li id="users_customer">
-                  <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('search') }}">Search tool</a>
-                </li>
-              </ul>
-            </div>
-          </li>
+          {% if current_user.orgname == "Org1" %}
+            <li id="dash_users">
+              <div id="dash_users_header" class="collapsible-header waves-effect waves-light">
+                <span class="valign-wrapper">
+                  <i class="material-icons">view_list</i> <b> Product management</b>
+                </span>
+              </div>
+              <div id="dash_users_body" class="collapsible-body">
+                <ul>
+                  <li id="users_customer">
+                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('create_cage') }}">Create cage</a>
+                  </li>
+                  
+                  <li id="users_customer">
+                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('search') }}">Search tool</a>
+                  </li>
+                </ul>
+              </div>
+            </li>
           {% endif %}
 
           <!-- <li id="dash_categories">
