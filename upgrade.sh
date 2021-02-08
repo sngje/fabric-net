@@ -82,7 +82,7 @@ chaincodeInvokeInit() {
     --peerAddresses localhost:7051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt \
     --peerAddresses localhost:10051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt \
     --peerAddresses localhost:13051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org3.example.com/peers/peer0.org3.example.com/tls/ca.crt \
-    -c '{"function":"queryAll","Args":[]}'
+    -c '{"function":"queryAssetsAll","Args":[]}'
     sleep 2
 }
 

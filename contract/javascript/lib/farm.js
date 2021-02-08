@@ -67,7 +67,7 @@ class Farm extends Contract {
     }
 
     // create new asset
-    async createAsset(ctx, id, injected, age) {
+    async createAsset(ctx, id, age, injected = false) {
         const assetExists = await this.assetExists(ctx, id);
         if (assetExists) {
             throw new Error(`This asset with ${id} already exists`);
@@ -78,11 +78,11 @@ class Farm extends Contract {
 			throw new Error("Age argument must be a numeric string");
         }
 
-        const condition = (String(injected) === 'true') ? true : false;
+        // const condition = (String(injected) === 'true') ? true : false;
         const asset = {
             docType: 'duck',
             age: int_age,
-            vaccination: condition,
+            vaccination: injected,
             step: 1,
         };
 
@@ -110,23 +110,23 @@ class Farm extends Contract {
     }
     
     // update asset age properity
-    async updateAssetAge(ctx, id, age) {
+    async updateAssetAge(ctx, id) {
         const currentAsset = await this.getAsset(ctx, id);
         let newAsset = JSON.parse(currentAsset);        
         
-        age = typeof age !== 'undefined' ? age : newAsset.age + 1
-        newAsset.age = ParseInt(age);
+        let age = parseInt(newAsset.age) + 1
+        newAsset.age = age;
 
         await ctx.stub.putState(id, Buffer.from(JSON.stringify(newAsset)));
         return ctx.stub.getTxID();
     }
 
     // change data vaccination status
-    async updateAssetInjectionStatus(ctx, id, newStatus) {
+    async updateAssetInjectionStatus(ctx, id) {
         const currentAsset = await this.getAsset(ctx, id); // get the cage from chaincode state
         let newAsset = JSON.parse(currentAsset);
-        let condition = (String(newStatus) === 'true') ? true : false;
-        newAsset.vaccination = condition;
+        // let condition = !newAsset.vaccination;
+        newAsset.vaccination = !newAsset.vaccination;
 
         await ctx.stub.putState(id, Buffer.from(JSON.stringify(newAsset)));
         return ctx.stub.getTxID();
@@ -191,7 +191,16 @@ class Farm extends Contract {
         await ctx.stub.putState(id, Buffer.from(JSON.stringify(newAsset)));
         return ctx.stub.getTxID();
     }
+    
+    // GetAssetHistory returns the chain of custody for an asset since issuance.
+	async getAssetHistory(ctx, assetKey) {
 
+		let resultsIterator = await ctx.stub.getHistoryForKey(assetKey);
+		let results = await this.getAllResults(resultsIterator, true);
+
+		return JSON.stringify(results);
+    }
+    
     // get assets by range - startKey - endKey
     async getAssetsByRange(ctx, startKey, endKey) {
 
@@ -221,15 +230,6 @@ class Farm extends Contract {
 		return await this.getQueryResultForQueryString(ctx, queryString);
 	}
 
-    // GetAssetHistory returns the chain of custody for an asset since issuance.
-	async getAssetHistory(ctx, assetKey) {
-
-		let resultsIterator = await ctx.stub.getHistoryForKey(assetKey);
-		let results = await this.getAllResults(resultsIterator, true);
-
-		return JSON.stringify(results);
-	}
-
     // Wrapper method
     async getAllResults(iterator, isHistory) {
 		let allResults = [];
@@ -239,7 +239,7 @@ class Farm extends Contract {
 				let jsonRes = {};
 				console.log(res.value.value.toString('utf8'));
 				if (isHistory && isHistory === true) {
-					jsonRes.tx_id = res.txId;
+					jsonRes.tx_id = res.value.txId;
 					jsonRes.timestamp = res.value.timestamp;
 					try {
 						jsonRes.data = JSON.parse(res.value.value.toString('utf8'));
@@ -264,28 +264,8 @@ class Farm extends Contract {
 		return allResults;
 	}
 
-    // get all cages with history
-    async queryAllCages(ctx) {
-        const startKey = '';
-        const endKey = '';
-        const allResults = [];
-        for await (const {key, value} of ctx.stub.getStateByRange(startKey, endKey)) {
-            const strValue = Buffer.from(value).toString('utf8');
-            let record;
-            try {
-                record = JSON.parse(strValue);
-            } catch (err) {
-                console.log(err);
-                record = strValue;
-            }
-            allResults.push({ Key: key, Record: record });
-        }
-        console.info(allResults);
-        return JSON.stringify(allResults);
-    }
-
     // get cages with vaccination filter
-    async queryWithVaccination(ctx, vaccination) {        
+    async queryAssetsByVaccinationStatus(ctx, vaccination) {        
         let condition = (String(vaccination) === 'true') ? true : false;
         let queryString = {};
         queryString.selector = {};
@@ -295,7 +275,7 @@ class Farm extends Contract {
     }
 
     // query specific aged cages
-    async queryWithAge(ctx, age) {
+    async queryAssetsByAge(ctx, age) {
         age = typeof age !== 'undefined' ? parseInt(age) : 'undefined';
 
 		if (typeof int_age !== "number") {
@@ -309,7 +289,7 @@ class Farm extends Contract {
     }
 
     // get all data which dockType is 'duck'
-    async queryAll(ctx) {
+    async queryAssetsAll(ctx) {
         let queryString = {
             selector: {
                 docType: 'duck'
@@ -317,112 +297,17 @@ class Farm extends Contract {
         };
         return await this.getQueryResultForQueryString(ctx, JSON.stringify(queryString));
     }
-    
-    // wrapper function
-    async queryWithQueryString(ctx, queryString) {
-        let resultsIterator = await ctx.stub.getQueryResult(queryString);
-        let allResults = [];
-        // eslint-disable-next-line no-constant-condition
-        while (true) {
-            let res = await resultsIterator.next();
-
-            if (res.value && res.value.value.toString()) {
-                let jsonRes = {};
-
-                console.log(res.value.value.toString('utf8'));
-
-                jsonRes.Key = res.value.key;
-
-                try {
-                    jsonRes.Record = JSON.parse(res.value.value.toString('utf8'));
-                } catch (err) {
-                    console.log(err);
-                    jsonRes.Record = res.value.value.toString('utf8');
-                }
-
-                allResults.push(jsonRes);
-            }
-            if (res.done) {
-                console.log('end of data');
-                await resultsIterator.close();
-                console.info(allResults);
-                console.log(JSON.stringify(allResults));
-                return JSON.stringify(allResults);
-            }
-        }
-
-    }
-
-    //new way
-    async getFullHistory(ctx, key) {
-        const promiseOfIterator = ctx.stub.getHistoryForKey(key);
-        const results = [];
-        for await (const keyMod of promiseOfIterator) {
-            // const tx = keyMod.getTxId();
-            const resp = {
-                timestamp: keyMod.timestamp
-            }
-            if (keyMod.is_delete) {
-                resp.data = 'KEY DELETED';
-            } else {
-                resp.data = JSON.parse(keyMod.value.toString('utf8'));
-            }
-            resp.tx_id = keyMod.txId;
-            results.push(resp);
-        }
-        console.log(results);
-        return JSON.stringify(results);
-    }
-
-    // get data from iterator
-    async getAllResultsOld(promiseOfIterator) {
-        const allResults = [];
-        for await (const res of promiseOfIterator) {
-            // no more res.value.value ...
-            // if not a getHistoryForKey iterator then key is contained in res.key
-            const resp = {
-                key: res.key.toString('utf8'),
-            }
-            if (res.is_delete) {
-                resp.data = 'KEY DELETED';
-            } else {
-                resp.data = JSON.parse(res.value.toString('utf8'));
-            }
-            allResults.push(resp);
-        }
-    
-        // iterator will be automatically closed on exit from the loop
-        // either by reaching the end, or a break or throw terminated the loop
-        return allResults;
-    }
 
     // Get data with pagination
-    async queryWithPagination(ctx, query_string, page_size, bookmark) {
+    async queryAssetsWithPagination(ctx, query_string, page_size, bookmark) {
         // convert to integer
         const pageSize = parseInt(page_size);
-        const promiseOfIterator = ctx.stub.getQueryResultWithPagination(query_string, pageSize, bookmark);
-        const results = await this.getAllResultsOld(promiseOfIterator);
+        const {iterator, metadata} = await ctx.stub.getQueryResultWithPagination(query_string, pageSize, bookmark);
+        const results = await this.getAllResults(iterator, false);
         // exract meta data informations
-        const metadata = (await promiseOfIterator).metadata;
         const alldata = {data: results, meta_data: metadata};
         return JSON.stringify(alldata);
     }
-
-    // new
-    async queryAssetsWithPagination(ctx, queryString, pageSize, bookmark) {
-
-        const intPageSize = parseInt(pageSize);
-		const {iterator, metadata} = await ctx.stub.getQueryResultWithPagination(queryString, intPageSize, bookmark);
-		const results = await this.getAllResults(iterator, false);
-
-		results.ResponseMetadata = {
-			RecordsCount: metadata.fetched_records_count,
-			Bookmark: metadata.bookmark,
-		};
-
-		return JSON.stringify(results);
-	}
-
 }
 
 module.exports = Farm;

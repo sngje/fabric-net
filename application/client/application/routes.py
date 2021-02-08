@@ -110,7 +110,7 @@ def logout():
 @login_required
 def allcages(bookmark=0):
 	headers = header_info(current_user.token)
-	r = requests.get(f'http://localhost:3000/api/queryallassets/{bookmark}', headers=headers) 
+	r = requests.get(f'http://localhost:3000/api/assets/all/{bookmark}', headers=headers) 
 	transactions = r.json()
 	print(transactions)
 	if len(transactions['data']) == 0:

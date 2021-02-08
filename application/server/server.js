@@ -31,7 +31,7 @@ app.use(expressJWT({
     secret: APP_SECRET,
     algorithms: ['HS256']
 }).unless({
-    path: ['/api/register','/api/login']
+    path: ['/api/users/register','/api/users/login']
 }));
 
 // Error handling for errors status
@@ -54,7 +54,7 @@ logger.level = 'debug';
 // Authorized routes without token
 app.use((req, res, next) => {
     logger.debug('New req for %s', req.originalUrl);
-    if (req.originalUrl.indexOf('/api/register') >= 0 || req.originalUrl.indexOf('/api/login') >= 0) {
+    if (req.originalUrl.indexOf('/api/users/register') >= 0 || req.originalUrl.indexOf('/api/users/login') >= 0) {
         return next();
     }
     let token = req.token;
@@ -72,9 +72,9 @@ app.use((req, res, next) => {
             });
             return;
         } else {
-            req.username = decoded.username;
+            req.email = decoded.email;
             req.orgname = decoded.orgname;
-            logger.debug(util.format('Decoded from JWT token: username - %s, orgname - %s', decoded.username, decoded.orgname));
+            logger.debug(util.format('Decoded from JWT token: email - %s, orgname - %s', decoded.email, decoded.orgname));
             return next();
         }
     });
@@ -87,12 +87,17 @@ app.use('/api', require('./config/routes'));
 app.listen(PORT, ()=>{
     console.log('***********************************');
     console.log('API server listening at http://localhost:%s', PORT);
-    console.log('example 1 (get): http://localhost:%s/api/queryallcages/0', PORT);
-    console.log('example 2 (get): http://localhost:%s/api/query/Cage0', PORT);
-    console.log('example 3 (put): http://localhost:%s/api/changeage/Cage0', PORT);
-    console.log('example 4 (post): http://localhost:%s/api/addcage', PORT);
-    console.log('example 5 (get): http://localhost:%s/api/history/Cage0', PORT);
-    console.log('example 6 (get): http://localhost:%s/api/injection', PORT);
-    console.log('example 7 (put): http://localhost:%s/api/inject/Cage0', PORT);
+    console.log('example 1 (get): http://localhost:%s/api/assets/all/0', PORT);
+    console.log('example 2 (get): http://localhost:%s/api/assets/Cage0', PORT);
+    console.log('example 3 (put): http://localhost:%s/api/assets/Cage0/update/age', PORT);
+    console.log('example 4 (put): http://localhost:%s/api/assets/Cage0/update/vaccination', PORT);
+    console.log('example 5 (post): http://localhost:%s/api/assets/create', PORT);
+    console.log('example 6 (get): http://localhost:%s/api/assets/Cage/history', PORT);
+    console.log('example 7 (get): http://localhost:%s/api/assets/filter/prosessing-plant/all', PORT);
+    console.log('example 8 (get): http://localhost:%s/api/assets/filter/prosessing-plant/finished', PORT);
+    console.log('example 9 (get): http://localhost:%s/api/assets/filter/health-monitor', PORT);
+    console.log('example 10 (get): http://localhost:%s/api/assets/search/0', PORT);
+    console.log('example 11 (get): http://localhost:%s/api/users/register', PORT);
+    console.log('example 12 (get): http://localhost:%s/api/users/login', PORT);
     console.log('***********************************');
 });

@@ -231,7 +231,7 @@ chaincodeQuery() {
     sleep $DELAY
     echo "Attempting to Query peer0.org${ORG}, Retry after $DELAY seconds."
     set -x
-    peer chaincode query -C $CHANNEL_NAME -n farm -c '{"Args":["queryAllCages"]}' >&log.txt
+    peer chaincode query -C $CHANNEL_NAME -n farm -c '{"Args":["queryAssetsAll"]}' >&log.txt
     res=$?
     set +x
 		let rc=$res
