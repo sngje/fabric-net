@@ -33,17 +33,7 @@ router.post('/register', async function (req, res) {
         });
         return;
     }
-
-    // // Generate token
-    // let token = jwt.sign({
-    //     exp: Math.floor(Date.now() / 1000) + parseInt(constants.jwt_expiretime),
-    //     username: username,
-    //     orgname: orgname
-    // }, req.app.get('secret'));
-
-    // // Output token on console
-    // logger.debug('Token: ' + token);
-
+    
     // request to fabric to enroll
     let response = await fabricNetwork.getRegisteredUser(username, orgname);
 
