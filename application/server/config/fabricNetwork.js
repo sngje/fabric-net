@@ -1,12 +1,15 @@
 'use strict';
 
 // Setting for Hyperledger Fabric
-const {  Wallets,  Gateway} = require('fabric-network');
+const {Wallets,  Gateway} = require('fabric-network');
 const FabricCAServices = require('fabric-ca-client');
 const CHANNEL = 'mychannel';
 const CONTRACT = 'farm';
 const path = require('path');
 const fs = require('fs');
+
+const log4js = require('log4js');
+const logger = log4js.getLogger('FabricNetworkApplication');
 
 const getCCP = async (org) => {
     let ccpPath;
@@ -74,12 +77,12 @@ const getRegisteredUser = async (username, orgname) => {
 
     const walletPath = await getWalletPath(orgname);
     const wallet = await Wallets.newFileSystemWallet(walletPath);
-    console.log(`Wallet path: ${walletPath}`);
+    logger.info(`Wallet path: ${walletPath}`);
 
     // Check to see if username enrolled already
     const userIdentity = await wallet.get(username);
     if (userIdentity) {
-        console.log(`An identity for the user ${username} already exists in the wallet`);
+        logger.info(`An identity for the user ${username} already exists in the wallet`);
         let response = {
             success: true,
             message: username + ' enrolled Successfully',
@@ -90,10 +93,10 @@ const getRegisteredUser = async (username, orgname) => {
     // Check to see if we've already enrolled the admin user.
     let adminIdentity = await wallet.get('admin');
     if (!adminIdentity) {
-        console.log('An identity for the admin user "admin" does not exist in the wallet');
+        logger.info('An identity for the admin user "admin" does not exist in the wallet');
         await enrollAdmin(orgname, ccp);
         adminIdentity = await wallet.get('admin');
-        console.log("Admin Enrolled Successfully");
+        logger.info("Admin Enrolled Successfully");
     }
 
     // build a user object for authenticating with the CA
@@ -142,7 +145,7 @@ const getRegisteredUser = async (username, orgname) => {
     }
 
     await wallet.put(username, x509Identity);
-    console.log(`Successfully registered and enrolled admin user ${username} and imported it into the wallet`);
+    logger.info(`Successfully registered and enrolled admin user ${username} and imported it into the wallet`);
 
     let response = {
         success: true,
@@ -154,11 +157,11 @@ const getRegisteredUser = async (username, orgname) => {
 const isUserRegistered = async  (username, orgname) => {
     const walletPath = await getWalletPath(orgname);
     const wallet = await Wallets.newFileSystemWallet(walletPath);
-    console.log(`Wallet path: ${walletPath}`);
+    logger.info(`Wallet path: ${walletPath}`);
 
     const userIdentity = await wallet.get(username);
     if (userIdentity) {
-        console.log(`An identity for the user ${username} exists in the wallet`);
+        logger.info(`An identity for the user ${username} exists in the wallet`);
         return true;
     }
     return false;
@@ -182,7 +185,7 @@ const getCaInfo = async (org, ccp) => {
 
 const enrollAdmin = async (org, ccp) => {
 
-    console.log('Calling enroll Admin method')
+    logger.info('Calling enroll Admin method')
 
     try {
 
@@ -193,12 +196,12 @@ const enrollAdmin = async (org, ccp) => {
         // Create a new file system based wallet for managing identities.
         const walletPath = await getWalletPath(org) //path.join(process.cwd(), 'wallet');
         const wallet = await Wallets.newFileSystemWallet(walletPath);
-        console.log(`Wallet path: ${walletPath}`);
+        logger.info(`Wallet path: ${walletPath}`);
 
         // Check to see if we've already enrolled the admin user.
         const identity = await wallet.get('admin');
         if (identity) {
-            console.log('An identity for the admin user "admin" already exists in the wallet');
+            logger.info('An identity for the admin user "admin" already exists in the wallet');
             return;
         }
 
@@ -235,7 +238,7 @@ const enrollAdmin = async (org, ccp) => {
         }
 
         await wallet.put('admin', x509Identity);
-        console.log('Successfully enrolled admin user "admin" and imported it into the wallet');
+        logger.info('Successfully enrolled admin user "admin" and imported it into the wallet');
         return
     } catch (error) {
         console.error(`Failed to enroll admin user "admin": ${error}`);
@@ -254,7 +257,7 @@ async function connectNetwork(username, orgname) {
     // Check to see if we've already enrolled the user.
     const userExists = await wallet.get(username);
     if (!userExists) {
-        console.log('An identity for the user "%s" does not exist in the wallet', username);
+        logger.info('An identity for the user "%s" does not exist in the wallet', username);
         return;
     }
     // Create a new gateway for connecting to our peer node.

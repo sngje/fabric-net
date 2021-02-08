@@ -35,12 +35,12 @@ def login():
 		if user and bcrpyt.check_password_hash(user.password, form.password.data):
 			login_user(user, remember=True)
 			req = {
-				'username': f'{user.email}',
+				'email': f'{user.email}',
 				'orgname': f'{user.orgname}'
 			}
 			req = json.loads(json.dumps(req))
 			# send the data to get new token
-			r = requests.post('http://localhost:3000/api/login', json=req)
+			r = requests.post('http://localhost:3000/api/users/login', json=req)
 			response = r.json()
 			print(response)
 			if r.status_code != 200:
@@ -75,13 +75,13 @@ def register():
 	form = RegistirationForm()
 	if form.validate_on_submit():
 		req = {
-			'username': f'{form.email.data}',
+			'email': f'{form.email.data}',
 			'orgname': f'{form.orgname.data}'
 		}
 		req = json.loads(json.dumps(req))
 		print(req)
 		# send the data
-		r = requests.post('http://localhost:3000/api/register', json=req) 
+		r = requests.post('http://localhost:3000/api/users/register', json=req) 
 		if r.status_code != 200:
 			flash("Something went wrong, please try again (", "error")
 			return redirect(url_for('register'))
