@@ -6,7 +6,7 @@
         <div class="timeline-event">
           <div class="card timeline-content">
             <div class="card-content">
-              <span class="card-title activator grey-text text-darken-4">{{ cage_id }}<i class="material-icons right">more_vert</i></span>
+              <span class="card-title activator grey-text text-darken-4">{{ asset_id }}<i class="material-icons right">more_vert</i></span>
               <p>Age: <b>{{ transactions['age'] }}</b></p>
               <p>Vaccination: <b>{{ transactions['vaccination'] }}</b></p>
               <p>Step: <b>{{ transactions['step'] }}</b></p>
@@ -33,7 +33,7 @@
     </div>
     <hr/>
     <div class="row">
-    <form class="col s12" action="{{ url_for('processing_plant', cage_id=cage_id) }}" method="POST">
+    <form class="col s12" action="{{ url_for('processing_start', asset_id=asset_id) }}" method="POST">
         <div class="row">
           {% if transactions['step'] == 4 %}
             <div class="input-field col s6">

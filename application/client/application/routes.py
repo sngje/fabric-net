@@ -5,24 +5,21 @@ from .forms import RegistirationForm, LoginForm
 from flask_login import login_user, current_user, logout_user, login_required
 import requests, json, random, os, time, json, secrets
 
+API_SERVER = 'http://localhost:3000/api'
+
 # Route: home page
 @app.route("/")
 @app.route("/index")
 @login_required
 def index():
 	if current_user.orgname == 'Org1':
-		return redirect(url_for('allcages'));
+		return redirect(url_for('grower_farm'));
 	elif current_user.orgname == 'Org2':
-		return redirect(url_for('processing_getall'));
+		return redirect(url_for('processing_all'));
 	elif current_user.orgname == 'Org3':
-		return redirect(url_for('processing_getall'));
+		return redirect(url_for('processing_all'));
 	else:
 		return redirect(url_for('register'));
-
-# @app.route("/index")
-# @login_required
-# def index():
-# 	return render_template('index.html', title="Options")
 
 # Route: login page
 @app.route("/login", methods=["POST", "GET"])
@@ -40,10 +37,10 @@ def login():
 			}
 			req = json.loads(json.dumps(req))
 			# send the data to get new token
-			r = requests.post('http://localhost:3000/api/users/login', json=req)
-			response = r.json()
+			response = requests.post(f'{API_SERVER}/users/login', json=req)
+			response = response.json()
 			print(response)
-			if r.status_code != 200:
+			if response.status_code != 200:
 				flash(req, "error")
 				return redirect(url_for('register'))
 			if response['success']:
@@ -52,11 +49,11 @@ def login():
 				db.session.commit()
 				# next_page = request.args.get('next')
 				if user.orgname == 'Org1':
-					return redirect(url_for('allcages'));
+					return redirect(url_for('grower_farm'));
 				elif user.orgname == 'Org2':
-					return redirect(url_for('processing_getall'));
+					return redirect(url_for('processing_all'));
 				elif user.orgname == 'Org3':
-					return redirect(url_for('processing_getall'));
+					return redirect(url_for('processing_all'));
 				else:
 					return redirect(url_for(index));
 				# return redirect(next_page) if next_page else redirect(url_for('index'))
@@ -81,11 +78,11 @@ def register():
 		req = json.loads(json.dumps(req))
 		print(req)
 		# send the data
-		r = requests.post('http://localhost:3000/api/users/register', json=req) 
-		if r.status_code != 200:
+		response = requests.post(f'{API_SERVER}/users/register', json=req) 
+		if response.status_code != 200:
 			flash("Something went wrong, please try again (", "error")
 			return redirect(url_for('register'))
-		response = r.json()
+		response = response.json()
 		if response['success']:
 			hashed_password = bcrpyt.generate_password_hash(form.password.data).decode('utf-8')
 			user = User(email=form.email.data, orgname=form.orgname.data, password=hashed_password)
@@ -105,144 +102,148 @@ def logout():
     return redirect(url_for('login'))
 
 # Route: query cages page
-@app.route("/live/")
-@app.route("/live/<string:bookmark>")
+@app.route("/grower-farm")
+@app.route("/grower-farm/<string:bookmark>")
 @login_required
-def allcages(bookmark=0):
+def grower_farm(bookmark=0):
 	headers = header_info(current_user.token)
-	r = requests.get(f'http://localhost:3000/api/assets/all/{bookmark}', headers=headers) 
-	transactions = r.json()
+	response = requests.get(f'{API_SERVER}/assets/all/{bookmark}', headers=headers) 
+	transactions = response.json()
 	print(transactions)
 	if len(transactions['data']) == 0:
 		return render_template('empty_list.html', title="Current state", text="Nothing found")
 	return render_template('cages.html', title="Current state", bookmark=bookmark, transactions=transactions)
 
 # Route: history page
-@app.route("/history/<string:cage_id>")
+@app.route("/assets/<string:asset_id>/history")
 @login_required
-def history(cage_id):
+def history(asset_id):
 	headers = header_info(current_user.token)
-	r = requests.get(f'http://localhost:3000/api/history/{cage_id}', headers=headers) 
-	transactions = r.json()
-	return render_template(f'history.html', title=f"History for {cage_id}", cage_id=cage_id, transactions=transactions)
+	response = requests.get(f'{API_SERVER}/assets/{asset_id}/history', headers=headers) 
+	transactions = response.json()
+	return render_template(f'history.html', title=f"History for {asset_id}", asset_id=asset_id, transactions=transactions)
 
 
-# Route: injection check up
-@app.route("/health_monitor")
-@app.route("/health_monitor/<string:bookmark>")
+# Route: health_monitor check up
+@app.route("/grower-farm/health_monitor")
+@app.route("/grower-farm/health_monitor/<string:bookmark>")
 @login_required
-def injection(bookmark=0):
+def health_monitor(bookmark=0):
 	headers = header_info(current_user.token)
-	r = requests.get(f'http://localhost:3000/api/show-uninjected-assets/{bookmark}', headers=headers) 
-	if r.status_code != 200:
+	response = requests.get(f'{API_SERVER}/assets/filter/health-monitor/{bookmark}', headers=headers) 
+	if response.status_code != 200:
 		flash("All cages are injected", "info")
-		return redirect(url_for('allcages'))
-	transactions = r.json()
+		return redirect(url_for('grower_farm'))
+	transactions = response.json()
 	if len(transactions['data']) == 0:
 		return render_template('empty_list.html', title="Health monitor", text="Nothing found")
-	return render_template('injection.html', title="Health monitor", bookmark=bookmark, transactions=transactions)
-
-# Route: show all processing plant data
-@app.route("/processing_plant/getall")
-@app.route("/processing_plant/getall/<string:bookmark>")
-@login_required
-def processing_getall(bookmark=0):
-	headers = header_info(current_user.token)
-	r = requests.get(f'http://localhost:3000/api/processing-plant/all/{bookmark}', headers=headers) 
-	if r.status_code != 200:
-		flash("List is currently empty", "info")
-		return redirect(url_for('index'))
-	transactions = r.json()
-	if len(transactions['data']) == 0:
-		return render_template('empty_list.html', title="Processing plant", text="Nothing found")
-	return render_template('processing_getall.html', title="Processing plant - current state", bookmark=bookmark, transactions=transactions)
-
-# Route: show all processing plant data
-@app.route("/processing_plant/finished")
-@app.route("/processing_plant/finished/<string:bookmark>")
-@login_required
-def processing_finished(bookmark=0):
-	headers = header_info(current_user.token)
-	r = requests.get(f'http://localhost:3000/api/processing-plant/finished/{bookmark}', headers=headers) 
-	if r.status_code != 200:
-		flash("Error occured, please ask from back-end team", "info")
-		return redirect(url_for('index'))
-	transactions = r.json()
-	if len(transactions['data']) == 0:
-		return render_template('empty_list.html', title="Processing plant - finished products", text="Finished products not found")
-	return render_template('processing_finished.html', title="Processing plant - finished products", bookmark=bookmark, transactions=transactions)
-
-# Route: inject
-@app.route("/inject/<string:cage_id>")
-@login_required
-def inject(cage_id):
-	headers = header_info(current_user.token)
-	r = requests.put(f'http://localhost:3000/api/inject/{cage_id}', headers=headers) 
-	transactions = r.json()
-	flash(transactions['response'], "success")
-	return redirect(url_for('injection'))
-	# return render_template('transaction.html', title=f"Inject cage - {cage_id}", cage_id=cage_id, transactions=transactions)
-
-# Route: changeage
-@app.route("/changeage/<string:cage_id>/<int:new_age>")
-@login_required
-def changeage(cage_id, new_age):
-	headers = header_info(current_user.token)
-	req = {
-			'new_age': int(new_age)
-		}
-	req = json.loads(json.dumps(req))
-	r = requests.put(f'http://localhost:3000/api/update-asset-age/{cage_id}', headers=headers, json=req) 
-	transactions = r.json()
-	print(transactions)
-	if r.status_code != 200:
-		flash(transactions['error'], "error")
-		return redirect(url_for('allcages'))
-	flash(transactions['response'], "success")
-	return redirect(url_for('allcages'))
-	# return render_template('transaction.html', title=f"Change age - {cage_id}", cage_id=cage_id, transactions=transactions)
-
-# Route: delete
-@app.route("/delete/<string:cage_id>")
-@login_required
-def delete(cage_id):
-	headers = header_info(current_user.token)
-	r = requests.delete(f'http://localhost:3000/api/delete/{cage_id}', headers=headers) 
-	if r.status_code != 200:
-		flash('Cage not found', "warning")
-		return redirect(url_for('allcages'))
-	transactions = r.json()
-	flash(transactions['response'], "success")
-	return render_template('transaction.html', title=f"Deleted - {cage_id}", cage_id=cage_id, transactions=transactions)
+	return render_template('health_monitor.html', title="Health monitor", bookmark=bookmark, transactions=transactions)
 
 # Route: create cage
-@app.route("/create_cage", methods=["POST", "GET"])
+@app.route("/grower-farm/create", methods=["POST", "GET"])
 @login_required
-def create_cage():
+def create_asset():
 	headers = header_info(current_user.token)
 	if request.method == "POST":
 		key = request.form['id']
 		age = int(request.form['age'])
-		vaccination = 'true' if (request.form.get('vaccination', False)) != False else 'false'
+		# vaccination = 'true' if (request.form.get('vaccination', False)) != False else 'false'
 
-		req = {
-			'id': f'{key}',
-			'age': f'{age}',
-			'vaccination': f'{vaccination}'
-			}
+		req = {'id': f'{key}', 'age': f'{age}'}
 		req = json.loads(json.dumps(req))
 		# send the data
-		r = requests.post('http://localhost:3000/api/create-asset', json=req, headers=headers) 
-		if r.status_code != 200:
+		response = requests.post(f'{API_SERVER}/assets/create', json=req, headers=headers) 
+		if response.status_code != 200:
 			flash("Something went wrong, please try again (", "error")
-			return redirect(url_for('create_cage'))
-		transactions = r.json()
+			return redirect(url_for('create_asset'))
+		transactions = response.json()
 		flash(transactions['response'], "success")
-		return redirect(url_for('allcages'))
-	return render_template('create_cage.html', title="Create cage")
+		return redirect(url_for('grower_farm'))
+	return render_template('create_asset.html', title="Create cage")
+
+# Route: inject
+@app.route("/assets/<string:asset_id>/update/vaccination")
+@login_required
+def update_vaccination(asset_id):
+	headers = header_info(current_user.token)
+	response = requests.put(f'{API_SERVER}/assets/{asset_id}/update/vaccination', headers=headers) 
+	transactions = response.json()
+	flash(transactions['response'], "success")
+	return redirect(url_for('health_monitor'))
+	# return render_template('transaction.html', title=f"Inject cage - {asset_id}", asset_id=asset_id, transactions=transactions)
+
+# Route: changeage
+@app.route("/assets/<string:asset_id>/update/age")
+@login_required
+def update_age(asset_id):
+	headers = header_info(current_user.token)
+	response = requests.put(f'{API_SERVER}/assets/{asset_id}/update/age', headers=headers) 
+	transactions = response.json()
+	print(transactions)
+	if response.status_code != 200:
+		flash(transactions['error'], "error")
+		return redirect(url_for('grower_farm'))
+	flash(transactions['response'], "success")
+	return redirect(url_for('grower_farm'))
+	# return render_template('transaction.html', title=f"Change age - {asset_id}", asset_id=asset_id, transactions=transactions)
+
+# Route: delete
+@app.route("/assets/<string:asset_id>/delete")
+@login_required
+def delete(asset_id):
+	headers = header_info(current_user.token)
+	response = requests.delete(f'{API_SERVER}/assets/{asset_id}/delete', headers=headers) 
+	if response.status_code != 200:
+		flash('Cage not found', "warning")
+		return redirect(url_for('grower_farm'))
+	transactions = response.json()
+	flash(transactions['response'], "success")
+	return redirect(url_for('grower_farm'))
+	# return render_template('transaction.html', title=f"Deleted - {asset_id}", asset_id=asset_id, transactions=transactions)
+
+# Route: edit asset
+@app.route("/assets/<string:asset_id>/edit", methods=["POST", "GET"])
+@login_required
+def edit(asset_id):
+	headers = header_info(current_user.token)
+	if request.method == "POST":
+		age = request.form.get('age', 0)
+		vaccination = request.form.get('vaccination', 0)
+		step = request.form.get('step', 1)
+
+		req = {
+			'age': f'{age}',
+			'vaccination': f'{vaccination}',
+			'step': f'{step}'
+			}
+		req = json.loads(json.dumps(req))
+		# print(req)
+
+		response = requests.put(f'{API_SERVER}/assets/{asset_id}/edit', json=req, headers=headers)
+		
+		# check for error
+		if response.status_code != 200:
+			flash(req, "error")
+			return redirect(url_for('grower_farm'))
+		
+		transactions = response.json()
+		flash("Updated successfully", "success")
+		flash(f"Transaction ID: {transactions['tx_id']}", "success")
+		return redirect(url_for('grower_farm', asset_id=asset_id))
+		# return render_template(f'edit.html', title=f"Data - {asset_id}", asset_id=asset_id, transactions=transactions)
+	else:
+		response = requests.get(f'{API_SERVER}/assets/{asset_id}', headers=headers) 
+		
+		# check for error
+		if response.status_code != 200:
+			flash("Cage not found", "error")
+			return redirect(url_for('grower_farm'))
+
+		transactions = response.json()
+		return render_template(f'edit.html', title=f"Edit - {asset_id}", asset_id=asset_id, transactions=transactions)
 
 # Route: create cage
-@app.route("/search/", methods=["POST", "GET"])
+@app.route("/assets/search/", methods=["POST", "GET"])
 @login_required
 def search():
 	headers = header_info(current_user.token)
@@ -258,20 +259,51 @@ def search():
 		}
 	req = json.loads(json.dumps(req))
 	# send the data
-	r = requests.get('http://localhost:3000/api/search/0/', json=req, headers=headers) 
-	if r.status_code != 200:
+	response = requests.get(f'{API_SERVER}/assets/search/0/', json=req, headers=headers) 
+	if response.status_code != 200:
 		flash(req, "error")
 		return redirect(url_for('search'))
-	transactions = r.json()
+	transactions = response.json()
 	if len(transactions['data']) == 0:
 		return render_template('empty_list.html', title="Advanced search results", text="Nothing found")
 	flash("Founded results", "success")
 	return render_template('cages.html', title="Advanced search results", transactions=transactions)
 
-# Route: individual cage
-@app.route("/processing_plant/<string:cage_id>", methods=["POST", "GET"])
+# Route: show all processing plant data
+@app.route("/processing-plant/all")
+@app.route("/processing-plant/all/<string:bookmark>")
 @login_required
-def processing_plant(cage_id):
+def processing_all(bookmark=0):
+	headers = header_info(current_user.token)
+	response = requests.get(f'{API_SERVER}/assets/filter/processing-plant/all/{bookmark}', headers=headers) 
+	if response.status_code != 200:
+		flash("List is currently empty", "info")
+		return redirect(url_for('index'))
+	transactions = response.json()
+	if len(transactions['data']) == 0:
+		return render_template('empty_list.html', title="Processing plant", text="Nothing found")
+	return render_template('processing_all.html', title="Processing plant - current state", bookmark=bookmark, transactions=transactions)
+
+# Route: show all processing plant data
+@app.route("/processing-plant/finished")
+@app.route("/processing-plant/finished/<string:bookmark>")
+@login_required
+def processing_finished(bookmark=0):
+	headers = header_info(current_user.token)
+	response = requests.get(f'{API_SERVER}/assets/filter/processing-plant/finished/{bookmark}', headers=headers) 
+	if response.status_code != 200:
+		flash("Error occured, please ask from back-end team", "info")
+		return redirect(url_for('index'))
+	transactions = response.json()
+	if len(transactions['data']) == 0:
+		return render_template('empty_list.html', title="Processing plant - finished products", text="Finished products not found")
+	return render_template('processing_finished.html', title="Processing plant - finished products", bookmark=bookmark, transactions=transactions)
+
+
+# Route: individual cage
+@app.route("/processing-plant/<string:asset_id>", methods=["POST", "GET"])
+@login_required
+def processing_start(asset_id):
 	headers = header_info(current_user.token)
 	if request.method == "POST":
 		acceptable = request.form.get('acceptable', 0)
@@ -283,64 +315,23 @@ def processing_plant(cage_id):
 			}
 		req = json.loads(json.dumps(req))
 		
-		r = requests.put(f'http://localhost:3000/api/processing-plant/{cage_id}', json=req, headers=headers)
+		response = requests.put(f'{API_SERVER}/assets/{asset_id}/processing-plant', json=req, headers=headers)
 		
 		# check for error
-		if r.status_code != 200:
+		if response.status_code != 200:
 			flash(req, "error")
-			return redirect(url_for('allcages'))
+			return redirect(url_for('grower_farm'))
 		
-		transactions = r.json()
+		transactions = response.json()
 		flash("Updated successfully", "success")
-		# return redirect(url_for('processing_plant', cage_id=cage_id, tx_id=transactions['tx_id']))
-		return render_template(f'processing_plant.html', title=f"Processing plant - {cage_id}", cage_id=cage_id, transactions=transactions)
+		# return redirect(url_for('processing_plant', asset_id=asset_id, tx_id=transactions['tx_id']))
+		return render_template(f'processing_plant.html', title=f"Processing plant - {asset_id}", asset_id=asset_id, transactions=transactions)
 	else:
-		r = requests.get(f'http://localhost:3000/api/get-asset/{cage_id}', headers=headers) 
+		response = requests.get(f'{API_SERVER}/assets/{asset_id}', headers=headers) 
 		
 		# check for error
-		if r.status_code != 200:
+		if response.status_code != 200:
 			flash("Cage not found", "error")
-			return redirect(url_for('processing_plant', cage_id=cage_id))
-		transactions = r.json()
-		return render_template(f'processing_plant.html', title=f"Processing plant - {cage_id}", cage_id=cage_id, transactions=transactions)
-
-# Route: edit asset
-@app.route("/edit/<string:cage_id>", methods=["POST", "GET"])
-@login_required
-def edit(cage_id):
-	headers = header_info(current_user.token)
-	if request.method == "POST":
-		age = request.form.get('age', 0)
-		vaccination = request.form.get('vaccination', 0)
-		step = request.form.get('step', 1)
-
-		req = {
-			'age': f'{age}',
-			'vaccination': f'{vaccination}',
-			'step': f'{step}'
-			}
-		req = json.loads(json.dumps(req))
-		# print(req)
-
-		r = requests.put(f'http://localhost:3000/api/update-asset/{cage_id}', json=req, headers=headers)
-		
-		# check for error
-		if r.status_code != 200:
-			flash(req, "error")
-			return redirect(url_for('allcages'))
-		
-		transactions = r.json()
-		flash("Updated successfully", "success")
-		flash(f"Transaction ID: {transactions['tx_id']}", "success")
-		# return redirect(url_for('processing_plant', cage_id=cage_id, tx_id=transactions['tx_id']))
-		return render_template(f'edit.html', title=f"Data - {cage_id}", cage_id=cage_id, transactions=transactions)
-	else:
-		r = requests.get(f'http://localhost:3000/api/get-asset/{cage_id}', headers=headers) 
-		
-		# check for error
-		if r.status_code != 200:
-			flash("Cage not found", "error")
-			return redirect(url_for('allcages'))
-
-		transactions = r.json()
-		return render_template(f'edit.html', title=f"Edit - {cage_id}", cage_id=cage_id, transactions=transactions)
+			return redirect(url_for('processing_plant', asset_id=asset_id))
+		transactions = response.json()
+		return render_template(f'processing_plant.html', title=f"Processing plant - {asset_id}", asset_id=asset_id, transactions=transactions)

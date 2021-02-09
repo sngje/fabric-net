@@ -16,12 +16,12 @@
         {% for arr in transactions['data'] %}
         <tr>
           <td style="text-transform:uppercase;">
-            <a href="{{ url_for('history', cage_id=arr['key'])}}" title="See history">{{ arr['key'] }}</a>
+            <a href="{{ url_for('history', asset_id=arr['key'])}}" title="See history">{{ arr['key'] }}</a>
             </td>
           <td>{{ arr['data']['processing_plant']['deliverer'] }}</td>
           <td>{{ arr['data']['processing_plant']['inspected'] }}</td>
           <td>{{ arr['data']['processing_plant']['status'] }}</td>
-          <td><a href="{{ url_for('delete', cage_id=arr['key']) }}" title="Delete"><i class="material-icons md-30">&nbsp;delete</i></a></td>
+          <td><a href="{{ url_for('delete', asset_id=arr['key']) }}" title="Delete"><i class="material-icons md-30">&nbsp;delete</i></a></td>
         </tr>
         {% endfor %}
       </tbody>

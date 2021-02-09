@@ -182,7 +182,7 @@ class Farm extends Contract {
 
         // control step and update if needed
         if (newAsset.step < 6) {
-            newAsset.step = asset.step + 1;
+            newAsset.step = newAsset.step + 1;
         } else {
             throw new Error('Processing plant was finished');
         }

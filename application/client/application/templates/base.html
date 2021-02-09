@@ -35,10 +35,10 @@
               <div id="dash_users_body" class="collapsible-body">
                 <ul>
                   <li id="users_seller">
-                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('allcages') }}">Current state</a>
+                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('grower_farm') }}">Current state</a>
                   </li>
                   <li id="users_customer">
-                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('injection') }}">Health monitor</a>
+                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('health_monitor') }}">Health monitor</a>
                   </li>
                 </ul>
               </div>
@@ -54,7 +54,7 @@
               <div id="dash_products_body" class="collapsible-body">
                 <ul>
                   <li id="products_product">
-                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('processing_getall') }}">Current state</a>
+                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('processing_all') }}">Current state</a>
                     <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('processing_finished') }}">Finished products</a>
                   </li>
                 </ul>
@@ -71,7 +71,7 @@
               <div id="dash_users_body" class="collapsible-body">
                 <ul>
                   <li id="users_customer">
-                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('create_cage') }}">Create cage</a>
+                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('create_asset') }}">Create cage</a>
                   </li>
                   
                   <li id="users_customer">
@@ -143,11 +143,11 @@
         <nav>
           <div class="nav-wrapper our-colour darken-2">
             {% if current_user.orgname == "Org1" %}
-              <a style="margin-left: 20px;font-size: 14.5px;" class="breadcrumb" href="{{ url_for('allcages') }}">Home</a>
+              <a style="margin-left: 20px;font-size: 14.5px;" class="breadcrumb" href="{{ url_for('grower_farm') }}">Home</a>
             {% elif current_user.orgname == "Org2" %}
-              <a style="margin-left: 20px;font-size: 14.5px;" class="breadcrumb" href="{{ url_for('processing_getall') }}">Home</a>
+              <a style="margin-left: 20px;font-size: 14.5px;" class="breadcrumb" href="{{ url_for('processing_all') }}">Home</a>
             {% elif current_user.orgname == "Org3" %}
-              <a style="margin-left: 20px;font-size: 14.5px;" class="breadcrumb" href="{{ url_for('live') }}">Home</a>
+              <a style="margin-left: 20px;font-size: 14.5px;" class="breadcrumb" href="{{ url_for('grower_farm') }}">Home</a>
             {% endif %}
             <a style="font-size: 14.5px;" class="breadcrumb" href="#">{{ title }}</a>
     

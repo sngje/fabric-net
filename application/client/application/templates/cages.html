@@ -16,18 +16,18 @@
         <tbody>
           {% for arr in transactions['data'] %}
           <tr>
-            <td style="text-transform:uppercase;"><a href="{{ url_for('edit', cage_id=arr['key']) }}" title="Edit">{{ arr['key'] }}</a></td>
+            <td style="text-transform:uppercase;"><a href="{{ url_for('edit', asset_id=arr['key']) }}" title="Edit">{{ arr['key'] }}</a></td>
             <td>{{ arr['data']['age'] }}</td>
             <td>{{ arr['data']['vaccination'] }}</td>
             <!-- <td>{{ arr['data']['step'] }}</td> -->
-            <td><a href="{{ url_for('changeage', cage_id=arr['key'], new_age=arr['data']['age']|int + 1) }}" title="Update"><i class="material-icons md-30">&nbsp;update</i></a></td>
-            <td><a href="{{ url_for('history', cage_id=arr['key']) }}" title="See history"><i class="material-icons md-30">&nbsp;track_changes</i></a></td>
+            <td><a href="{{ url_for('update_age', asset_id=arr['key']) }}" title="Update"><i class="material-icons md-30">&nbsp;update</i></a></td>
+            <td><a href="{{ url_for('history', asset_id=arr['key']) }}" title="See history"><i class="material-icons md-30">&nbsp;track_changes</i></a></td>
             {% if arr['data']['age']|int >= 5 and arr['data']['vaccination'] %}
-              <td><a href="{{ url_for('processing_plant', cage_id=arr['key']) }}" title="Update"><i class="material-icons md-30">&nbsp;autorenew</i></a></td>
+              <td><a href="{{ url_for('processing_start', asset_id=arr['key']) }}" title="Update"><i class="material-icons md-30">&nbsp;autorenew</i></a></td>
             {% else %}
               <td><i class="material-icons md-30">&nbsp;autorenew</i></td>
             {% endif %}
-            <td><a href="{{ url_for('delete', cage_id=arr['key']) }}" title="Delete"><i class="material-icons md-30">&nbsp;delete</i></a></td>
+            <td><a href="{{ url_for('delete', asset_id=arr['key']) }}" title="Delete"><i class="material-icons md-30">&nbsp;delete</i></a></td>
           </tr>
           {% endfor %}
         </tbody>
@@ -48,7 +48,7 @@
       {% endif %}
       {% if transactions['meta_data']['fetchedRecordsCount'] >= 10 %}
         <li class="waves-effect">
-          <a href="{{ url_for('allcages', bookmark=transactions['meta_data']['bookmark']) }}">
+          <a href="{{ url_for('grower_farm', bookmark=transactions['meta_data']['bookmark']) }}">
             <i class="material-icons">chevron_right</i>
           </a>
         </li>
@@ -56,7 +56,7 @@
         <li class="disabled"><a href="#!"><i class="material-icons">chevron_right</i></a></li>
       {% endif %}
     </ul>
-    <a class="waves-effect our-colour waves-light btn" href="{{ url_for('create_cage') }}"><i class="material-icons left">add_circle</i>Add cage</a>
+    <a class="waves-effect our-colour waves-light btn" href="{{ url_for('create_asset') }}"><i class="material-icons left">add_circle</i>Add cage</a>
     
 {% endblock %}
 
