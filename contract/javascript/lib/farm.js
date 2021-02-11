@@ -132,6 +132,38 @@ class Farm extends Contract {
         return ctx.stub.getTxID();
     }
 
+    // phase shows different divistion as number
+    // phase 1 = PROCESSING_PLANT
+    // phase 2 = DELIVERY
+    async startProcessingPlant(ctx, id, phase) {
+        const currentAsset = await this.getAsset(ctx, id);
+        // get the data as json format
+        const newAsset = JSON.parse(currentAsset);
+        if (newAsset.age < 5 || newAsset.vaccination != true) {
+            throw new Error('Asset is not accaptable yet, age must be 5 and vaccination should be true');
+        }
+
+        if (phase == 1) {
+            // add new dictinoary if not exists
+            if (typeof newAsset.processing_plant == 'undefined') {
+                newAsset.processing_plant = {};
+            }
+            newAsset.processing_plant.started = 'PENDING';
+        } else if (phase ==  2) {
+            // add new dictinoary if not exists
+            if (typeof newAsset.delivery == 'undefined') {
+                newAsset.delivery = {};
+            }
+            newAsset.delivery.started = 'PENDING';
+        } else {
+            throw new Error('Phase not found, please check the value and try again');
+        }
+        
+        // update the state
+        await ctx.stub.putState(id, Buffer.from(JSON.stringify(newAsset)));
+        return ctx.stub.getTxID();
+    }
+
     // Prosessing plant logic goes here
     async upgradeAssetToProsessingPlant(ctx, id, acceptable, deliverer) {
         // check data if exists
@@ -161,9 +193,9 @@ class Farm extends Contract {
                 status = "UNDEFINED_STATUS";
         };
 
-        // add new dictinoary if not exists
-        if (typeof newAsset.processing_plant == 'undefined') {
-            newAsset.processing_plant = {};
+        // update started field to 'CONFIRMED' 
+        if (newAsset.processing_plant.started === 'PENDING') {
+            newAsset.processing_plant.started = 'CONFIRMED';
         }
 
         //update status

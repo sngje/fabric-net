@@ -26,7 +26,7 @@
 
         <ul class="collapsible" data-collapsible="accordion">
           {% if current_user.orgname == "Org1" %}
-            <li id="dash_users" class="active">
+            <li id="dash_users">
               <div id="dash_users_header" class="collapsible-header waves-effect waves-light">
                 <span class="valign-wrapper">
                   <i class="material-icons">view_list</i> <b> Grower farm</b>
@@ -44,8 +44,8 @@
               </div>
             </li>
           {% endif %}
-          {% if current_user.orgname == "Org2" %}
-            <li id="dash_products" class="active">
+          {% if current_user.orgname == "Org1" %}
+            <li id="dash_products">
               <div id="dash_products_header" class="collapsible-header waves-effect waves-light">
                 <span class="valign-wrapper">
                   <i class="material-icons">view_list</i> <b> Processing plant</b>

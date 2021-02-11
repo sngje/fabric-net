@@ -46,7 +46,7 @@ async function main() {
         for (let i = 11; i < 100; i ++) {
             let randomAge = Math.floor(Math.random() * (5 - 1 + 1));
             let randomCondition = Math.floor(Math.random() * 2);
-            let tx = await contract.submitTransaction('createCage', 'Cage' + i, v_status[randomCondition], randomAge);
+            let tx = await contract.submitTransaction('createAsset', 'ASSET' + i, randomAge);
             console.log(`${i} ok - ${tx.toString()}`);
         }
 

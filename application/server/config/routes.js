@@ -271,74 +271,6 @@ router.get('/assets/filter/health-monitor/:bookmark', async function (req, res) 
     }
 });
 
-// Query to get processing plant data
-router.get('/assets/filter/processing-plant/all/:bookmark', async function (req, res) {
-    const decoded = helper.decodeJwt(req.headers['authorization']);
-    try {
-        // Get the contract from the network
-        const {contract, gateway} = await fabricNetwork.connectNetwork(decoded['email'], decoded['orgname']);
-
-        let queryString = {
-            selector: {
-                step: {"$gt": 1}
-            }
-        };
-        let bookmark = (req.params.bookmark !== '0') ? req.params.bookmark : ''; 
-        const result = await contract.evaluateTransaction('queryAssetsWithPagination',
-                    JSON.stringify(queryString), 10,
-                    bookmark);
-        let objects = JSON.parse(result);
-       
-        // check what we have
-        if (objects.length === 0) {
-            throw new Error('Nothing found');
-        }
-
-        logger.info(objects);
-        res.status(200).json(objects);
-
-        // disconnect the gateway
-        // await gateway.disconnect();
-    } catch (error) {
-        logger.error(`Failed to evaluate transaction: ${error}`);
-        res.status(500).json({error: 'Failed to evaluate transaction. Please try again'});
-    }
-});
-
-// Query to get finished processing plant data
-router.get('/assets/filter/processing-plant/finished/:bookmark', async function (req, res) {
-    const decoded = helper.decodeJwt(req.headers['authorization']);
-    try {
-        // Get the contract from the network
-        const {contract, gateway} = await fabricNetwork.connectNetwork(decoded['email'], decoded['orgname']);
-
-        let queryString = {
-            selector: {
-                step: {"$eq": 6}
-            }
-        };
-        let bookmark = (req.params.bookmark !== '0') ? req.params.bookmark : ''; 
-        const result = await contract.evaluateTransaction('queryAssetsWithPagination',
-                    JSON.stringify(queryString), 10,
-                    bookmark);
-        let objects = JSON.parse(result);
-       
-        // check what we have
-        if (objects.length === 0) {
-            throw new Error('Nothing found');
-        }
-
-        logger.info(objects);
-        res.status(200).json(objects);
-
-        // disconnect the gateway
-        // await gateway.disconnect();
-    } catch (error) {
-        logger.error(`Failed to evaluate transaction: ${error}`);
-        res.status(500).json({error: 'Failed to evaluate transaction. Please try again'});
-    }
-});
-
 // Search query with different parameters
 router.get('/assets/search/:bookmark', async function (req, res) {
     const decoded = helper.decodeJwt(req.headers['authorization']);
@@ -428,8 +360,82 @@ router.put('/assets/:id/update/age', async function (req, res) {
     }
 });
 
+// Query to get processing plant data
+router.get('/processing-plant/assets/all/:bookmark', async function (req, res) {
+    const decoded = helper.decodeJwt(req.headers['authorization']);
+    try {
+        // Get the contract from the network
+        const {contract, gateway} = await fabricNetwork.connectNetwork(decoded['email'], decoded['orgname']);
+
+        let queryString = {
+            selector: {
+                step: {
+                    "$gt": 1,
+                    "$lt": 6
+                },
+                processing_plant: {
+                    started: 'CONFIRMED'
+                }
+            }
+        };
+        let bookmark = (req.params.bookmark !== '0') ? req.params.bookmark : ''; 
+        const result = await contract.evaluateTransaction('queryAssetsWithPagination',
+                    JSON.stringify(queryString), 10,
+                    bookmark);
+        let objects = JSON.parse(result);
+       
+        // check what we have
+        if (objects.length === 0) {
+            throw new Error('Nothing found');
+        }
+
+        logger.info(objects);
+        res.status(200).json(objects);
+
+        // disconnect the gateway
+        // await gateway.disconnect();
+    } catch (error) {
+        logger.error(`Failed to evaluate transaction: ${error}`);
+        res.status(500).json({error: 'Failed to evaluate transaction. Please try again'});
+    }
+});
+
+// Query to get finished processing plant data
+router.get('/processing-plant/assets/finished/:bookmark', async function (req, res) {
+    const decoded = helper.decodeJwt(req.headers['authorization']);
+    try {
+        // Get the contract from the network
+        const {contract, gateway} = await fabricNetwork.connectNetwork(decoded['email'], decoded['orgname']);
+
+        let queryString = {
+            selector: {
+                step: {"$eq": 6}
+            }
+        };
+        let bookmark = (req.params.bookmark !== '0') ? req.params.bookmark : ''; 
+        const result = await contract.evaluateTransaction('queryAssetsWithPagination',
+                    JSON.stringify(queryString), 10,
+                    bookmark);
+        let objects = JSON.parse(result);
+       
+        // check what we have
+        if (objects.length === 0) {
+            throw new Error('Nothing found');
+        }
+
+        logger.info(objects);
+        res.status(200).json(objects);
+
+        // disconnect the gateway
+        // await gateway.disconnect();
+    } catch (error) {
+        logger.error(`Failed to evaluate transaction: ${error}`);
+        res.status(500).json({error: 'Failed to evaluate transaction. Please try again'});
+    }
+});
+
 // Prosessing plant steps
-router.put('/assets/:id/processing-plant', async function (req, res) {
+router.put('/processing-plant/:id', async function (req, res) {
     const decoded = helper.decodeJwt(req.headers['authorization']);
     try {
         // Get the contract from the network
@@ -451,6 +457,29 @@ router.put('/assets/:id/processing-plant', async function (req, res) {
     } catch (error) {
         logger.error(`Failed to evaluate transaction: ${error}`);
         res.status(500).json({error: 'Failed to evaluate transaction. Please try again'});
+    }
+});
+
+// Prosessing plant steps
+router.put('/processing-plant/:id/request', async function (req, res) {
+    const decoded = helper.decodeJwt(req.headers['authorization']);
+    try {
+        // Get the contract from the network
+        const {contract, gateway} = await fabricNetwork.connectNetwork(decoded['email'], decoded['orgname']);
+
+        // Evaluate the specified transaction.
+        // getAsset transaction - requires 1 argument, ex: ('getAsset', 'Cage1')
+        let tx = await contract.submitTransaction('startProcessingPlant', req.params.id, req.body.phase);
+        // let data = await contract.evaluateTransaction('getAsset', req.params.id);
+        // let answer = JSON.parse(data);
+        answer.tx_id = tx.toString();
+        logger.info('Transaction has been evaluated');
+        res.status(200).json(answer);
+        // disconnect the gateway
+        // await gateway.disconnect();
+    } catch (error) {
+        logger.error(`Failed to evaluate transaction: ${error}`);
+        res.status(500).json({error: `Failed to evaluate transaction. ${error}`});
     }
 });
 
