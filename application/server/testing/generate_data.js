@@ -43,10 +43,10 @@ async function main() {
 
         const v_status = [true, false];
 
-        for (let i = 11; i < 100; i ++) {
+        for (let i = 16; i < 100; i ++) {
             let randomAge = Math.floor(Math.random() * (5 - 1 + 1));
             let randomCondition = Math.floor(Math.random() * 2);
-            let tx = await contract.submitTransaction('createAsset', 'ASSET' + i, randomAge);
+            let tx = await contract.submitTransaction('createAsset', 'ASSET' + i, 5);
             console.log(`${i} ok - ${tx.toString()}`);
         }
 

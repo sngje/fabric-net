@@ -171,6 +171,12 @@ main {
     top: 16px;
     right: 5px;
 }
+.toast-container {
+	top: auto !important;
+	right: auto !important;
+	bottom: 10%;
+	left:7%;  
+}
 .materialert.info{
     background-color: #039be5;
     color: #fff;

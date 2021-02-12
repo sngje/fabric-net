@@ -54,6 +54,7 @@
               <div id="dash_products_body" class="collapsible-body">
                 <ul>
                   <li id="products_product">
+                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('processing_confirmation') }}">Products to collect</a>
                     <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('processing_all') }}">Current state</a>
                     <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('processing_finished') }}">Finished products</a>
                   </li>
@@ -159,19 +160,23 @@
         {% block content %}
         {% endblock %}
       </main>
-      
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
       {% with messages = get_flashed_messages(with_categories=True) %}
           {% if messages %}
               {% for category, message in messages %}
-                <div id="alter-box" class="materialert {{ category }}">
+              <script type="text/javascript">
+                toastr.info('Are you the 6 fingered man?');
+              </script>
+                <div id="alter-box" class="materialert {{ category }} toast-container">
                     <i class="material-icons">check</i> {{ message }}
                     <!-- info_outline, check, warning, error_outline -->
                     <button type="button" id="close-alert" class="close-alert">×</button>
-                </div>
+                </div>            
               {% endfor %}
           {% endif %}
       {% endwith %}
       
+  
       <!-- <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>   -->
       <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script> -->
       

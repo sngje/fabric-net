@@ -297,9 +297,25 @@ def processing_finished(bookmark=0):
 	transactions = response.json()
 	if len(transactions['data']) == 0:
 		return render_template('empty_list.html', title="Processing plant - finished products", text="Finished products not found")
-	return render_template('processing_finished.html', title="Processing plant - finished products", bookmark=bookmark, transactions=transactions)
+	return render_template('processing_data.html', title="Processing plant - finished products", finished=True, bookmark=bookmark, transactions=transactions)
 
-# Route: show all processing plant data
+# Route: show all processing plant data - confirmation
+@app.route("/processing-plant/confirmation")
+@app.route("/processing-plant/confirmation/<string:bookmark>")
+@login_required
+def processing_confirmation(bookmark=0):
+	headers = header_info(current_user.token)
+	response = requests.get(f'{API_SERVER}/processing-plant/assets/confirmation/{bookmark}', headers=headers) 
+	if response.status_code != 200:
+		flash("List is currently empty", "info")
+		return redirect(url_for('index'))
+	transactions = response.json()
+	if len(transactions['data']) == 0:
+		return render_template('empty_list.html', title="Processing plant", text="Nothing found")
+	return render_template('processing_data.html', title="Processing plant - confirmation", finished=False, bookmark=bookmark, transactions=transactions)
+
+
+# Route: change asset status to PENDING for processing plant
 @app.route("/assets/<string:asset_id>/request/processing-plant")
 @login_required
 def processing_request(asset_id):
@@ -313,7 +329,7 @@ def processing_request(asset_id):
 	if response.status_code != 200:
 		flash("Error occured, please ask from back-end team", "info")
 		return redirect(url_for('grower_farm'))
-	flash("Transaction successfull! Asset is now in waiting to get confirmation from Processing plant organization ", "error")
+	flash("Asset is now in waiting to get confirmation from Processing plant organization ", "success")
 	return redirect(url_for('grower_farm'))
 
 # Route: individual cage

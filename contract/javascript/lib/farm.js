@@ -148,13 +148,15 @@ class Farm extends Contract {
             if (typeof newAsset.processing_plant == 'undefined') {
                 newAsset.processing_plant = {};
             }
-            newAsset.processing_plant.started = 'PENDING';
+            newAsset.step = 2;
+            newAsset.processing_plant.status = 'PENDING';
         } else if (phase ==  2) {
             // add new dictinoary if not exists
             if (typeof newAsset.delivery == 'undefined') {
                 newAsset.delivery = {};
             }
-            newAsset.delivery.started = 'PENDING';
+            newAsset.step = 8;
+            newAsset.delivery.status = 'PENDING';
         } else {
             throw new Error('Phase not found, please check the value and try again');
         }
@@ -174,29 +176,24 @@ class Farm extends Contract {
 
         // steps by definition
         switch(newAsset.step) {
-            case 1:
+            case 2:
                 status = "RECEIVED";
                 break;
-            case 2:
+            case 3:
                 status = "IN_PREPERATION";
                 break;
-            case 3:
+            case 4:
                 status = "PACKAGING";
                 break;
-            case 4:
+            case 5:
                 status = "SHIPPED";
                 break;
-            case 5:
+            case 6:
                 status = "FINISHED";
                 break;
             default:
                 status = "UNDEFINED_STATUS";
         };
-
-        // update started field to 'CONFIRMED' 
-        if (newAsset.processing_plant.started === 'PENDING') {
-            newAsset.processing_plant.started = 'CONFIRMED';
-        }
 
         //update status
         newAsset.processing_plant.status = status;
@@ -213,7 +210,7 @@ class Farm extends Contract {
         }
 
         // control step and update if needed
-        if (newAsset.step < 6) {
+        if (newAsset.step < 7) {
             newAsset.step = newAsset.step + 1;
         } else {
             throw new Error('Processing plant was finished');
