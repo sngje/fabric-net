@@ -160,16 +160,31 @@
         {% block content %}
         {% endblock %}
       </main>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
       {% with messages = get_flashed_messages(with_categories=True) %}
           {% if messages %}
               {% for category, message in messages %}
-              <script type="text/javascript">
-                toastr.info('Are you the 6 fingered man?');
-              </script>
-                <div id="alter-box" class="materialert {{ category }} toast-container">
+                <!-- <script type="text/javascript">
+                  toastr.options = {
+                    "closeButton": false,
+                    "debug": true,
+                    "newestOnTop": true,
+                    "progressBar": true,
+                    "positionClass": "toast-bottom-right",
+                    "preventDuplicates": true,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "5000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                  }
+                  toastr.{{ category }}('{{ message }}');
+                </script> -->
+                <div id="alter-box" class="materialert {{ category }}">
                     <i class="material-icons">check</i> {{ message }}
-                    <!-- info_outline, check, warning, error_outline -->
                     <button type="button" id="close-alert" class="close-alert">×</button>
                 </div>            
               {% endfor %}

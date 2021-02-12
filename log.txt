@@ -1,0 +1,1 @@
+[{"key":"Cage0","data":{"age":2,"docType":"duck","step":1,"vaccination":false}},{"key":"Cage1","data":{"age":2,"docType":"duck","step":1,"vaccination":false}},{"key":"Cage2","data":{"age":2,"docType":"duck","step":1,"vaccination":true}}]

@@ -183,7 +183,7 @@ def update_age(asset_id):
 	if response.status_code != 200:
 		flash(transactions['error'], "error")
 		return redirect(url_for('grower_farm'))
-	flash(transactions['response'], "success")
+	flash(transactions['response'], 'success')
 	return redirect(url_for('grower_farm'))
 	# return render_template('transaction.html', title=f"Change age - {asset_id}", asset_id=asset_id, transactions=transactions)
 

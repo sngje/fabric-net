@@ -4,6 +4,10 @@ channel-artifacts/
 application/server/org1-wallet/
 application/server/org2-wallet/
 application/server/node_modules/
+contract/node_modules/
+organizations/ordererOrganizations/
+organizations/peerOrganizations/
+organizations/fabric-ca/
 .vscode/
 bin/
 application/client/venv/
@@ -12,3 +16,5 @@ application/client/venv/
 **/.bin
 farm_2.tar.gz
 farm_3.tar.gz
+farm.tar.gz
+application/client/application/site.db

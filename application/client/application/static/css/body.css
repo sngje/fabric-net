@@ -133,7 +133,7 @@ main {
     -webkit-border-radius: 50px; /*50px vs. 50%*/
 }
 
-.materialert{
+/* .materialert{
     position: relative;
     min-width: 150px;
     padding: 15px;
@@ -151,6 +151,31 @@ main {
     -webkit-align-items: center;
     -ms-flex-align: center;
     align-items: center;
+} */
+.materialert{
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    /* min-width: 150px; */
+    width: 280px;
+    word-wrap: break-word;
+    word-break: break-all;
+    padding: 15px;
+    margin: 15px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    overflow: auto;
+    transition: all 0.1s linear;
+    webkit-box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+/*     display: flex; */
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
 }
 .materialert .material-icons{
     margin-right: 10px;
@@ -160,7 +185,7 @@ main {
     border: 0;
     cursor: pointer;
     color: inherit;
-    background: 0 0;
+    background: 0;
     font-size: 22px;
     line-height: 1;
     font-weight: bold;
@@ -171,12 +196,7 @@ main {
     top: 16px;
     right: 5px;
 }
-.toast-container {
-	top: auto !important;
-	right: auto !important;
-	bottom: 10%;
-	left:7%;  
-}
+
 .materialert.info{
     background-color: #039be5;
     color: #fff;
