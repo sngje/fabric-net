@@ -16,7 +16,9 @@
       <tbody>
         {% for arr in transactions['data'] %}
         <tr>
-          <td style="text-transform:uppercase;">{{ arr['key'] }}</td>
+          <td style="text-transform:uppercase;">
+            <a class="waves-effect waves-light btn" href="{{ url_for('history', asset_id=arr['key'])}}" title="See history">{{ arr['key'] }}</a>
+          </td>
           <td>{{ arr['data']['age'] }}</td>
           <td>{{ arr['data']['vaccination'] }}</td>
           <td>{{ arr['data']['processing_plant']['status'] }}</td>

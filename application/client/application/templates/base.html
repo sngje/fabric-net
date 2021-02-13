@@ -34,10 +34,10 @@
               </div>
               <div id="dash_users_body" class="collapsible-body">
                 <ul>
-                  <li id="users_seller">
+                  <li id="dash_users_menu">
                     <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('grower_farm') }}">Current state</a>
                   </li>
-                  <li id="users_customer">
+                  <li id="dash_users_menu">
                     <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('health_monitor') }}">Health monitor</a>
                   </li>
                 </ul>
@@ -45,17 +45,21 @@
             </li>
           {% endif %}
           {% if current_user.orgname == "Org1" %}
-            <li id="dash_products">
-              <div id="dash_products_header" class="collapsible-header waves-effect waves-light">
+            <li id="dash_users">
+              <div id="dash_users_header" class="collapsible-header waves-effect waves-light">
                 <span class="valign-wrapper">
                   <i class="material-icons">view_list</i> <b> Processing plant</b>
                 </span>
               </div>
-              <div id="dash_products_body" class="collapsible-body">
+              <div id="dash_users_body" class="collapsible-body">
                 <ul>
-                  <li id="products_product">
+                  <li id="dash_users_menu">
                     <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('processing_confirmation') }}">Products to collect</a>
+                  </li>
+                  <li id="dash_users_menu">
                     <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('processing_all') }}">Current state</a>
+                  </li>
+                  <li id="dash_users_menu">
                     <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('processing_finished') }}">Finished products</a>
                   </li>
                 </ul>
@@ -71,11 +75,11 @@
               </div>
               <div id="dash_users_body" class="collapsible-body">
                 <ul>
-                  <li id="users_customer">
+                  <li id="dash_users_menu">
                     <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('create_asset') }}">Create cage</a>
                   </li>
                   
-                  <li id="users_customer">
+                  <li id="dash_users_menu">
                     <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('search') }}">Search tool</a>
                   </li>
                 </ul>

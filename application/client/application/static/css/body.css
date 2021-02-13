@@ -186,7 +186,7 @@ main {
     cursor: pointer;
     color: inherit;
     background: 0;
-    font-size: 22px;
+    font-size: 20px;
     line-height: 1;
     font-weight: bold;
     text-shadow: 0 1px 0 rgba(255, 255, 255, .7);
@@ -364,12 +364,12 @@ thead {
 }
 
 
-.sidenav .collapsible-header, .sidenav.fixed .collapsible-header {
-    background-color: transparent;
-    /* border: none; */
-    line-height: inherit;
-    height: inherit;
-    padding: 0 10px;
+#dash_users {
+	border-bottom: 1px solid rgba(0,0,0,0.12);
+}
+
+#dash_users_menu {
+    border-top: 1px solid rgba(0,0,0,0.12);
 }
 /* .input-field input[type=date]:focus + label,
 .input-field input[type=text]:focus + label,

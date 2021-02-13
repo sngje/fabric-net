@@ -316,7 +316,7 @@ def processing_confirmation(bookmark=0):
 
 
 # Route: change asset status to PENDING for processing plant
-@app.route("/assets/<string:asset_id>/request/processing-plant")
+@app.route("/processing-plant/<string:asset_id>/request")
 @login_required
 def processing_request(asset_id):
 	headers = header_info(current_user.token)
@@ -327,12 +327,12 @@ def processing_request(asset_id):
 	response = requests.put(f'{API_SERVER}/processing-plant/{asset_id}/request', json=req, headers=headers) 
 	# print(response)
 	if response.status_code != 200:
-		flash("Error occured, please ask from back-end team", "info")
+		flash("Error occured, please ask from back-end team", "error")
 		return redirect(url_for('grower_farm'))
 	flash("Asset is now in waiting to get confirmation from Processing plant organization ", "success")
 	return redirect(url_for('grower_farm'))
-
-# Route: individual cage
+ 
+# Route: processing plant - start
 @app.route("/processing-plant/<string:asset_id>", methods=["POST", "GET"])
 @login_required
 def processing_start(asset_id):
@@ -363,7 +363,24 @@ def processing_start(asset_id):
 		
 		# check for error
 		if response.status_code != 200:
-			flash("Cage not found", "error")
+			flash("Asset not found", "error")
 			return redirect(url_for('processing_start', asset_id=asset_id))
 		transactions = response.json()
 		return render_template(f'processing_plant.html', title=f"Processing plant - {asset_id}", asset_id=asset_id, transactions=transactions)
+
+# Route: request to delivery organization
+@app.route("/delivery/<string:asset_id>/request")
+@login_required
+def delivery_request(asset_id):
+	headers = header_info(current_user.token)
+	req = {
+		'phase': 2
+	}
+	req = json.loads(json.dumps(req))
+	response = requests.put(f'{API_SERVER}/assets/{asset_id}/start-next-phase', json=req, headers=headers) 
+	# print(response)
+	if response.status_code != 200:
+		flash("Error occured, please ask from back-end team", "error")
+		return redirect(url_for('grower_farm'))
+	flash("Asset is now in waiting to get confirmation from Processing plant organization ", "success")
+	return redirect(url_for('grower_farm'))

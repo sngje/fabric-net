@@ -135,7 +135,7 @@ class Farm extends Contract {
     // phase shows different divistion as number
     // phase 1 = PROCESSING_PLANT
     // phase 2 = DELIVERY
-    async startProcessingPlant(ctx, id, phase) {
+    async startNextPhase(ctx, id, phase) {
         const currentAsset = await this.getAsset(ctx, id);
         // get the data as json format
         const newAsset = JSON.parse(currentAsset);

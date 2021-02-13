@@ -459,7 +459,7 @@ router.put('/processing-plant/:id', async function (req, res) {
 });
 
 // Prosessing plant steps
-router.put('/processing-plant/:id/request', async function (req, res) {
+router.put('/assets/:id/start-next-phase', async function (req, res) {
     const decoded = helper.decodeJwt(req.headers['authorization']);
     try {
         // Get the contract from the network
@@ -467,10 +467,7 @@ router.put('/processing-plant/:id/request', async function (req, res) {
 
         // Evaluate the specified transaction.
         // getAsset transaction - requires 1 argument, ex: ('getAsset', 'Cage1')
-        let tx = await contract.submitTransaction('startProcessingPlant', req.params.id, req.body.phase);
-        // let data = await contract.evaluateTransaction('getAsset', req.params.id);
-        // let answer = JSON.parse(data);
-        // answer.tx_id = tx.toString();
+        let tx = await contract.submitTransaction('startNextPhase', req.params.id, req.body.phase);
         logger.info('Transaction has been evaluated');
         res.status(200).json(tx);
         // disconnect the gateway
