@@ -373,9 +373,6 @@ router.get('/processing-plant/assets/all/:bookmark', async function (req, res) {
                 step: {
                     "$gt": 1,
                     "$lt": 6
-                },
-                processing_plant: {
-                    started: 'CONFIRMED'
                 }
             }
         };

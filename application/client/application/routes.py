@@ -112,7 +112,7 @@ def grower_farm(bookmark=0):
 	print(transactions)
 	if len(transactions['data']) == 0:
 		return render_template('empty_list.html', title="Current state", text="Nothing found")
-	return render_template('cages.html', title="Current state", bookmark=bookmark, transactions=transactions)
+	return render_template('assets.html', title="Current state", bookmark=bookmark, transactions=transactions)
 
 # Route: history page
 @app.route("/assets/<string:asset_id>/history")
@@ -267,7 +267,7 @@ def search():
 	if len(transactions['data']) == 0:
 		return render_template('empty_list.html', title="Advanced search results", text="Nothing found")
 	flash("Founded results", "success")
-	return render_template('cages.html', title="Advanced search results", transactions=transactions)
+	return render_template('assets.html', title="Advanced search results", transactions=transactions)
 
 # Route: show all processing plant data
 @app.route("/processing-plant/all")
