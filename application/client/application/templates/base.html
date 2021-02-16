@@ -70,6 +70,28 @@
             <li id="dash_users">
               <div id="dash_users_header" class="collapsible-header waves-effect waves-light">
                 <span class="valign-wrapper">
+                  <i class="material-icons">view_list</i> <b> Delivery</b>
+                </span>
+              </div>
+              <div id="dash_users_body" class="collapsible-body">
+                <ul>
+                  <li id="dash_users_menu">
+                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('delivery_confirmation') }}">Products to collect</a>
+                  </li>
+                  <li id="dash_users_menu">
+                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('delivery_all') }}">Current state</a>
+                  </li>
+                  <li id="dash_users_menu">
+                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('delivery_finished') }}">Finished products</a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+          {% endif %}
+          {% if current_user.orgname == "Org1" %}
+            <li id="dash_users">
+              <div id="dash_users_header" class="collapsible-header waves-effect waves-light">
+                <span class="valign-wrapper">
                   <i class="material-icons">view_list</i> <b> Product management</b>
                 </span>
               </div>

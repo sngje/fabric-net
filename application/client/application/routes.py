@@ -282,7 +282,7 @@ def processing_all(bookmark=0):
 	transactions = response.json()
 	if len(transactions['data']) == 0:
 		return render_template('empty_list.html', title="Processing plant", text="Nothing found")
-	return render_template('processing_all.html', title="Processing plant - current state", bookmark=bookmark, transactions=transactions)
+	return render_template('processing_plant_pages.html', title="Processing plant - current state", bookmark=bookmark, transactions=transactions)
 
 # Route: show all processing plant data
 @app.route("/processing-plant/finished")
@@ -297,7 +297,7 @@ def processing_finished(bookmark=0):
 	transactions = response.json()
 	if len(transactions['data']) == 0:
 		return render_template('empty_list.html', title="Processing plant - finished products", text="Finished products not found")
-	return render_template('processing_data.html', title="Processing plant - finished products", finished=True, bookmark=bookmark, transactions=transactions)
+	return render_template('processing_plant_pages.html', title="Processing plant - finished products", page="finished", bookmark=bookmark, transactions=transactions)
 
 # Route: show all processing plant data - confirmation
 @app.route("/processing-plant/confirmation")
@@ -312,7 +312,7 @@ def processing_confirmation(bookmark=0):
 	transactions = response.json()
 	if len(transactions['data']) == 0:
 		return render_template('empty_list.html', title="Processing plant", text="Nothing found")
-	return render_template('processing_data.html', title="Processing plant - confirmation", finished=False, bookmark=bookmark, transactions=transactions)
+	return render_template('processing_plant_pages.html', title="Processing plant - confirmation", page="confirmation", bookmark=bookmark, transactions=transactions)
 
 
 # Route: change asset status to PENDING for processing plant
@@ -324,12 +324,12 @@ def processing_request(asset_id):
 		'phase': 1
 	}
 	req = json.loads(json.dumps(req))
-	response = requests.put(f'{API_SERVER}/processing-plant/{asset_id}/request', json=req, headers=headers) 
+	response = requests.put(f'{API_SERVER}/assets/{asset_id}/start-next-phase', json=req, headers=headers) 
 	# print(response)
 	if response.status_code != 200:
 		flash("Error occured, please ask from back-end team", "error")
 		return redirect(url_for('grower_farm'))
-	flash("Asset is now in waiting to get confirmation from Processing plant organization ", "success")
+	flash("Asset is added to waiting list. Processing Plant organization must confirm to proceed.", "success")
 	return redirect(url_for('grower_farm'))
  
 # Route: processing plant - start
@@ -351,7 +351,7 @@ def processing_start(asset_id):
 		
 		# check for error
 		if response.status_code != 200:
-			flash(req, "error")
+			flash("Error occured during the transaction, please contact with back-end team", "error")
 			return redirect(url_for('grower_farm'))
 		
 		transactions = response.json()
@@ -382,5 +382,85 @@ def delivery_request(asset_id):
 	if response.status_code != 200:
 		flash("Error occured, please ask from back-end team", "error")
 		return redirect(url_for('grower_farm'))
-	flash("Asset is now in waiting to get confirmation from Processing plant organization ", "success")
+	flash("Asset is added to waiting list. Delivery organization must confirm to proceed.", "success")
 	return redirect(url_for('grower_farm'))
+
+# Route: show all processing plant data
+@app.route("/delivery/all")
+@app.route("/delivery/all/<string:bookmark>")
+@login_required
+def delivery_all(bookmark=0):
+	headers = header_info(current_user.token)
+	response = requests.get(f'{API_SERVER}/delivery/assets/all/{bookmark}', headers=headers) 
+	if response.status_code != 200:
+		flash("List is currently empty", "info")
+		return redirect(url_for('index'))
+	transactions = response.json()
+	if len(transactions['data']) == 0:
+		return render_template('empty_list.html', title="Delivery", text="Nothing found")
+	return render_template('delivery_pages.html', title="Delivery - current state", bookmark=bookmark, transactions=transactions)
+
+# Route: show all processing plant data
+@app.route("/delivery/finished")
+@app.route("/delivery/finished/<string:bookmark>")
+@login_required
+def delivery_finished(bookmark=0):
+	headers = header_info(current_user.token)
+	response = requests.get(f'{API_SERVER}/delivery/assets/finished/{bookmark}', headers=headers) 
+	if response.status_code != 200:
+		flash("Error occured, please ask from back-end team", "info")
+		return redirect(url_for('index'))
+	transactions = response.json()
+	if len(transactions['data']) == 0:
+		return render_template('empty_list.html', title="Delivery - finished products", text="Finished products not found")
+	return render_template('delivery_pages.html', title="Delivery - finished products", page="finished", bookmark=bookmark, transactions=transactions)
+
+# Route: show all processing plant data - confirmation
+@app.route("/delivery/confirmation")
+@app.route("/delivery/confirmation/<string:bookmark>")
+@login_required
+def delivery_confirmation(bookmark=0):
+	headers = header_info(current_user.token)
+	response = requests.get(f'{API_SERVER}/delivery/assets/confirmation/{bookmark}', headers=headers) 
+	if response.status_code != 200:
+		flash("List is currently empty", "info")
+		return redirect(url_for('index'))
+	transactions = response.json()
+	if len(transactions['data']) == 0:
+		return render_template('empty_list.html', title="Delivery", text="Nothing found")
+	return render_template('delivery_pages.html', title="Delivery - confirmation", page="confirmation", bookmark=bookmark, transactions=transactions)
+
+# Route: processing plant - start
+@app.route("/delivery/<string:asset_id>", methods=["POST", "GET"])
+@login_required
+def delivery_start(asset_id):
+	headers = header_info(current_user.token)
+	if request.method == "POST":
+		address = request.form.get('address', 'Unknow')
+		deliverer = request.form.get('deliverer', 'AA000XX')
+		req = {
+			'address': f'{address}',
+			'deliverer': f'{deliverer}'
+		}
+		req = json.loads(json.dumps(req))
+		
+		response = requests.put(f'{API_SERVER}/delivery/{asset_id}', json=req, headers=headers)
+		
+		# check for error
+		if response.status_code != 200:
+			flash("Error occured during the transaction, please contact with back-end team", "error")
+			return redirect(url_for('delivery_all'))
+		
+		transactions = response.json()
+		flash("Updated successfully", "success")
+		# return redirect(url_for('processing_start', asset_id=asset_id))
+		return render_template(f'delivery_process.html', title=f"Delivery - {asset_id}", asset_id=asset_id, transactions=transactions)
+	else:
+		response = requests.get(f'{API_SERVER}/assets/{asset_id}', headers=headers) 
+		
+		# check for error
+		if response.status_code != 200:
+			flash("Asset not found", "error")
+			return redirect(url_for('delivery_start', asset_id=asset_id))
+		transactions = response.json()
+		return render_template(f'delivery_process.html', title=f"Delivery - {asset_id}", asset_id=asset_id, transactions=transactions)

@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="transactions">
+    <!-- START TABLE -->
+    <table class="highlight centered responsive-table">
+        {% if page == 'finished' %}
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Deliverer</th>
+              <th>Address</th>
+              <th>Status</th>
+              <!-- <th>Start Delivery</th> -->
+            </tr>
+          </thead>
+          <tbody>
+            {% for arr in transactions['data'] %}
+            <tr>
+              <td style="text-transform:uppercase;">
+                <a class="waves-effect waves-light btn" href="{{ url_for('history', asset_id=arr['key'])}}" title="See history">{{ arr['key'] }}</a>
+              </td>
+              <td>{{ arr['data']['delivery']['deliverer'] }}</td>
+              <td>{{ arr['data']['delivery']['store_address'] }}</td>
+              <td>{{ arr['data']['delivery']['status'] }}</td>
+              <!-- <td>
+                <a href="{{ url_for('delivery_request', asset_id=arr['key']) }}" title="Confirm"><i class="material-icons md-30">&nbsp;next_plan</i></a>
+              </td> -->
+            </tr>
+            {% endfor %}
+          </tbody>
+        {% elif page == 'confirmation' %}
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Status</th>
+              <th>Confirm</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for arr in transactions['data'] %}
+            <tr>
+              <td style="text-transform:uppercase;">
+                <a class="waves-effect waves-light btn" href="{{ url_for('history', asset_id=arr['key'])}}" title="See history">{{ arr['key'] }}</a>
+              </td>
+              <!-- <td>
+                <a href="{{ url_for('delivery_request', asset_id=arr['key']) }}" title="Confirm"><i class="material-icons md-30">&nbsp;next_plan</i></a>
+              </td> -->
+              <td>{{ arr['data']['delivery']['status'] }}</td>
+              <td>
+                <a href="{{ url_for('delivery_start', asset_id=arr['key']) }}" title="Confirm"><i class="material-icons md-30">&nbsp;check_box</i></a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        {% else %}
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Deliverer</th>
+              <th>Inspection</th>
+              <th>Stage</th>
+              <th>Update</th>
+          </tr>
+          </thead>
+          <tbody>
+            {% for arr in transactions['data'] %}
+            <tr>
+              <td style="text-transform:uppercase;">
+                <a class="waves-effect waves-light btn" href="{{ url_for('history', asset_id=arr['key'])}}" title="See history">{{ arr['key'] }}</a>
+              </td>
+              <td>
+                {% if arr['data']['delivery']['deliverer'] is defined %}
+                  {{ arr['data']['delivery']['deliverer'] }}
+                {% else %}
+                  -
+                {% endif %}
+              </td>
+              <td>
+                {% if arr['data']['delivery']['store_address'] is defined %}
+                  {{ arr['data']['delivery']['store_address'] }}
+                {% else %}
+                  -
+                {% endif %}
+              </td>
+              <td>{{ arr['data']['delivery']['status'] }}</td>
+              <td>
+                <a href="{{ url_for('delivery_start', asset_id=arr['key']) }}" title="Update"><i class="material-icons md-30">&nbsp;autorenew</i></a>
+              </td>
+              <!-- <td><a href="{{ url_for('delete', asset_id=arr['key']) }}" title="Delete"><i class="material-icons md-30">&nbsp;delete</i></a></td> -->
+            </tr>
+            {% endfor %}
+          </tbody>
+        {% endif %}
+    </table>
+    <!-- END TABLE -->
+  </div>
+
+  <br />
+    <ul class="pagination col center-align">
+      {% if bookmark != 0 %}
+        <li class="waves-effect">
+          <a href="javascript:history.go(-1)">
+            <i class="material-icons">chevron_left</i>
+          </a>
+        </li>
+      {% else %}
+        <li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>
+      {% endif %}
+      {% if transactions['meta_data']['fetchedRecordsCount'] >= 10 %}
+        <li class="waves-effect">
+          {% if page == 'finished' %}
+            <a href="{{ url_for('delivery_finished', bookmark=transactions['meta_data']['bookmark']) }}">
+              <i class="material-icons">chevron_right</i>
+            </a>
+          {% elif page == 'confirmation' %}
+            <a href="{{ url_for('delivery_confirmation', bookmark=transactions['meta_data']['bookmark']) }}">
+              <i class="material-icons">chevron_right</i>
+            </a>
+          {% else %}
+            <a href="{{ url_for('delivery_all', bookmark=transactions['meta_data']['bookmark']) }}">
+              <i class="material-icons">chevron_right</i>
+            </a>
+          {% endif %}
+        </li>
+      {% else %}
+        <li class="disabled"><a href="#!"><i class="material-icons">chevron_right</i></a></li>
+      {% endif %}
+    </ul>
+{% endblock %}
+
