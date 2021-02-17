@@ -17,13 +17,13 @@
             {% for arr in transactions['data'] %}
             <tr>
               <td style="text-transform:uppercase;">
-                <a class="waves-effect waves-light btn" href="{{ url_for('history', asset_id=arr['key'])}}" title="See history">{{ arr['key'] }}</a>
+                <a class="waves-effect waves-light btn" href="{{ url_for('asset.history', asset_id=arr['key'])}}" title="See history">{{ arr['key'] }}</a>
               </td>
               <td>{{ arr['data']['delivery']['deliverer'] }}</td>
               <td>{{ arr['data']['delivery']['store_address'] }}</td>
               <td>{{ arr['data']['delivery']['status'] }}</td>
               <!-- <td>
-                <a href="{{ url_for('delivery_request', asset_id=arr['key']) }}" title="Confirm"><i class="material-icons md-30">&nbsp;next_plan</i></a>
+                <a href="{{ url_for('delivery.delivery_request', asset_id=arr['key']) }}" title="Confirm"><i class="material-icons md-30">&nbsp;next_plan</i></a>
               </td> -->
             </tr>
             {% endfor %}
@@ -40,14 +40,14 @@
             {% for arr in transactions['data'] %}
             <tr>
               <td style="text-transform:uppercase;">
-                <a class="waves-effect waves-light btn" href="{{ url_for('history', asset_id=arr['key'])}}" title="See history">{{ arr['key'] }}</a>
+                <a class="waves-effect waves-light btn" href="{{ url_for('asset.history', asset_id=arr['key'])}}" title="See history">{{ arr['key'] }}</a>
               </td>
               <!-- <td>
-                <a href="{{ url_for('delivery_request', asset_id=arr['key']) }}" title="Confirm"><i class="material-icons md-30">&nbsp;next_plan</i></a>
+                <a href="{{ url_for('delivery.delivery_request', asset_id=arr['key']) }}" title="Confirm"><i class="material-icons md-30">&nbsp;next_plan</i></a>
               </td> -->
               <td>{{ arr['data']['delivery']['status'] }}</td>
               <td>
-                <a href="{{ url_for('delivery_start', asset_id=arr['key']) }}" title="Confirm"><i class="material-icons md-30">&nbsp;check_box</i></a>
+                <a href="{{ url_for('delivery.delivery_start', asset_id=arr['key']) }}" title="Confirm"><i class="material-icons md-30">&nbsp;check_box</i></a>
               </td>
             </tr>
             {% endfor %}
@@ -66,7 +66,7 @@
             {% for arr in transactions['data'] %}
             <tr>
               <td style="text-transform:uppercase;">
-                <a class="waves-effect waves-light btn" href="{{ url_for('history', asset_id=arr['key'])}}" title="See history">{{ arr['key'] }}</a>
+                <a class="waves-effect waves-light btn" href="{{ url_for('asset.history', asset_id=arr['key'])}}" title="See history">{{ arr['key'] }}</a>
               </td>
               <td>
                 {% if arr['data']['delivery']['deliverer'] is defined %}
@@ -84,9 +84,9 @@
               </td>
               <td>{{ arr['data']['delivery']['status'] }}</td>
               <td>
-                <a href="{{ url_for('delivery_start', asset_id=arr['key']) }}" title="Update"><i class="material-icons md-30">&nbsp;autorenew</i></a>
+                <a href="{{ url_for('delivery.delivery_start', asset_id=arr['key']) }}" title="Update"><i class="material-icons md-30">&nbsp;autorenew</i></a>
               </td>
-              <!-- <td><a href="{{ url_for('delete', asset_id=arr['key']) }}" title="Delete"><i class="material-icons md-30">&nbsp;delete</i></a></td> -->
+              <!-- <td><a href="{{ url_for('asset.delete', asset_id=arr['key']) }}" title="Delete"><i class="material-icons md-30">&nbsp;delete</i></a></td> -->
             </tr>
             {% endfor %}
           </tbody>
@@ -109,15 +109,15 @@
       {% if transactions['meta_data']['fetchedRecordsCount'] >= 10 %}
         <li class="waves-effect">
           {% if page == 'finished' %}
-            <a href="{{ url_for('delivery_finished', bookmark=transactions['meta_data']['bookmark']) }}">
+            <a href="{{ url_for('delivery.delivery_finished', bookmark=transactions['meta_data']['bookmark']) }}">
               <i class="material-icons">chevron_right</i>
             </a>
           {% elif page == 'confirmation' %}
-            <a href="{{ url_for('delivery_confirmation', bookmark=transactions['meta_data']['bookmark']) }}">
+            <a href="{{ url_for('delivery.delivery_confirmation', bookmark=transactions['meta_data']['bookmark']) }}">
               <i class="material-icons">chevron_right</i>
             </a>
           {% else %}
-            <a href="{{ url_for('delivery_all', bookmark=transactions['meta_data']['bookmark']) }}">
+            <a href="{{ url_for('delivery.delivery_all', bookmark=transactions['meta_data']['bookmark']) }}">
               <i class="material-icons">chevron_right</i>
             </a>
           {% endif %}

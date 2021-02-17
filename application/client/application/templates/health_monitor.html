@@ -19,9 +19,9 @@
           <td style="text-transform:uppercase;">{{ arr['key'] }}</td>
           <td>{{ arr['data']['age'] }}</td>
           <td>{{ arr['data']['vaccination'] }}</td>
-          <td><a href="{{ url_for('update_vaccination', asset_id=arr['key']) }}" title="Inject"><i class="material-icons md-30">&nbsp;colorize</i></a></td>
-          <td><a href="{{ url_for('update_age', asset_id=arr['key']) }}" title="Update"><i class="material-icons md-30">&nbsp;autorenew</i></a></td>
-          <!-- <td><a href="{{ url_for('delete', asset_id=arr['key'])}}" title="Delete"><i class="material-icons md-30">&nbsp;delete</i></a></td> -->
+          <td><a href="{{ url_for('asset.update_vaccination', asset_id=arr['key']) }}" title="Inject"><i class="material-icons md-30">&nbsp;colorize</i></a></td>
+          <td><a href="{{ url_for('asset.update_age', asset_id=arr['key']) }}" title="Update"><i class="material-icons md-30">&nbsp;autorenew</i></a></td>
+          <!-- <td><a href="{{ url_for('asset.delete', asset_id=arr['key'])}}" title="Delete"><i class="material-icons md-30">&nbsp;delete</i></a></td> -->
         </tr>
         {% endfor %}
       </tbody>
@@ -42,7 +42,7 @@
       {% endif %}
       {% if transactions['meta_data']['fetchedRecordsCount'] >= 10 %}
         <li class="waves-effect">
-          <a href="{{ url_for('health_monitor', bookmark=transactions['meta_data']['bookmark']) }}">
+          <a href="{{ url_for('grower.health_monitor', bookmark=transactions['meta_data']['bookmark']) }}">
             <i class="material-icons">chevron_right</i>
           </a>
         </li>

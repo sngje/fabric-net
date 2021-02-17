@@ -17,7 +17,7 @@
                 <h5>Registration form</h5>
             </div>
             <div class="row">
-                <form class="col s12" action="{{ url_for('register') }}" method="POST">
+                <form class="col s12" action="{{ url_for('users.register') }}" method="POST">
                 {{ form.hidden_tag() }}
                 <div class="input-field col s12">
                     <!-- {{ form.email.label() }} -->
@@ -75,7 +75,7 @@
                     {{ form.submit(class="btn btn-outline-info") }}
                 </div>
             </form>
-            <div style="padding:0px 5px 15px 10px; margin-left:15px; font-size:16px;">Do you have an account? <a href="{{ url_for('login') }}">Yes, login</a></div>
+            <div style="padding:0px 5px 15px 10px; margin-left:15px; font-size:16px;">Do you have an account? <a href="{{ url_for('users.login') }}">Yes, login</a></div>
         </div>
     </div>
     {% with messages = get_flashed_messages(with_categories=True) %}
