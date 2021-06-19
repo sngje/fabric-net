@@ -9,33 +9,54 @@
 const { Contract } = require('fabric-contract-api');
 
 class Farm extends Contract {
+    constructor() {
+        super('Farm');
+        this.timestamp = '';
+        this.txId = '';
+    }
+
+    async beforeTransaction(ctx) {
+        this.txId = ctx.stub.getTxID();
+        // this.timestamp = ctx.stub.GetTxTimestamp();
+        console.log('TxID called');
+    }
+
+    async afterTransaction(ctx, result) {
+        console.log(`TX - ${this.txId}`);
+    }
+
+    generateRandomId = (length = 8) => {
+        // Declare all characters
+        let chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    
+        // Pick characers randomly
+        let str = '';
+        for (let i = 0; i < length; i++) {
+            str += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+    
+        return str;
+    
+    };
+
+
+
     // init state which calls from chaincode installition
     async initLedger(ctx) {
-        const assets = [
-            {
+        const ts = new Date().toDateString();
+        const assets = {
                 docType: 'duck',
-                age: 2,
-                vaccination: false,
+                quantity: 500,
+                timestamp: ts,
+                txId: this.TxId,
                 step: 1,
-            },
-            {
-                docType: 'duck',
-                age: 2,
-                vaccination: false,
-                step: 1,
-            },
-            {
-                docType: 'duck',
-                age: 2,
-                vaccination: true,
-                step: 1,
-            },
-        ];
+        };
 
-        for (let i = 0; i < assets.length; i++) {
-            await ctx.stub.putState('Cage' + i, Buffer.from(JSON.stringify(assets[i])));
-            console.info('Added <--> ', assets[i]);
-        }
+        // for (let i = 0; i < assets.length; i++) {
+            const id = this.generateRandomId(8);
+            await ctx.stub.putState('CAGE1', Buffer.from(JSON.stringify(assets)));
+            console.info('Added <--> ', assets);
+        // }
     }
 
     // assetExists returns true when asset exists in world state within given id
@@ -67,22 +88,22 @@ class Farm extends Contract {
     }
 
     // create new asset
-    async createAsset(ctx, id, age, injected = false) {
+    async createAsset(ctx, id, quantity) {
         const assetExists = await this.assetExists(ctx, id);
         if (assetExists) {
             throw new Error(`This asset with ${id} already exists`);
         }
 
-        const int_age = parseInt(age);
-		if (typeof int_age !== "number") {
-			throw new Error("Age argument must be a numeric string");
+        const int_quantity = parseInt(quantity);
+		if (typeof int_quantity !== "number") {
+			throw new Error("Quantity argument must be a numeric string");
         }
 
         // const condition = (String(injected) === 'true') ? true : false;
         const asset = {
             docType: 'duck',
-            age: int_age,
-            vaccination: injected,
+            quantity: int_quantity,
+            timestamp: ctx.GetStub().GetTxTimestamp(),
             step: 1,
         };
 
@@ -90,18 +111,18 @@ class Farm extends Contract {
         return ctx.stub.getTxID();
     }
 
-    async updateAsset(ctx, id, age, vaccination, step) {
+    async updateAsset(ctx, id, quantity, step) {
         // get data and check
         const currentAsset = await this.getAsset(ctx, id); // get the cage from chaincode state
         let newAsset = JSON.parse(currentAsset); 
 
         // set default values if not defined
-        age = typeof age !== 'undefined' ? parseInt(age) : newAsset.age;
-        vaccination = typeof vaccination !== 'undefined' ? ((String(vaccination) === 'true') ? true : false) : newAsset.vaccination;
+        quantity = typeof quantity !== 'undefined' ? parseInt(quantity) : newAsset.quantity;
+        // vaccination = typeof vaccination !== 'undefined' ? ((String(vaccination) === 'true') ? true : false) : newAsset.vaccination;
         step = typeof step !== 'undefined' ? parseInt(step) : newAsset.step;
         // update asset
-        newAsset.age = age;
-        newAsset.vaccination = vaccination;
+        newAsset.quantity = quantity;
+        // newAsset.vaccination = vaccination;
         newAsset.step = step;
 
         // commit changes
@@ -109,28 +130,29 @@ class Farm extends Contract {
         return ctx.stub.getTxID();
     }
     
-    // update asset age properity
-    async updateAssetAge(ctx, id) {
-        const currentAsset = await this.getAsset(ctx, id);
-        let newAsset = JSON.parse(currentAsset);        
+    // // update asset age properity
+    // async updateAssetAge(ctx, id) {
+    //     const currentAsset = await this.getAsset(ctx, id);
+    //     let newAsset = JSON.parse(currentAsset);        
         
-        let age = parseInt(newAsset.age) + 1
-        newAsset.age = age;
+    //     let age = parseInt(newAsset.age) + 1
+    //     newAsset.age = age;
 
-        await ctx.stub.putState(id, Buffer.from(JSON.stringify(newAsset)));
-        return ctx.stub.getTxID();
-    }
+    //     await ctx.stub.putState(id, Buffer.from(JSON.stringify(newAsset)));
+    //     return ctx.stub.getTxID();
+    // }
 
     // change data vaccination status
-    async updateAssetInjectionStatus(ctx, id) {
-        const currentAsset = await this.getAsset(ctx, id); // get the cage from chaincode state
-        let newAsset = JSON.parse(currentAsset);
-        // let condition = !newAsset.vaccination;
-        newAsset.vaccination = !newAsset.vaccination;
+    
+    // async updateAssetInjectionStatus(ctx, id) {
+    //     const currentAsset = await this.getAsset(ctx, id); // get the cage from chaincode state
+    //     let newAsset = JSON.parse(currentAsset);
+    //     // let condition = !newAsset.vaccination;
+    //     newAsset.vaccination = !newAsset.vaccination;
 
-        await ctx.stub.putState(id, Buffer.from(JSON.stringify(newAsset)));
-        return ctx.stub.getTxID();
-    }
+    //     await ctx.stub.putState(id, Buffer.from(JSON.stringify(newAsset)));
+    //     return ctx.stub.getTxID();
+    // }
 
     // Prosessing plant logic goes here
     async upgradeAssetToProsessingPlant(ctx, id, acceptable, deliverer) {
@@ -265,28 +287,28 @@ class Farm extends Contract {
 	}
 
     // get cages with vaccination filter
-    async queryAssetsByVaccinationStatus(ctx, vaccination) {        
-        let condition = (String(vaccination) === 'true') ? true : false;
-        let queryString = {};
-        queryString.selector = {};
-        queryString.selector.vaccination = condition;
-        //use_index: ['_design/indexVcDoc', 'indexVc']
-        return await this.getQueryResultForQueryString(ctx, JSON.stringify(queryString));
-    }
+    // async queryAssetsByVaccinationStatus(ctx, vaccination) {        
+    //     let condition = (String(vaccination) === 'true') ? true : false;
+    //     let queryString = {};
+    //     queryString.selector = {};
+    //     queryString.selector.vaccination = condition;
+    //     //use_index: ['_design/indexVcDoc', 'indexVc']
+    //     return await this.getQueryResultForQueryString(ctx, JSON.stringify(queryString));
+    // }
 
     // query specific aged cages
-    async queryAssetsByAge(ctx, age) {
-        age = typeof age !== 'undefined' ? parseInt(age) : 'undefined';
+    // async queryAssetsByAge(ctx, age) {
+    //     age = typeof age !== 'undefined' ? parseInt(age) : 'undefined';
 
-		if (typeof int_age !== "number") {
-			throw new Error("Age argument must be a numeric string");
-        }
+	// 	if (typeof int_age !== "number") {
+	// 		throw new Error("Age argument must be a numeric string");
+    //     }
     
-        let queryString = {};
-        queryString.selector = {};
-        queryString.selector.age = age;
-        return await this.getQueryResultForQueryString(ctx, JSON.stringify(queryString));
-    }
+    //     let queryString = {};
+    //     queryString.selector = {};
+    //     queryString.selector.age = age;
+    //     return await this.getQueryResultForQueryString(ctx, JSON.stringify(queryString));
+    // }
 
     // get all data which dockType is 'duck'
     async queryAssetsAll(ctx) {
