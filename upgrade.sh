@@ -2,7 +2,7 @@ export PATH=${PWD}/./bin:$PATH
 export FABRIC_CFG_PATH=$PWD/./config/
 export CORE_PEER_MSPCONFIGPATH=${PWD}/organizations/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
 
-VERSION=2
+VERSION=3
 CHANNEL_NAME="mychannel"
 CHAINCODE_PATH="./contract/javascript"
 CHAINCODE_LABEL="farm_${VERSION}"

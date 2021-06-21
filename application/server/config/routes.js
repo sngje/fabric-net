@@ -98,12 +98,21 @@ router.post('/assets/create', async function (req, res) {
     try {
         // Get the contract from the network
         const {contract, gateway} = await fabricNetwork.connectNetwork(decoded['email'], decoded['orgname']);
+        const product_id = helper.generateRandomId(10);
+        
+        // Default values to pass
+        const current_date = new Date();
+        const current_time = current_date.toISOString();
+        console.log(`${product_id} ${current_time}`);
+
+        // result = await contract.evaluateTransaction('org.hyperledger.fabric:GetMetadata');
+        // console.log(JSON.parse(result.toString('utf8')));
 
         // Submit the specified transaction.
-        let tx = await contract.submitTransaction('createAsset', req.body.id, req.body.age);
+        let tx = await contract.submitTransaction('createAsset', product_id, current_time, req.body.quantity, req.body.product_serial, req.body.message);
         console.log('Transaction has been submitted');
         res.status(200).json({
-            response: 'Successfully added',
+            response: `Successfully added - ${product_id}`,
             tx_id: tx.toString()
         });
 

@@ -11,50 +11,49 @@ const { Contract } = require('fabric-contract-api');
 class Farm extends Contract {
     constructor() {
         super('Farm');
-        this.timestamp = '';
-        this.txId = '';
+        this.tx_id = '';
     }
 
     async beforeTransaction(ctx) {
-        this.txId = ctx.stub.getTxID();
+        this.tx_id = ctx.stub.getTxID();
         // this.timestamp = ctx.stub.GetTxTimestamp();
         console.log('TxID called');
     }
 
     async afterTransaction(ctx, result) {
-        console.log(`TX - ${this.txId}`);
+        console.log(`TX - ${this.tx_id}`);
     }
 
-    generateRandomId = (length = 8) => {
-        // Declare all characters
-        let chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    // generateRandomId = (length = 8) => {
+    //     // Declare all characters
+    //     let chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     
-        // Pick characers randomly
-        let str = '';
-        for (let i = 0; i < length; i++) {
-            str += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
+    //     // Pick characers randomly
+    //     let str = '';
+    //     for (let i = 0; i < length; i++) {
+    //         str += chars.charAt(Math.floor(Math.random() * chars.length));
+    //     }
     
-        return str;
+    //     return str;
     
-    };
-
+    // };
 
 
     // init state which calls from chaincode installition
     async initLedger(ctx) {
-        const ts = new Date().toDateString();
         const assets = {
                 docType: 'duck',
+                product_serial: 'WB',
                 quantity: 500,
-                timestamp: ts,
-                txId: this.TxId,
+                message: 'Block created',
+                flag: 'PR',
                 step: 1,
+                tx_id: this.tx_id,
         };
 
         // for (let i = 0; i < assets.length; i++) {
-            const id = this.generateRandomId(8);
-            await ctx.stub.putState('CAGE1', Buffer.from(JSON.stringify(assets)));
+            // const id = this.generateRandomId(8);
+            await ctx.stub.putState('qpAt6q7amIz', Buffer.from(JSON.stringify(assets)));
             console.info('Added <--> ', assets);
         // }
     }
@@ -88,7 +87,7 @@ class Farm extends Contract {
     }
 
     // create new asset
-    async createAsset(ctx, id, quantity) {
+    async createAsset(ctx, id, timestamp, quantity, product_serial, message) {
         const assetExists = await this.assetExists(ctx, id);
         if (assetExists) {
             throw new Error(`This asset with ${id} already exists`);
@@ -99,15 +98,23 @@ class Farm extends Contract {
 			throw new Error("Quantity argument must be a numeric string");
         }
 
+        if (typeof message === 'undefined') {
+            message = 'Block created';
+        }
+
         // const condition = (String(injected) === 'true') ? true : false;
         const asset = {
             docType: 'duck',
+            product_serial: product_serial,
             quantity: int_quantity,
-            timestamp: ctx.GetStub().GetTxTimestamp(),
+            timestamp: timestamp,
+            message: message,
+            flag: 'PR',
             step: 1,
+            tx_id: this.tx_id,
         };
 
-        ctx.stub.putState(id, Buffer.from(JSON.stringify(asset)));
+        await ctx.stub.putState(id, Buffer.from(JSON.stringify(asset)));
         return ctx.stub.getTxID();
     }
 
