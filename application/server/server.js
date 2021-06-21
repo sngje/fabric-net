@@ -11,6 +11,16 @@ const bearerToken = require('express-bearer-token');
 const cors = require('cors');
 const util = require('util');
 
+function logOriginalUrl (req, res, next) {
+    logger.debug('Request URL:', req.originalUrl);
+    next();
+}
+  
+function logMethod (req, res, next) {
+    logger.debug('Request Type:', req.method);
+    next();
+}
+
 // Loading env variables
 const APP_SECRET = process.env.APP_SECRET;
 const PORT = process.env.PORT;
@@ -34,17 +44,19 @@ app.use(expressJWT({
     path: ['/api/users/register','/api/users/login']
 }));
 
+
 // Error handling for errors status
 app.use(function(err, req, res, next) {
     if (err.name === 'UnauthorizedError') {
-      res.status(err.status).send({message:err.message});
-      logger.error({
+        res.status(err.status).send({message:err.message});
+        logger.error({
             success: false,
             message:err.message
         });
-      return;
+        return;
     }
- next();
+    logger.error(err.stack);
+    next();
 });
 
 // Use Bearer token and set logger level to debug
@@ -53,7 +65,7 @@ logger.level = 'debug';
 
 // Authorized routes without token
 app.use((req, res, next) => {
-    logger.debug('New req for %s', req.originalUrl);
+    // logger.debug('New req for %s', req.originalUrl);
     if (req.originalUrl.indexOf('/api/users/register') >= 0 || req.originalUrl.indexOf('/api/users/login') >= 0) {
         return next();
     }
@@ -81,7 +93,8 @@ app.use((req, res, next) => {
 });
 
 // Loading defined routes
-app.use('/api', require('./config/routes'));
+var logStuff = [logOriginalUrl, logMethod]
+app.use('/api', logStuff, require('./config/routes'));
 
 // Start the app
 app.listen(PORT, ()=>{

@@ -4,11 +4,21 @@ channel-artifacts/
 application/server/org1-wallet/
 application/server/org2-wallet/
 application/server/node_modules/
+contract/node_modules/
+organizations/ordererOrganizations/
+organizations/peerOrganizations/
+organizations/fabric-ca/
 .vscode/
 bin/
 application/client/venv/
 **/__pycache__/
 **/.DS_Store
 **/.bin
+<<<<<<< HEAD
 farm_2.tar.gz
 farm_3.tar.gz
+=======
+application/client/application/site.db
+**.id
+**.tar.gz
+>>>>>>> e7df4b99d7d00f6280945c9494709a3bdb7193dd

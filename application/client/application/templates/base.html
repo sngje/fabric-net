@@ -26,7 +26,7 @@
 
         <ul class="collapsible" data-collapsible="accordion">
           {% if current_user.orgname == "Org1" %}
-            <li id="dash_users" class="active">
+            <li id="dash_users">
               <div id="dash_users_header" class="collapsible-header waves-effect waves-light">
                 <span class="valign-wrapper">
                   <i class="material-icons">view_list</i> <b> Grower farm</b>
@@ -34,28 +34,55 @@
               </div>
               <div id="dash_users_body" class="collapsible-body">
                 <ul>
-                  <li id="users_seller">
-                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('allcages') }}">Current state</a>
+                  <li id="dash_users_menu">
+                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('grower.grower_farm') }}">Current state</a>
                   </li>
-                  <li id="users_customer">
-                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('injection') }}">Health monitor</a>
+                  <li id="dash_users_menu">
+                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('grower.health_monitor') }}">Health monitor</a>
                   </li>
                 </ul>
               </div>
             </li>
           {% endif %}
-          {% if current_user.orgname == "Org2" %}
-            <li id="dash_products" class="active">
-              <div id="dash_products_header" class="collapsible-header waves-effect waves-light">
+          {% if current_user.orgname == "Org1" %}
+            <li id="dash_users">
+              <div id="dash_users_header" class="collapsible-header waves-effect waves-light">
                 <span class="valign-wrapper">
                   <i class="material-icons">view_list</i> <b> Processing plant</b>
                 </span>
               </div>
-              <div id="dash_products_body" class="collapsible-body">
+              <div id="dash_users_body" class="collapsible-body">
                 <ul>
-                  <li id="products_product">
-                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('processing_getall') }}">Current state</a>
-                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('processing_finished') }}">Finished products</a>
+                  <li id="dash_users_menu">
+                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('processing.processing_confirmation') }}">Products to collect</a>
+                  </li>
+                  <li id="dash_users_menu">
+                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('processing.processing_all') }}">Current state</a>
+                  </li>
+                  <li id="dash_users_menu">
+                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('processing.processing_finished') }}">Finished products</a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+          {% endif %}
+          {% if current_user.orgname == "Org1" %}
+            <li id="dash_users">
+              <div id="dash_users_header" class="collapsible-header waves-effect waves-light">
+                <span class="valign-wrapper">
+                  <i class="material-icons">view_list</i> <b> Delivery</b>
+                </span>
+              </div>
+              <div id="dash_users_body" class="collapsible-body">
+                <ul>
+                  <li id="dash_users_menu">
+                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('delivery.delivery_confirmation') }}">Products to collect</a>
+                  </li>
+                  <li id="dash_users_menu">
+                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('delivery.delivery_all') }}">Current state</a>
+                  </li>
+                  <li id="dash_users_menu">
+                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('delivery.delivery_finished') }}">Finished products</a>
                   </li>
                 </ul>
               </div>
@@ -70,12 +97,12 @@
               </div>
               <div id="dash_users_body" class="collapsible-body">
                 <ul>
-                  <li id="users_customer">
-                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('create_cage') }}">Create cage</a>
+                  <li id="dash_users_menu">
+                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('grower.create_asset') }}">Create cage</a>
                   </li>
                   
-                  <li id="users_customer">
-                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('search') }}">Search tool</a>
+                  <li id="dash_users_menu">
+                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('asset.search') }}">Search tool</a>
                   </li>
                 </ul>
               </div>
@@ -117,11 +144,11 @@
       <header>
         <ul class="dropdown-content" id="dropdown1">
           {% if current_user.is_authenticated %}
-            <!-- <li><a class="indigo-text" href="{{ url_for('login') }}"><i class="material-icons">person</i> Profile</a></li> -->
-            <li><a class="indigo-text" href="{{ url_for('logout') }}""><i class="material-icons">cancel</i> Logout</a></li>
+            <!-- <li><a class="indigo-text" href="{{ url_for('users.login') }}"><i class="material-icons">person</i> Profile</a></li> -->
+            <li><a class="indigo-text" href="{{ url_for('users.logout') }}""><i class="material-icons">cancel</i> Logout</a></li>
           {% else %}
-            <li><a class="indigo-text" href="{{ url_for('register') }}"><i class="material-icons">person</i> Register</a></li>
-            <li><a class="indigo-text" href="{{ url_for('login') }}""><i class="material-icons">person</i> Login</a></li>
+            <li><a class="indigo-text" href="{{ url_for('users.register') }}"><i class="material-icons">person</i> Register</a></li>
+            <li><a class="indigo-text" href="{{ url_for('users.login') }}""><i class="material-icons">person</i> Login</a></li>
           {% endif %}
         </ul>
     
@@ -132,7 +159,6 @@
                 <i class="material-icons">menu</i>
               </a>
             </ul>
-            <!-- <a data-activates="slide-out" class="button-collapse show-on-large" style="font-size: 20px; margin-left: 20px;" href="{{ url_for('index') }}">System management</a> -->
             <ul class="right">
               <li>
                 <a class='dropdown-trigger' href='' data-target='dropdown1'><i class='material-icons'>account_circle</i></a>
@@ -143,11 +169,11 @@
         <nav>
           <div class="nav-wrapper our-colour darken-2">
             {% if current_user.orgname == "Org1" %}
-              <a style="margin-left: 20px;font-size: 14.5px;" class="breadcrumb" href="{{ url_for('allcages') }}">Home</a>
+              <a style="margin-left: 20px;font-size: 14.5px;" class="breadcrumb" href="{{ url_for('grower.grower_farm') }}">Home</a>
             {% elif current_user.orgname == "Org2" %}
-              <a style="margin-left: 20px;font-size: 14.5px;" class="breadcrumb" href="{{ url_for('processing_getall') }}">Home</a>
+              <a style="margin-left: 20px;font-size: 14.5px;" class="breadcrumb" href="{{ url_for('processing.processing_all') }}">Home</a>
             {% elif current_user.orgname == "Org3" %}
-              <a style="margin-left: 20px;font-size: 14.5px;" class="breadcrumb" href="{{ url_for('live') }}">Home</a>
+              <a style="margin-left: 20px;font-size: 14.5px;" class="breadcrumb" href="{{ url_for('delivery.delivery_all') }}">Home</a>
             {% endif %}
             <a style="font-size: 14.5px;" class="breadcrumb" href="#">{{ title }}</a>
     
@@ -159,19 +185,38 @@
         {% block content %}
         {% endblock %}
       </main>
-      
       {% with messages = get_flashed_messages(with_categories=True) %}
           {% if messages %}
               {% for category, message in messages %}
+                <!-- <script type="text/javascript">
+                  toastr.options = {
+                    "closeButton": false,
+                    "debug": true,
+                    "newestOnTop": true,
+                    "progressBar": true,
+                    "positionClass": "toast-bottom-right",
+                    "preventDuplicates": true,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "5000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                  }
+                  toastr.{{ category }}('{{ message }}');
+                </script> -->
                 <div id="alter-box" class="materialert {{ category }}">
                     <i class="material-icons">check</i> {{ message }}
-                    <!-- info_outline, check, warning, error_outline -->
                     <button type="button" id="close-alert" class="close-alert">×</button>
-                </div>
+                </div>            
               {% endfor %}
           {% endif %}
       {% endwith %}
       
+  
       <!-- <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>   -->
       <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script> -->
       

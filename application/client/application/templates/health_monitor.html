@@ -6,22 +6,22 @@
       <thead>
         <tr>
             <th>ID</th>
-            <th>Deliverer</th>
-            <th>Inspection</th>
-            <th>Stage</th>
-            <th>Delete</th>
+            <th>Age</th>
+            <th>Vaccination</th>
+            <th>Inject</th>
+            <th>Update age</th>
+            <!-- <th>Delete</th> -->
         </tr>
       </thead>
       <tbody>
         {% for arr in transactions['data'] %}
         <tr>
-          <td style="text-transform:uppercase;">
-            <a href="{{ url_for('history', cage_id=arr['key'])}}" title="See history">{{ arr['key'] }}</a>
-            </td>
-          <td>{{ arr['data']['processing_plant']['deliverer'] }}</td>
-          <td>{{ arr['data']['processing_plant']['inspected'] }}</td>
-          <td>{{ arr['data']['processing_plant']['status'] }}</td>
-          <td><a href="{{ url_for('delete', cage_id=arr['key']) }}" title="Delete"><i class="material-icons md-30">&nbsp;delete</i></a></td>
+          <td style="text-transform:uppercase;">{{ arr['key'] }}</td>
+          <td>{{ arr['data']['age'] }}</td>
+          <td>{{ arr['data']['vaccination'] }}</td>
+          <td><a href="{{ url_for('asset.update_vaccination', asset_id=arr['key']) }}" title="Inject"><i class="material-icons md-30">&nbsp;colorize</i></a></td>
+          <td><a href="{{ url_for('asset.update_age', asset_id=arr['key']) }}" title="Update"><i class="material-icons md-30">&nbsp;autorenew</i></a></td>
+          <!-- <td><a href="{{ url_for('asset.delete', asset_id=arr['key'])}}" title="Delete"><i class="material-icons md-30">&nbsp;delete</i></a></td> -->
         </tr>
         {% endfor %}
       </tbody>
@@ -40,14 +40,9 @@
       {% else %}
         <li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>
       {% endif %}
-      <!-- <li class="active"><a href="#!">1</a></li>
-      <li class="waves-effect"><a href="#!">2</a></li>
-      <li class="waves-effect"><a href="#!">3</a></li>
-      <li class="waves-effect"><a href="#!">4</a></li>
-      <li class="waves-effect"><a href="#!">5</a></li> -->
       {% if transactions['meta_data']['fetchedRecordsCount'] >= 10 %}
         <li class="waves-effect">
-          <a href="{{ url_for('processing_finished', bookmark=transactions['meta_data']['bookmark']) }}">
+          <a href="{{ url_for('grower.health_monitor', bookmark=transactions['meta_data']['bookmark']) }}">
             <i class="material-icons">chevron_right</i>
           </a>
         </li>

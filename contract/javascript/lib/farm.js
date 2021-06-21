@@ -161,6 +161,40 @@ class Farm extends Contract {
     //     return ctx.stub.getTxID();
     // }
 
+    // phase shows different divistion as number
+    // phase 1 = PROCESSING_PLANT
+    // phase 2 = DELIVERY
+    async startNextPhase(ctx, id, phase) {
+        const currentAsset = await this.getAsset(ctx, id);
+        // get the data as json format
+        const newAsset = JSON.parse(currentAsset);
+        if (newAsset.age < 5 || newAsset.vaccination != true) {
+            throw new Error('Asset is not accaptable yet, age must be at least 5 and vaccination should be true');
+        }
+
+        if (phase == 1) {
+            // add new dictinoary if not exists
+            if (typeof newAsset.processing_plant == 'undefined') {
+                newAsset.processing_plant = {};
+            }
+            newAsset.step = 2;
+            newAsset.processing_plant.status = 'PENDING';
+        } else if (phase ==  2) {
+            // add new dictinoary if not exists
+            if (typeof newAsset.delivery == 'undefined') {
+                newAsset.delivery = {};
+            }
+            newAsset.step = 8;
+            newAsset.delivery.status = 'PENDING';
+        } else {
+            throw new Error('Phase not found, please check the value and try again');
+        }
+        
+        // update the state
+        await ctx.stub.putState(id, Buffer.from(JSON.stringify(newAsset)));
+        return ctx.stub.getTxID();
+    }
+
     // Prosessing plant logic goes here
     async upgradeAssetToProsessingPlant(ctx, id, acceptable, deliverer) {
         // check data if exists
@@ -170,30 +204,25 @@ class Farm extends Contract {
         let status;
 
         // steps by definition
-        switch(newAsset.step) {
-            case 1:
+        switch(newAsset.step + 1) {
+            case 3:
                 status = "RECEIVED";
                 break;
-            case 2:
+            case 4:
                 status = "IN_PREPERATION";
                 break;
-            case 3:
+            case 5:
                 status = "PACKAGING";
                 break;
-            case 4:
+            case 6:
                 status = "SHIPPED";
                 break;
-            case 5:
+            case 7:
                 status = "FINISHED";
                 break;
             default:
                 status = "UNDEFINED_STATUS";
         };
-
-        // add new dictinoary if not exists
-        if (typeof newAsset.processing_plant == 'undefined') {
-            newAsset.processing_plant = {};
-        }
 
         //update status
         newAsset.processing_plant.status = status;
@@ -210,8 +239,8 @@ class Farm extends Contract {
         }
 
         // control step and update if needed
-        if (newAsset.step < 6) {
-            newAsset.step = asset.step + 1;
+        if (newAsset.step < 7) {
+            newAsset.step = newAsset.step + 1;
         } else {
             throw new Error('Processing plant was finished');
         }
@@ -221,6 +250,43 @@ class Farm extends Contract {
         return ctx.stub.getTxID();
     }
     
+    async upgradeAssetToDelivery(ctx, id, address, deliverer) {
+        // check data if exists
+        const currentAsset = await this.getAsset(ctx, id);
+        // get the data as json format
+        const newAsset = JSON.parse(currentAsset);
+        let status;
+        // steps by definition
+        switch(newAsset.step + 1) {
+            case 9:
+                status = "PICKED";
+                break;
+            case 10:
+                status = "FINISHED";
+                break;
+        };
+
+        if (status === 'PICKED') {
+            newAsset.delivery.deliverer = deliverer;
+        }
+
+        if (status === 'FINISHED') {
+            newAsset.delivery.store_address = address;
+        }
+        //update status
+        newAsset.delivery.status = status;
+
+        // control step and update if needed
+        if (newAsset.step < 10) {
+            newAsset.step = newAsset.step + 1;
+        } else {
+            throw new Error('Delivery was finished');
+        }
+        
+        // update the state
+        await ctx.stub.putState(id, Buffer.from(JSON.stringify(newAsset)));
+        return ctx.stub.getTxID();
+    }
     // GetAssetHistory returns the chain of custody for an asset since issuance.
 	async getAssetHistory(ctx, assetKey) {
 

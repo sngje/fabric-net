@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="create">
+    <div class="container">
+      <div class="timeline">
+        <div class="timeline-event">
+          <div class="card timeline-content">
+            <div class="card-content">
+              <span class="card-title activator grey-text text-darken-4">{{ asset_id }}<i class="material-icons right">more_vert</i></span>
+              <p>Age: <b>{{ transactions['age'] }}</b></p>
+              <p>Vaccination: <b>{{ transactions['vaccination'] }}</b></p>
+              <p>Step: <b>{{ transactions['step'] }}</b></p>
+              {% if transactions['delivery'] %}
+                <p>Status: <b>{{ transactions['delivery']['status'] }}</b></p>
+                {% if transactions['delivery']['deliverer'] %}
+                  <p>Deliverer plate number: <b>{{ transactions['delivery']['deliverer'] }}</b></p>
+                {% endif %}
+                {% if transactions['delivery']['store_address'] %}
+                  <p>Store adress: <b>{{ transactions['delivery']['store_address'] }}</b></p>
+                {% endif %}
+                <!-- {% if transactions['delivery']['deliverer'] %}
+                  <p>Deliverer: <b>{{ transactions['processing_plant']['deliverer'] }}</b></p>
+                {% endif %} -->
+              {% endif %}
+            </div>
+            <div class="card-reveal">
+              <span class="card-title grey-text text-darken-4">Transaction ID<i class="material-icons right">close</i></span>
+              {% if transactions['tx_id'] %}
+                <p style="word-wrap: break-word;">{{ transactions['tx_id'] }}</p>
+              {% endif %}
+            </div>
+          </div>
+          <div class="timeline-badge blue white-text"><i class="material-icons">cached</i></div>
+        </div>
+        </div>
+    </div>
+    <hr/>
+    <div class="row">
+    <form class="col s12" action="{{ url_for('delivery.delivery_start', asset_id=asset_id) }}" method="POST">
+        {% if transactions['delivery']['status'] == "PENDING" %}
+        <div class="row">
+            <div class="input-field col s6">
+                <i class="material-icons prefix">account_circle</i>
+                <input id="icon_prefix" name="deliverer" type="text" class="validate">
+                <label for="icon_prefix">Driver number</label>
+            </div>
+        </div>
+        {% endif %}
+        {% if transactions['delivery']['status'] == "PICKED" %}
+            <div class="row">
+                <div class="input-field col s6">
+                    <i class="material-icons prefix">address</i>
+                    <input id="icon_prefix" name="address" type="text" class="validate">
+                    <label for="icon_prefix">Store address</label>
+                </div>
+            </div>
+        {% endif %}
+        {% if transactions['delivery']['status'] == "FINISHED" %}
+          <input class="waves-light btn our-colour disabled" type="submit" value="Delivery finished" name="">
+          <a class="waves-light btn our-colour" href="{{ url_for('delivery.delivery_finished') }}">Show Finished Products</a>
+        {% else %}
+          <input class="waves-light btn our-colour" type="submit" value="Proceed" name="">
+        {% endif %}
+      </form>
+    </div>
+  </div>
+{% endblock %}

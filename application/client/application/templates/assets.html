@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block content %}
+      <table class="highlight centered responsive-table">
+        <thead>
+          <tr>
+              <th>ID</th>
+              <th>Age</th>
+              <th>Vaccination</th>
+              <th>Update age</th>
+              <th>Trace</th>
+              <th>Next stage</th>
+              <th>Delete</th>
+
+          </tr>
+        </thead>
+        <tbody>
+          {% for arr in transactions['data'] %}
+          <tr>
+            <td style="text-transform:uppercase;">
+              <a class="waves-effect waves-light btn" href="{{ url_for('asset.edit', asset_id=arr['key']) }}" title="Edit">{{ arr['key'] }}</a>
+            </td>
+            <td>{{ arr['data']['age'] }}</td>
+            <td>
+              <!-- <div class="switch">
+                <label>
+                  {% if arr['data']['vaccination'] %}
+                    <input type="checkbox" checked="True">
+                  {% else %}
+                    <input disabled type="checkbox">
+                  {% endif %}
+                  <span class="lever"></span>
+                </label>
+              </div> -->
+              {{ arr['data']['vaccination'] }}
+            </td>
+            <!-- <td>{{ arr['data']['step'] }}</td> -->
+            <td><a href="{{ url_for('asset.update_age', asset_id=arr['key']) }}" title="Update"><i class="material-icons md-30">&nbsp;update</i></a></td>
+            <td><a href="{{ url_for('asset.history', asset_id=arr['key']) }}" title="See history"><i class="material-icons md-30">&nbsp;track_changes</i></a></td>
+            {% if arr['data']['age']|int >= 5 and arr['data']['vaccination'] %}
+              <td><a href="{{ url_for('processing.processing_request', asset_id=arr['key']) }}" title="Update"><i class="material-icons md-30">&nbsp;next_plan</i></a></td>
+            {% else %}
+              <td><i class="material-icons md-30">&nbsp;next_plan</i></td>
+            {% endif %}
+            <td><a href="{{ url_for('asset.delete', asset_id=arr['key']) }}" title="Delete"><i class="material-icons md-30">&nbsp;delete</i></a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <!-- END TABLE -->
+    <!-- </div> -->
+
+    <br />
+    <ul class="pagination col center-align">
+      {% if bookmark != 0 %}
+        <li class="waves-effect">
+          <a href="javascript:history.go(-1)"">
+            <i class="material-icons">chevron_left</i>
+          </a>
+        </li>
+      {% else %}
+        <li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>
+      {% endif %}
+      {% if transactions['meta_data']['fetchedRecordsCount'] >= 10 %}
+        <li class="waves-effect">
+          <a href="{{ url_for('grower.grower_farm', bookmark=transactions['meta_data']['bookmark']) }}">
+            <i class="material-icons">chevron_right</i>
+          </a>
+        </li>
+      {% else %}
+        <li class="disabled"><a href="#!"><i class="material-icons">chevron_right</i></a></li>
+      {% endif %}
+    </ul>
+    <!-- <a class="waves-effect our-colour waves-light btn" href="{{ url_for('grower.create_asset') }}"><i class="material-icons left">add_circle</i>Add cage</a> -->
+    
+{% endblock %}
+

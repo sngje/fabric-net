@@ -3,7 +3,7 @@
   <div class="create">
     <!-- START FORM -->
       <div class="row">
-        <form class="col s12" action="create_cage" method="POST">
+        <form class="col s12" action="{{ url_for('grower.create_asset') }}" method="POST">
             <div class="row">
               <div class="input-field col s6">
                 <input placeholder="ID" name="id" type="text" >

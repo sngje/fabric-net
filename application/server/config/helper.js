@@ -1,7 +1,6 @@
 'use strict';
 const jwt_decode = require('jwt-decode');
 
-
 // Function to return errors
 function getErrorMessage(field) {
     let response = {
@@ -10,7 +9,8 @@ function getErrorMessage(field) {
     };
     return response;
 }
-function decode_jwt(token) {
+
+function decodeJwt(token) {
     // const filter_token = token.substring(7, token.lengh);
     // console.log(filter_token);
     let decoded = jwt_decode(token);
@@ -32,7 +32,12 @@ function generateRandomId(length = 8) {
 
 
 module.exports = {
+<<<<<<< HEAD
     decode_jwt: decode_jwt,
     getErrorMessage: getErrorMessage,
     generateRandomId: generateRandomId,
+=======
+    decodeJwt: decodeJwt,
+    getErrorMessage: getErrorMessage,
+>>>>>>> e7df4b99d7d00f6280945c9494709a3bdb7193dd
 }
