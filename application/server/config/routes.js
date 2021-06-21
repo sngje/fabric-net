@@ -107,13 +107,8 @@ router.post('/assets/create', async function (req, res) {
         // console.log(JSON.parse(result.toString('utf8')));
 
         // Submit the specified transaction.
-<<<<<<< HEAD
         let tx = await contract.submitTransaction('createAsset', product_id, current_time, req.body.quantity, req.body.product_serial, req.body.message);
         console.log('Transaction has been submitted');
-=======
-        let tx = await contract.submitTransaction('createAsset', req.body.id, req.body.age);
-        logger.info('Transaction has been submitted');
->>>>>>> e7df4b99d7d00f6280945c9494709a3bdb7193dd
         res.status(200).json({
             response: `Successfully added - ${product_id}`,
             tx_id: tx.toString()

@@ -32,12 +32,7 @@ function generateRandomId(length = 8) {
 
 
 module.exports = {
-<<<<<<< HEAD
     decode_jwt: decode_jwt,
     getErrorMessage: getErrorMessage,
     generateRandomId: generateRandomId,
-=======
-    decodeJwt: decodeJwt,
-    getErrorMessage: getErrorMessage,
->>>>>>> e7df4b99d7d00f6280945c9494709a3bdb7193dd
 }
