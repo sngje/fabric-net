@@ -24,21 +24,6 @@ class Farm extends Contract {
         console.log(`TX - ${this.tx_id}`);
     }
 
-    // generateRandomId = (length = 8) => {
-    //     // Declare all characters
-    //     let chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    
-    //     // Pick characers randomly
-    //     let str = '';
-    //     for (let i = 0; i < length; i++) {
-    //         str += chars.charAt(Math.floor(Math.random() * chars.length));
-    //     }
-    
-    //     return str;
-    
-    // };
-
-
     // init state which calls from chaincode installition
     async initLedger(ctx) {
         const assets = {
@@ -86,7 +71,7 @@ class Farm extends Contract {
         return 'Deleted';
     }
 
-    // create new asset
+    // Create new asset
     async createAsset(ctx, id, timestamp, quantity, product_serial, message) {
         const assetExists = await this.assetExists(ctx, id);
         if (assetExists) {
@@ -118,6 +103,7 @@ class Farm extends Contract {
         return ctx.stub.getTxID();
     }
 
+    // Update asset
     async updateAsset(ctx, id, quantity, step) {
         // get data and check
         const currentAsset = await this.getAsset(ctx, id); // get the cage from chaincode state
@@ -137,7 +123,7 @@ class Farm extends Contract {
         return ctx.stub.getTxID();
     }
     
-    // // update asset age properity
+    // update asset age properity
     // async updateAssetAge(ctx, id) {
     //     const currentAsset = await this.getAsset(ctx, id);
     //     let newAsset = JSON.parse(currentAsset);        
@@ -250,6 +236,7 @@ class Farm extends Contract {
         return ctx.stub.getTxID();
     }
     
+    // Upgrade to delivery
     async upgradeAssetToDelivery(ctx, id, address, deliverer) {
         // check data if exists
         const currentAsset = await this.getAsset(ctx, id);
@@ -315,12 +302,7 @@ class Farm extends Contract {
 		return JSON.stringify(results);
 	}
 
-    // Example: Ad hoc rich query
-	// QueryAssets uses a query string to perform a query for assets.
-	// Query string matching state database syntax is passed in and executed as is.
-	// Supports ad hoc queries that can be defined at runtime by the client.
-	// If this is not desired, follow the QueryAssetsForOwner example for parameterized queries.
-	// Only available on state databases that support rich query (e.g. CouchDB)
+    // Wrapper method
     async queryAssets(ctx, queryString) {
 		return await this.getQueryResultForQueryString(ctx, queryString);
 	}
@@ -360,28 +342,28 @@ class Farm extends Contract {
 	}
 
     // get cages with vaccination filter
-    // async queryAssetsByVaccinationStatus(ctx, vaccination) {        
-    //     let condition = (String(vaccination) === 'true') ? true : false;
-    //     let queryString = {};
-    //     queryString.selector = {};
-    //     queryString.selector.vaccination = condition;
-    //     //use_index: ['_design/indexVcDoc', 'indexVc']
-    //     return await this.getQueryResultForQueryString(ctx, JSON.stringify(queryString));
-    // }
+    async queryAssetsByVaccinationStatus(ctx, vaccination) {        
+        let condition = (String(vaccination) === 'true') ? true : false;
+        let queryString = {};
+        queryString.selector = {};
+        queryString.selector.vaccination = condition;
+        //use_index: ['_design/indexVcDoc', 'indexVc']
+        return await this.getQueryResultForQueryString(ctx, JSON.stringify(queryString));
+    }
 
-    // query specific aged cages
-    // async queryAssetsByAge(ctx, age) {
-    //     age = typeof age !== 'undefined' ? parseInt(age) : 'undefined';
+    // quer y specific aged cages
+    async queryAssetsByAge(ctx, age) {
+        age = typeof age !== 'undefined' ? parseInt(age) : 'undefined';
 
-	// 	if (typeof int_age !== "number") {
-	// 		throw new Error("Age argument must be a numeric string");
-    //     }
+		if (typeof int_age !== "number") {
+			throw new Error("Age argument must be a numeric string");
+        }
     
-    //     let queryString = {};
-    //     queryString.selector = {};
-    //     queryString.selector.age = age;
-    //     return await this.getQueryResultForQueryString(ctx, JSON.stringify(queryString));
-    // }
+        let queryString = {};
+        queryString.selector = {};
+        queryString.selector.age = age;
+        return await this.getQueryResultForQueryString(ctx, JSON.stringify(queryString));
+    }
 
     // get all data which dockType is 'duck'
     async queryAssetsAll(ctx) {

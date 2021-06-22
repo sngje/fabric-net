@@ -524,7 +524,6 @@ router.put('/assets/:id/start-next-phase', async function (req, res) {
     }
 });
 
-
 // Query to get deliver data
 router.get('/delivery/assets/all/:bookmark', async function (req, res) {
     const decoded = helper.decodeJwt(req.headers['authorization']);
