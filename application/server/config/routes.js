@@ -97,10 +97,7 @@ router.post('/assets/create', async function (req, res) {
         // Get the contract from the network
         const {contract, gateway} = await fabricNetwork.connectNetwork(decoded['email'], decoded['orgname']);
         const product_id = helper.generateRandomId(10);
-        
-        // Default values to pass
-        const current_date = new Date();
-        const current_time = current_date.toISOString();
+        const current_time = helper.getDateAsString();
         console.log(`${product_id} ${current_time}`);
 
         // result = await contract.evaluateTransaction('org.hyperledger.fabric:GetMetadata');
@@ -121,7 +118,6 @@ router.post('/assets/create', async function (req, res) {
         res.status(500).json({error: 'Transaction failed ( Please try again.'}); 
     }
 });
-
 
 // Transaction to delete
 router.delete('/assets/:id/delete', async function (req, res) {

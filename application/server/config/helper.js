@@ -27,12 +27,17 @@ function generateRandomId(length = 8) {
         str += chars.charAt(Math.floor(Math.random() * chars.length));
     }
     return str;
-
 };
 
+function getDateAsString() {
+    const date = new Date();
+    const current_time = date.toISOString();
+    return current_time;
+}
 
 module.exports = {
     decodeJwt: decodeJwt,
     getErrorMessage: getErrorMessage,
     generateRandomId: generateRandomId,
+    getDateAsString: getDateAsString,
 }

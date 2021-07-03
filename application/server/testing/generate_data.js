@@ -3,6 +3,7 @@
 const { Gateway, Wallets } = require('fabric-network');
 const fs = require('fs');
 const path = require('path');
+const helper = require('../config/helper');
 const user = 'usmonov.me@gmail.com';
 
 async function main() {
@@ -43,10 +44,12 @@ async function main() {
 
         const v_status = [true, false];
 
-        for (let i = 16; i < 100; i ++) {
-            let randomAge = Math.floor(Math.random() * (5 - 1 + 1));
-            let randomCondition = Math.floor(Math.random() * 2);
-            let tx = await contract.submitTransaction('createAsset', 'ASSET' + i, 5);
+        for (let i = 0; i < 20; i ++) {
+            let current_time = helper.getDateAsString();
+            let randomId = helper.generateRandomId()
+            let randomQuantity = Math.floor(Math.random() * (1000 - 10 + 1));
+            let randomSerial = helper.generateRandomId(2);
+            let tx = await contract.submitTransaction('createAsset', randomId, current_time, randomQuantity, randomSerial, 'CR - auto');
             console.log(`${i} ok - ${tx.toString()}`);
         }
 

@@ -4,9 +4,9 @@
         <thead>
           <tr>
               <th>ID</th>
-              <th>Age</th>
-              <th>Vaccination</th>
-              <th>Update age</th>
+              <th>Quantity</th>
+              <th>Created time</th>
+              <th>Serial number</th>
               <th>Trace</th>
               <th>Next stage</th>
               <th>Delete</th>
@@ -19,24 +19,14 @@
             <td style="text-transform:uppercase;">
               <a class="waves-effect waves-light btn" href="{{ url_for('asset.edit', asset_id=arr['key']) }}" title="Edit">{{ arr['key'] }}</a>
             </td>
-            <td>{{ arr['data']['age'] }}</td>
+            <td>{{ arr['data']['quantity'] }}</td>
             <td>
-              <!-- <div class="switch">
-                <label>
-                  {% if arr['data']['vaccination'] %}
-                    <input type="checkbox" checked="True">
-                  {% else %}
-                    <input disabled type="checkbox">
-                  {% endif %}
-                  <span class="lever"></span>
-                </label>
-              </div> -->
-              {{ arr['data']['vaccination'] }}
+              {{ arr['data']['timestamp'] }}
             </td>
-            <!-- <td>{{ arr['data']['step'] }}</td> -->
-            <td><a href="{{ url_for('asset.update_age', asset_id=arr['key']) }}" title="Update"><i class="material-icons md-30">&nbsp;update</i></a></td>
+            <td>{{ arr['data']['product_serial']|upper }}</td>
+            <!-- <td><a href="{{ url_for('asset.update_age', asset_id=arr['key']) }}" title="Update"><i class="material-icons md-30">&nbsp;update</i></a></td> -->
             <td><a href="{{ url_for('asset.history', asset_id=arr['key']) }}" title="See history"><i class="material-icons md-30">&nbsp;track_changes</i></a></td>
-            {% if arr['data']['age']|int >= 5 and arr['data']['vaccination'] %}
+            {% if arr['data'] %}
               <td><a href="{{ url_for('processing.processing_request', asset_id=arr['key']) }}" title="Update"><i class="material-icons md-30">&nbsp;next_plan</i></a></td>
             {% else %}
               <td><i class="material-icons md-30">&nbsp;next_plan</i></td>

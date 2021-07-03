@@ -150,28 +150,26 @@ class Farm extends Contract {
     // phase shows different divistion as number
     // phase 1 = PROCESSING_PLANT
     // phase 2 = DELIVERY
-    async startNextPhase(ctx, id, phase) {
+    async startNextPhase(ctx, id, flag) {
         const currentAsset = await this.getAsset(ctx, id);
         // get the data as json format
         const newAsset = JSON.parse(currentAsset);
-        if (newAsset.age < 5 || newAsset.vaccination != true) {
-            throw new Error('Asset is not accaptable yet, age must be at least 5 and vaccination should be true');
-        }
-
-        if (phase == 1) {
+        // if (newAsset.age < 5 || newAsset.vaccination != true) {
+        //     throw new Error('Asset is not accaptable yet, age must be at least 5 and vaccination should be true');
+        // }
+        newAsset.flag = 'CR';
+        if (flag == 'CR') {
             // add new dictinoary if not exists
-            if (typeof newAsset.processing_plant == 'undefined') {
-                newAsset.processing_plant = {};
+            if (typeof newAsset.cultivator == 'undefined') {
+                newAsset.cultivator = {};
             }
-            newAsset.step = 2;
-            newAsset.processing_plant.status = 'PENDING';
-        } else if (phase ==  2) {
+            newAsset.cultivator.status = 'PENDING';
+        } else if (flag ==  'SR') {
             // add new dictinoary if not exists
-            if (typeof newAsset.delivery == 'undefined') {
-                newAsset.delivery = {};
+            if (typeof newAsset.supplier == 'undefined') {
+                newAsset.supplier = {};
             }
-            newAsset.step = 8;
-            newAsset.delivery.status = 'PENDING';
+            newAsset.supplier.status = 'PENDING';
         } else {
             throw new Error('Phase not found, please check the value and try again');
         }
@@ -352,18 +350,18 @@ class Farm extends Contract {
     }
 
     // quer y specific aged cages
-    async queryAssetsByAge(ctx, age) {
-        age = typeof age !== 'undefined' ? parseInt(age) : 'undefined';
+    // async queryAssetsByAge(ctx, age) {
+    //     age = typeof age !== 'undefined' ? parseInt(age) : 'undefined';
 
-		if (typeof int_age !== "number") {
-			throw new Error("Age argument must be a numeric string");
-        }
+	// 	if (typeof int_age !== "number") {
+	// 		throw new Error("Age argument must be a numeric string");
+    //     }
     
-        let queryString = {};
-        queryString.selector = {};
-        queryString.selector.age = age;
-        return await this.getQueryResultForQueryString(ctx, JSON.stringify(queryString));
-    }
+    //     let queryString = {};
+    //     queryString.selector = {};
+    //     queryString.selector.age = age;
+    //     return await this.getQueryResultForQueryString(ctx, JSON.stringify(queryString));
+    // }
 
     // get all data which dockType is 'duck'
     async queryAssetsAll(ctx) {

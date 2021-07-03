@@ -111,9 +111,9 @@
               <span class="card-title activator grey-text text-darken-4">
               {{ myTimeFunc(arr['timestamp']['seconds']|int) }}
               <i class="material-icons right">more_vert</i></span>
-              <p>Age: <b>{{ arr['data']['age'] }}</b></p>
-              <p>Vaccination: <b>{{ arr['data']['vaccination'] }}</b></p>
-              <p>Step: <b>{{ arr['data']['step'] }}</b></p>
+              <p>ID: <b>{{ asset_id }}</b></p>
+              <p>Quantity: <b>{{ arr['data']['quantity'] }}</b></p>
+              <p>Flag: <b>{{ arr['data']['flag'] }}</b></p>
               {% if arr['data']['processing_plant'] %}
                 <p>Status: <b>{{ arr['data']['processing_plant']['status'] }}</b></p>
                 {% if arr['data']['processing_plant']['inspected'] %}
