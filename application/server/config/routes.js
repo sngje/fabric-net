@@ -375,8 +375,8 @@ router.get('/processing-plant/assets/confirmation/:bookmark', async function (re
 
         let queryString = {
             selector: {
-                step: {"$eq": 2},
-                processing_plant: {
+                // step: {"$eq": 2},
+                cultivator: {
                     status: 'PENDING'
                 }
             }
@@ -449,7 +449,7 @@ router.get('/processing-plant/assets/finished/:bookmark', async function (req, r
 
         let queryString = {
             selector: {
-                step: {"$eq": 7}
+                cultivator: 'RECEIVED'
             }
         };
         let bookmark = (req.params.bookmark !== '0') ? req.params.bookmark : ''; 
@@ -475,15 +475,15 @@ router.get('/processing-plant/assets/finished/:bookmark', async function (req, r
 });
 
 // Prosessing plant steps
-router.put('/processing-plant/:id', async function (req, res) {
+router.put('/processing-plant/:id/start', async function (req, res) {
     const decoded = helper.decodeJwt(req.headers['authorization']);
     try {
         // Get the contract from the network
         const {contract, gateway} = await fabricNetwork.connectNetwork(decoded['email'], decoded['orgname']);
-
+        const current_time = helper.getDateAsString();
         // Evaluate the specified transaction.
         // getAsset transaction - requires 1 argument, ex: ('getAsset', 'Cage1')
-        let tx = await contract.submitTransaction('upgradeAssetToProsessingPlant', req.params.id, req.body.acceptable, req.body.deliverer);
+        let tx = await contract.submitTransaction('upgradeAssetToCultivator', req.params.id, req.body.deliverer, req.body.message, current_time);
         let data = await contract.evaluateTransaction('getAsset', req.params.id);
         let answer = JSON.parse(data);
         answer.tx_id = tx.toString();
@@ -509,7 +509,7 @@ router.put('/assets/:id/start-next-phase', async function (req, res) {
 
         // Evaluate the specified transaction.
         // getAsset transaction - requires 1 argument, ex: ('getAsset', 'Cage1')
-        let tx = await contract.submitTransaction('startNextPhase', req.params.id, req.body.phase);
+        let tx = await contract.submitTransaction('startNextPhase', req.params.id, req.body.flag);
         logger.info('Transaction has been evaluated');
         res.status(200).json(tx);
         // disconnect the gateway
@@ -599,8 +599,8 @@ router.get('/delivery/assets/confirmation/:bookmark', async function (req, res) 
 
         let queryString = {
             selector: {
-                step: {"$eq": 8},
-                delivery: {
+                // step: {"$eq": 8},
+                supplier: {
                     status: 'PENDING'
                 }
             }
@@ -628,15 +628,15 @@ router.get('/delivery/assets/confirmation/:bookmark', async function (req, res) 
 });
 
 // Delivery - start
-router.put('/delivery/:id', async function (req, res) {
+router.put('/delivery/:id/start', async function (req, res) {
     const decoded = helper.decodeJwt(req.headers['authorization']);
     try {
         // Get the contract from the network
         const {contract, gateway} = await fabricNetwork.connectNetwork(decoded['email'], decoded['orgname']);
-
+        const current_time = helper.getDateAsString();
         // Evaluate the specified transaction.
         // getAsset transaction - requires 1 argument, ex: ('getAsset', 'Cage1')
-        let tx = await contract.submitTransaction('upgradeAssetToDelivery', req.params.id, req.body.address, req.body.deliverer);
+        let tx = await contract.submitTransaction('upgradeAssetToSupplier', req.params.id, req.body.message, req.body.deliverer, current_time);
         let data = await contract.evaluateTransaction('getAsset', req.params.id);
         let answer = JSON.parse(data);
         answer.tx_id = tx.toString();

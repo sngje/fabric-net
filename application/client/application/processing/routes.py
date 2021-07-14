@@ -15,11 +15,11 @@ def processing_all(bookmark=0):
 	response = requests.get(f'{API_SERVER}/processing-plant/assets/all/{bookmark}', headers=headers) 
 	if response.status_code != 200:
 		flash("Something went wrong", "error")
-		return render_template('empty_list.html', title="Processing plant", text="Nothing found")
+		return render_template('empty_list.html', title="Cultivator", text="Nothing found")
 	transactions = response.json()
 	if len(transactions['data']) == 0:
-		return render_template('empty_list.html', title="Processing plant", text="Nothing found")
-	return render_template('processing_plant_pages.html', title="Processing plant - current state", bookmark=bookmark, transactions=transactions)
+		return render_template('empty_list.html', title="Cultivator", text="Nothing found")
+	return render_template('processing_plant_pages.html', title="Cultivator - current state", bookmark=bookmark, transactions=transactions)
 
 # Route: show all processing plant data
 @processing.route("/processing-plant/finished")
@@ -30,11 +30,11 @@ def processing_finished(bookmark=0):
 	response = requests.get(f'{API_SERVER}/processing-plant/assets/finished/{bookmark}', headers=headers) 
 	if response.status_code != 200:
 		flash("Error occured, please ask from back-end team", "info")
-		return render_template('empty_list.html', title="Processing plant", text="Nothing found")
+		return render_template('empty_list.html', title="Cultivator", text="Nothing found")
 	transactions = response.json()
 	if len(transactions['data']) == 0:
-		return render_template('empty_list.html', title="Processing plant - finished products", text="Finished products not found")
-	return render_template('processing_plant_pages.html', title="Processing plant - finished products", page="finished", bookmark=bookmark, transactions=transactions)
+		return render_template('empty_list.html', title="Cultivator - finished products", text="Finished products not found")
+	return render_template('processing_plant_pages.html', title="Cultivator - finished products", page="finished", bookmark=bookmark, transactions=transactions)
 
 # Route: show all processing plant data - confirmation
 @processing.route("/processing-plant/confirmation")
@@ -45,11 +45,11 @@ def processing_confirmation(bookmark=0):
 	response = requests.get(f'{API_SERVER}/processing-plant/assets/confirmation/{bookmark}', headers=headers) 
 	if response.status_code != 200:
 		flash("List is currently empty", "info")
-		return render_template('empty_list.html', title="Processing plant", text="Nothing found")
+		return render_template('empty_list.html', title="Cultivator", text="Nothing found")
 	transactions = response.json()
 	if len(transactions['data']) == 0:
-		return render_template('empty_list.html', title="Processing plant", text="Nothing found")
-	return render_template('processing_plant_pages.html', title="Processing plant - confirmation", page="confirmation", bookmark=bookmark, transactions=transactions)
+		return render_template('empty_list.html', title="Cultivator", text="Nothing found")
+	return render_template('processing_plant_pages.html', title="Cultivator - confirmation", page="confirmation", bookmark=bookmark, transactions=transactions)
 
 
 # Route: change asset status to PENDING for processing plant
@@ -58,7 +58,7 @@ def processing_confirmation(bookmark=0):
 def processing_request(asset_id):
 	headers = header_info(current_user.token)
 	req = {
-		'phase': 1
+		'flag': 'CR'
 	}
 	req = json.loads(json.dumps(req))
 	response = requests.put(f'{API_SERVER}/assets/{asset_id}/start-next-phase', json=req, headers=headers) 
@@ -93,7 +93,7 @@ def processing_start(asset_id):
 		
 		transactions = response.json()
 		flash("Updated successfully", "success")
-		return render_template(f'processing_plant.html', title=f"Processing plant - {asset_id}", asset_id=asset_id, transactions=transactions)
+		return render_template(f'processing_plant.html', title=f"Cultivator - {asset_id}", asset_id=asset_id, transactions=transactions)
 	else:
 		response = requests.get(f'{API_SERVER}/assets/{asset_id}', headers=headers) 
 		
@@ -102,5 +102,5 @@ def processing_start(asset_id):
 			flash("Asset not found", "error")
 			return redirect(url_for('processing.processing_start', asset_id=asset_id))
 		transactions = response.json()
-		return render_template(f'processing_plant.html', title=f"Processing plant - {asset_id}", asset_id=asset_id, transactions=transactions)
+		return render_template(f'processing_plant.html', title=f"Cultivator - {asset_id}", asset_id=asset_id, transactions=transactions)
 

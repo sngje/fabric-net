@@ -180,6 +180,47 @@ class Farm extends Contract {
     }
 
     // Prosessing plant logic goes here
+    async upgradeAssetToCultivator(ctx, id, deliverer, message, timestamp) {
+        // check data if exists
+        const currentAsset = await this.getAsset(ctx, id);
+        // get the data as json format
+        const newAsset = JSON.parse(currentAsset);
+
+        //update status
+        newAsset.cultivator.status = 'RECEIVED';
+
+        newAsset.cultivator.delivery = {
+            'message': message,
+            'deliverer': deliverer,
+            'timestamp': timestamp,
+        }
+
+        // update the state
+        await ctx.stub.putState(id, Buffer.from(JSON.stringify(newAsset)));
+        return ctx.stub.getTxID();
+    }
+
+    async upgradeAssetToSupplier(ctx, id, deliverer, message, timestamp) {
+        // check data if exists
+        const currentAsset = await this.getAsset(ctx, id);
+        // get the data as json format
+        const newAsset = JSON.parse(currentAsset);
+
+        //update status
+        newAsset.supplier.status = 'RECEIVED';
+
+        newAsset.supplier.delivery = {
+            'message': message,
+            'deliverer': deliverer,
+            'timestamp': timestamp,
+        }
+
+        // update the state
+        await ctx.stub.putState(id, Buffer.from(JSON.stringify(newAsset)));
+        return ctx.stub.getTxID();
+    }
+    
+    // Prosessing plant logic goes here
     async upgradeAssetToProsessingPlant(ctx, id, acceptable, deliverer) {
         // check data if exists
         const currentAsset = await this.getAsset(ctx, id);
