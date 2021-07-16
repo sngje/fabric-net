@@ -68,6 +68,22 @@ def processing_request(asset_id):
 		return redirect(url_for('grower.grower_farm'))
 	flash("Asset is added to waiting list. Processing Plant organization must confirm to proceed.", "success")
 	return redirect(url_for('grower.grower_farm'))
+
+@processing.route("/processing-plant/<string:asset_id>/accept")
+@login_required
+def processing_accept(asset_id):
+	headers = header_info(current_user.token)
+	req = {
+		'flag': 'CR'
+	}
+	req = json.loads(json.dumps(req))
+	response = requests.put(f'{API_SERVER}/assets/{asset_id}/accept-current-phase', json=req, headers=headers) 
+	# print(response)
+	if response.status_code != 200:
+		flash("Error occured, please ask from back-end team", "error")
+		return redirect(url_for('grower.grower_farm'))
+	flash("Asset is added to waiting list. Processing Plant organization must confirm to proceed.", "success")
+	return redirect(url_for('grower.grower_farm'))
  
 # Route: processing plant - start
 @processing.route("/processing-plant/<string:asset_id>", methods=["POST", "GET"])

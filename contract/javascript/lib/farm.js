@@ -104,18 +104,18 @@ class Farm extends Contract {
     }
 
     // Update asset
-    async updateAsset(ctx, id, quantity, step) {
+    async updateAsset(ctx, id, quantity, message, product_serial) {
         // get data and check
         const currentAsset = await this.getAsset(ctx, id); // get the cage from chaincode state
         let newAsset = JSON.parse(currentAsset); 
 
         // set default values if not defined
         quantity = typeof quantity !== 'undefined' ? parseInt(quantity) : newAsset.quantity;
-        // vaccination = typeof vaccination !== 'undefined' ? ((String(vaccination) === 'true') ? true : false) : newAsset.vaccination;
-        step = typeof step !== 'undefined' ? parseInt(step) : newAsset.step;
+
         // update asset
         newAsset.quantity = quantity;
-        // newAsset.vaccination = vaccination;
+        newAsset.message = message;
+        newAsset.product_serial = product_serial;
         newAsset.step = step;
 
         // commit changes
@@ -150,7 +150,7 @@ class Farm extends Contract {
     // phase shows different divistion as number
     // phase 1 = PROCESSING_PLANT
     // phase 2 = DELIVERY
-    async startNextPhase(ctx, id, flag) {
+    async sendRequest(ctx, id, flag) {
         const currentAsset = await this.getAsset(ctx, id);
         // get the data as json format
         const newAsset = JSON.parse(currentAsset);
@@ -170,6 +170,35 @@ class Farm extends Contract {
                 newAsset.supplier = {};
             }
             newAsset.supplier.status = 'PENDING';
+        } else {
+            throw new Error('Phase not found, please check the value and try again');
+        }
+        
+        // update the state
+        await ctx.stub.putState(id, Buffer.from(JSON.stringify(newAsset)));
+        return ctx.stub.getTxID();
+    }
+
+    async acceptRequest(ctx, id, flag) {
+        const currentAsset = await this.getAsset(ctx, id);
+        // get the data as json format
+        const newAsset = JSON.parse(currentAsset);
+        // if (newAsset.age < 5 || newAsset.vaccination != true) {
+        //     throw new Error('Asset is not accaptable yet, age must be at least 5 and vaccination should be true');
+        // }
+        newAsset.flag = 'CR';
+        if (flag == 'CR') {
+            // add new dictinoary if not exists
+            if (typeof newAsset.cultivator == 'undefined') {
+                newAsset.cultivator = {};
+            }
+            newAsset.cultivator.status = 'RECEIVED';
+        } else if (flag ==  'SR') {
+            // add new dictinoary if not exists
+            if (typeof newAsset.supplier == 'undefined') {
+                newAsset.supplier = {};
+            }
+            newAsset.supplier.status = 'RECEIVED';
         } else {
             throw new Error('Phase not found, please check the value and try again');
         }

@@ -96,7 +96,7 @@ router.post('/assets/create', async function (req, res) {
     try {
         // Get the contract from the network
         const {contract, gateway} = await fabricNetwork.connectNetwork(decoded['email'], decoded['orgname']);
-        const product_id = helper.generateRandomId(10);
+        const product_id = helper.generateRandomId(8);
         const current_time = helper.getDateAsString();
         console.log(`${product_id} ${current_time}`);
 
@@ -150,7 +150,7 @@ router.put('/assets/:id/edit', async function (req, res) {
 
         // Evaluate the specified transaction.
         // getAsset transaction - requires 1 argument, ex: ('getAsset', 'Cage1')
-        let tx = await contract.submitTransaction('updateAsset', req.params.id, req.body.age, req.body.vaccination, req.body.step);
+        let tx = await contract.submitTransaction('updateAsset', req.params.id, req.body.product_serial, req.body.message, req.body.quantity);
         let data = await contract.evaluateTransaction('getAsset', req.params.id);
         let answer = JSON.parse(data);
         answer.tx_id = tx.toString();
@@ -201,7 +201,7 @@ router.get('/assets/all/:bookmark', async function (req, res) {
         const queryString = {
             selector: {
                 docType: 'duck',
-                step: {"$eq": 1}
+                flag: 'PR'
             } 
         };
         let bookmark = (req.params.bookmark !== '0') ? req.params.bookmark : ''; 
@@ -412,9 +412,12 @@ router.get('/processing-plant/assets/all/:bookmark', async function (req, res) {
 
         let queryString = {
             selector: {
-                step: {
-                    "$gt": 1,
-                    "$lt": 6
+                // step: {
+                //     "$gt": 1,
+                //     "$lt": 6
+                // }
+                cultivator: {
+                    status: 'RECEIVED'
                 }
             }
         };
@@ -509,7 +512,26 @@ router.put('/assets/:id/start-next-phase', async function (req, res) {
 
         // Evaluate the specified transaction.
         // getAsset transaction - requires 1 argument, ex: ('getAsset', 'Cage1')
-        let tx = await contract.submitTransaction('startNextPhase', req.params.id, req.body.flag);
+        let tx = await contract.submitTransaction('sendRequest', req.params.id, req.body.flag);
+        logger.info('Transaction has been evaluated');
+        res.status(200).json(tx);
+        // disconnect the gateway
+        // await gateway.disconnect();
+    } catch (error) {
+        logger.error(`Failed to evaluate transaction: ${error}`);
+        res.status(500).json({error: `Failed to evaluate transaction. ${error}`});
+    }
+});
+
+router.put('/assets/:id/accept-current-phase', async function (req, res) {
+    const decoded = helper.decodeJwt(req.headers['authorization']);
+    try {
+        // Get the contract from the network
+        const {contract, gateway} = await fabricNetwork.connectNetwork(decoded['email'], decoded['orgname']);
+
+        // Evaluate the specified transaction.
+        // getAsset transaction - requires 1 argument, ex: ('getAsset', 'Cage1')
+        let tx = await contract.submitTransaction('acceptRequest', req.params.id, req.body.flag);
         logger.info('Transaction has been evaluated');
         res.status(200).json(tx);
         // disconnect the gateway

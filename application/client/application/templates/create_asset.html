@@ -6,20 +6,26 @@
         <form class="col s12" action="{{ url_for('grower.create_asset') }}" method="POST">
             <div class="row">
               <div class="input-field col s6">
-                <input placeholder="ID" name="id" type="text" >
+                <input placeholder="Product serial number" name="product_serial" type="text" >
               </div>
-              <div class="input-field col s6">
-                <input placeholder="Age" name="age" type="text" >
               </div>
               <div class="row">
-                </div><div class="switch col">
+              <div class="input-field col s6">
+                <input placeholder="Quantity" name="quantity" type="number" >
+              </div>
+              </div>
+              <div class="row">
+              <div class="input-field col s6">
+                <input placeholder="Message" name="message" type="text" >
+              </div>
+              <!-- <div class="switch col">
                   <label>
                     False
                     <input type="checkbox" name="vaccination">
                     <span class="lever"></span>
                     True
                   </label>
-                </div>
+                </div> -->
               </div>
             </div>
             <input class="waves-light btn our-colour" type="submit" value="Submit" name="">

@@ -1,2 +1,0 @@
-[34m2021-07-14 15:31:21.229 KST [cli.lifecycle.chaincode] submitInstallProposal -> INFO 001[0m Installed remotely: response:<status:200 payload:"\nGfarm_3:1e28beb21d57be9540c042d7f168966b2f387e1e377394d0178364fe6f2b327e\022\006farm_3" > 
-[34m2021-07-14 15:31:21.229 KST [cli.lifecycle.chaincode] submitInstallProposal -> INFO 002[0m Chaincode code package identifier: farm_3:1e28beb21d57be9540c042d7f168966b2f387e1e377394d0178364fe6f2b327e

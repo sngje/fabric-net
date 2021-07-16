@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from application.config import Config
-from application.utils import myTimeFunc, header_info
+from application.utils import myTimeFunc, header_info, daysCount
 
 API_SERVER = 'http://localhost:3000/api'
 db = SQLAlchemy()
@@ -28,7 +28,7 @@ def create_app(config_class=Config):
     # This allows using the above 3 functions in-line from the HTML templates 
     app.jinja_env.globals.update(myTimeFunc=myTimeFunc) 
     app.jinja_env.globals.update(header_info=header_info)
-
+    app.jinja_env.globals.update(daysCount=daysCount)
 
     from application.users.routes import users
     from application.asset.routes import asset

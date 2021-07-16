@@ -47,7 +47,7 @@
               </td> -->
               <td>{{ arr['data']['cultivator']['status'] }}</td>
               <td>
-                <a href="{{ url_for('processing.processing_start', asset_id=arr['key']) }}" title="Confirm"><i class="material-icons md-30">&nbsp;check_box</i></a>
+                <a href="{{ url_for('processing.processing_accept', asset_id=arr['key']) }}" title="Confirm"><i class="material-icons md-30">&nbsp;check_box</i></a>
               </td>
             </tr>
             {% endfor %}
@@ -56,9 +56,9 @@
           <thead>
             <tr>
               <th>ID</th>
-              <th>Deliverer</th>
-              <th>Inspection</th>
-              <th>Stage</th>
+              <th>Status</th>
+              <th>Serial N</th>
+              <th>Timestamp</th>
               <th>Update</th>
           </tr>
           </thead>
@@ -69,22 +69,18 @@
                 <a class="waves-effect waves-light btn" href="{{ url_for('asset.history', asset_id=arr['key'])}}" title="See history">{{ arr['key'] }}</a>
               </td>
               <td>
-                {% if arr['data']['processing_plant']['deliverer'] is defined %}
-                  {{ arr['data']['processing_plant']['deliverer'] }}
-                {% else %}
-                  -
-                {% endif %}
+                {{ arr['data']['cultivator']['status'] }}
               </td>
               <td>
-                {% if arr['data']['processing_plant']['inspection'] is defined %}
-                  {{ arr['data']['processing_plant']['inspection'] }}
-                {% else %}
-                  -
-                {% endif %}
+                {{ arr['data']['product_serial'] }}
               </td>
-              <td>{{ arr['data']['processing_plant']['status'] }}</td>
+              <td>{{ arr['data']['timestamp'] }}</td>
               <td>
-                <a href="{{ url_for('processing.processing_start', asset_id=arr['key']) }}" title="Update"><i class="material-icons md-30">&nbsp;autorenew</i></a>
+                {% if daysCount(arr['data']['timestamp']) < 45 %}
+                  {{ daysCount(arr['data']['timestamp']) }} days
+                {% else %}
+                  <a href="{{ url_for('processing.processing_start', asset_id=arr['key']) }}" title="Update"><i class="material-icons md-30">&nbsp;autorenew</i></a>
+                {% endif %}
               </td>
               <!-- <td><a href="{{ url_for('asset.delete', asset_id=arr['key']) }}" title="Delete"><i class="material-icons md-30">&nbsp;delete</i></a></td> -->
             </tr>

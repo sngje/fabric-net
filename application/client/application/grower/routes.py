@@ -40,11 +40,12 @@ def health_monitor(bookmark=0):
 def create_asset():
 	headers = header_info(current_user.token)
 	if request.method == "POST":
-		key = request.form['id']
-		age = int(request.form['age'])
+		product_serial = request.form['product_serial']
+		quantity = int(request.form['quantity'])
+		message = request.form['message']
 		# vaccination = 'true' if (request.form.get('vaccination', False)) != False else 'false'
 
-		req = {'id': f'{key}', 'age': f'{age}'}
+		req = {'product_serial': f'{product_serial}', 'quantity': f'{quantity}', 'message': f'{message}'}
 		req = json.loads(json.dumps(req))
 		# send the data
 		response = requests.post(f'{API_SERVER}/assets/create', json=req, headers=headers) 
