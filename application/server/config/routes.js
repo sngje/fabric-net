@@ -150,7 +150,7 @@ router.put('/assets/:id/edit', async function (req, res) {
 
         // Evaluate the specified transaction.
         // getAsset transaction - requires 1 argument, ex: ('getAsset', 'Cage1')
-        let tx = await contract.submitTransaction('updateAsset', req.params.id, req.body.product_serial, req.body.message, req.body.quantity);
+        let tx = await contract.submitTransaction('updateAsset', req.params.id, req.body.quantity, req.body.message, req.body.product_serial);
         let data = await contract.evaluateTransaction('getAsset', req.params.id);
         let answer = JSON.parse(data);
         answer.tx_id = tx.toString();
@@ -452,7 +452,9 @@ router.get('/processing-plant/assets/finished/:bookmark', async function (req, r
 
         let queryString = {
             selector: {
-                cultivator: 'RECEIVED'
+                cultivator: {
+                    status: 'FINISHED'
+                }
             }
         };
         let bookmark = (req.params.bookmark !== '0') ? req.params.bookmark : ''; 
@@ -486,7 +488,7 @@ router.put('/processing-plant/:id/start', async function (req, res) {
         const current_time = helper.getDateAsString();
         // Evaluate the specified transaction.
         // getAsset transaction - requires 1 argument, ex: ('getAsset', 'Cage1')
-        let tx = await contract.submitTransaction('upgradeAssetToCultivator', req.params.id, req.body.deliverer, req.body.message, current_time);
+        let tx = await contract.submitTransaction('addDeliveryInfo', req.params.id, 'CR', req.body.plate_number, req.body.message, current_time);
         let data = await contract.evaluateTransaction('getAsset', req.params.id);
         let answer = JSON.parse(data);
         answer.tx_id = tx.toString();
@@ -523,25 +525,6 @@ router.put('/assets/:id/start-next-phase', async function (req, res) {
     }
 });
 
-router.put('/assets/:id/accept-current-phase', async function (req, res) {
-    const decoded = helper.decodeJwt(req.headers['authorization']);
-    try {
-        // Get the contract from the network
-        const {contract, gateway} = await fabricNetwork.connectNetwork(decoded['email'], decoded['orgname']);
-
-        // Evaluate the specified transaction.
-        // getAsset transaction - requires 1 argument, ex: ('getAsset', 'Cage1')
-        let tx = await contract.submitTransaction('acceptRequest', req.params.id, req.body.flag);
-        logger.info('Transaction has been evaluated');
-        res.status(200).json(tx);
-        // disconnect the gateway
-        // await gateway.disconnect();
-    } catch (error) {
-        logger.error(`Failed to evaluate transaction: ${error}`);
-        res.status(500).json({error: `Failed to evaluate transaction. ${error}`});
-    }
-});
-
 // Query to get deliver data
 router.get('/delivery/assets/all/:bookmark', async function (req, res) {
     const decoded = helper.decodeJwt(req.headers['authorization']);
@@ -551,8 +534,8 @@ router.get('/delivery/assets/all/:bookmark', async function (req, res) {
 
         let queryString = {
             selector: {
-                step: {
-                    "$eq": 9
+                supplier: {
+                    status: 'RECEIVED'
                 }
             }
         };
@@ -587,7 +570,9 @@ router.get('/delivery/assets/finished/:bookmark', async function (req, res) {
 
         let queryString = {
             selector: {
-                step: {"$eq": 10}
+                supplier: {
+                    status: 'FINISHED'
+                }
             }
         };
         let bookmark = (req.params.bookmark !== '0') ? req.params.bookmark : ''; 
@@ -658,7 +643,7 @@ router.put('/delivery/:id/start', async function (req, res) {
         const current_time = helper.getDateAsString();
         // Evaluate the specified transaction.
         // getAsset transaction - requires 1 argument, ex: ('getAsset', 'Cage1')
-        let tx = await contract.submitTransaction('upgradeAssetToSupplier', req.params.id, req.body.message, req.body.deliverer, current_time);
+        let tx = await contract.submitTransaction('addDeliveryInfo', req.params.id, 'SR', req.body.plate_number, req.body.message, current_time);
         let data = await contract.evaluateTransaction('getAsset', req.params.id);
         let answer = JSON.parse(data);
         answer.tx_id = tx.toString();

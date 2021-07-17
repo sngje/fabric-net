@@ -116,7 +116,6 @@ class Farm extends Contract {
         newAsset.quantity = quantity;
         newAsset.message = message;
         newAsset.product_serial = product_serial;
-        newAsset.step = step;
 
         // commit changes
         await ctx.stub.putState(id, Buffer.from(JSON.stringify(newAsset)));
@@ -179,53 +178,33 @@ class Farm extends Contract {
         return ctx.stub.getTxID();
     }
 
-    async acceptRequest(ctx, id, flag) {
-        const currentAsset = await this.getAsset(ctx, id);
-        // get the data as json format
-        const newAsset = JSON.parse(currentAsset);
-        // if (newAsset.age < 5 || newAsset.vaccination != true) {
-        //     throw new Error('Asset is not accaptable yet, age must be at least 5 and vaccination should be true');
-        // }
-        newAsset.flag = 'CR';
-        if (flag == 'CR') {
-            // add new dictinoary if not exists
-            if (typeof newAsset.cultivator == 'undefined') {
-                newAsset.cultivator = {};
-            }
-            newAsset.cultivator.status = 'RECEIVED';
-        } else if (flag ==  'SR') {
-            // add new dictinoary if not exists
-            if (typeof newAsset.supplier == 'undefined') {
-                newAsset.supplier = {};
-            }
-            newAsset.supplier.status = 'RECEIVED';
-        } else {
-            throw new Error('Phase not found, please check the value and try again');
-        }
-        
-        // update the state
-        await ctx.stub.putState(id, Buffer.from(JSON.stringify(newAsset)));
-        return ctx.stub.getTxID();
-    }
-
     // Prosessing plant logic goes here
-    async upgradeAssetToCultivator(ctx, id, deliverer, message, timestamp) {
-        // check data if exists
+    async addDeliveryInfo(ctx, id, flag, deliverer, message, timestamp) {
+        // Check data if exists
         const currentAsset = await this.getAsset(ctx, id);
-        // get the data as json format
-        const newAsset = JSON.parse(currentAsset);
-
-        //update status
-        newAsset.cultivator.status = 'RECEIVED';
-
-        newAsset.cultivator.delivery = {
-            'message': message,
-            'deliverer': deliverer,
-            'timestamp': timestamp,
+        // Get the data as json format
+        const asset = JSON.parse(currentAsset);
+        
+        // Update asset - delivery information
+        if (flag === 'CR') {
+            asset.cultivator.status = 'RECEIVED';
+            asset.cultivator.delivery = {
+                'message': message,
+                'deliverer': deliverer,
+                'timestamp': timestamp,
+            }
+        } else {
+            asset.cultivator.status = 'FINISHED';
+            asset.supplier.status = 'RECEIVED';
+            asset.supplier.delivery = {
+                'message': message,
+                'deliverer': deliverer,
+                'timestamp': timestamp,
+            }
         }
-
-        // update the state
-        await ctx.stub.putState(id, Buffer.from(JSON.stringify(newAsset)));
+    
+        // Update the state
+        await ctx.stub.putState(id, Buffer.from(JSON.stringify(asset)));
         return ctx.stub.getTxID();
     }
 

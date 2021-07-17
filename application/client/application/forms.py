@@ -14,8 +14,8 @@ class RegistirationForm(FlaskForm):
     confirm_password = PasswordField('Confirm password', validators=[DataRequired(), EqualTo('password')])
     orgname = SelectField('Please choose your organization', validators=[DataRequired()],
                         choices=[('Org1', 'Grower farm'),
-                                 ('Org2', 'Processing plant'),
-                                 ('Org3', 'Delivery')])
+                                 ('Org2', 'Cultivator'),
+                                 ('Org3', 'Supplier')])
     submit = SubmitField('Sign Up')
 
     # def validate_username(self, username):

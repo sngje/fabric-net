@@ -11,7 +11,7 @@ delivery = Blueprint('delivery', __name__)
 def delivery_request(asset_id):
 	headers = header_info(current_user.token)
 	req = {
-		'phase': 2
+		'flag': 'SR'
 	}
 	req = json.loads(json.dumps(req))
 	response = requests.put(f'{API_SERVER}/assets/{asset_id}/start-next-phase', json=req, headers=headers) 
@@ -73,15 +73,20 @@ def delivery_confirmation(bookmark=0):
 def delivery_start(asset_id):
 	headers = header_info(current_user.token)
 	if request.method == "POST":
-		address = request.form.get('address', 'Unknow')
-		deliverer = request.form.get('deliverer', 'AA000XX')
+		plate_number = request.form.get('plate_number', 'NaN')
+		message = request.form.get('message', 'NaN')
+
+		if (plate_number == 'NaN'):
+			flash('Please enter plate number of the vehicle')
+			return redirect(url_for('processing.processing_start', asset_id=asset_id))
+
 		req = {
-			'address': f'{address}',
-			'deliverer': f'{deliverer}'
-		}
+			'plate_number': f'{plate_number}',
+			'message': f'{message}'
+			}
 		req = json.loads(json.dumps(req))
 		
-		response = requests.put(f'{API_SERVER}/delivery/{asset_id}', json=req, headers=headers)
+		response = requests.put(f'{API_SERVER}/delivery/{asset_id}/start', json=req, headers=headers)
 		
 		# check for error
 		if response.status_code != 200:
@@ -90,14 +95,14 @@ def delivery_start(asset_id):
 		
 		transactions = response.json()
 		flash("Updated successfully", "success")
-		# return redirect(url_for('processing_start', asset_id=asset_id))
-		return render_template(f'delivery_process.html', title=f"Supplier - {asset_id}", asset_id=asset_id, transactions=transactions)
+		return redirect(url_for('delivery.delivery_all', asset_id=asset_id))
+		# return render_template(f'delivery_process.html', title=f"Supplier - {asset_id}", asset_id=asset_id, transactions=transactions)
 	else:
 		response = requests.get(f'{API_SERVER}/assets/{asset_id}', headers=headers) 
 		
 		# check for error
 		if response.status_code != 200:
 			flash("Asset not found", "error")
-			return redirect(url_for('delivery.delivery_start', asset_id=asset_id))
+			return redirect(url_for('delivery.delivery_confirmation', asset_id=asset_id))
 		transactions = response.json()
-		return render_template(f'delivery_process.html', title=f"Supplier - {asset_id}", asset_id=asset_id, transactions=transactions)
+		return render_template(f'delivery_info.html', title=f"Supplier - {asset_id}", asset_id=asset_id, flag='SR', transactions=transactions)

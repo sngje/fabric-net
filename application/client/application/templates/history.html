@@ -1,11 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
-{% set step = transactions[0]['data']['step'] %}
+{% set flag = transactions[0]['data']['flag'] %}
 <div class="content0">
 	<div class="content3">
     <div class="shipment">
-
-			{% if step >= 1 %}
+			{% if flag == 'PR' %}
         <div class="confirm">
           <div class="imgcircle" style="background-color:#98D091">
             <img src="{{ url_for('static', filename='image/confirm.png') }}" alt="confirm order">
@@ -23,7 +22,7 @@
         </div>
       {% endif %}
       
-      {% if step >= 2%}
+      {% if flag == 'CR' %}
         <div class="process">
           <div class="imgcircle" style="background-color:#98D091">
             <img src="{{ url_for('static', filename='image/process.png') }}" alt="process order">
@@ -41,7 +40,7 @@
         </div>
       {% endif %}
       
-      {% if step >= 3%}
+      <!-- {% if flag == 'SR' %}
         <div class="quality">
           <div class="imgcircle" style="background-color:#98D091">
             <img src="{{ url_for('static', filename='image/quality.png') }}" alt="quality check">
@@ -59,7 +58,7 @@
         </div>
       {% endif %}
 
-      {% if step >= 4%}
+      {% if flag == 'AX' %}
         <div class="dispatch">
           <div class="imgcircle" style="background-color:#98D091">
             <img src="{{ url_for('static', filename='image/dispatch.png') }}" alt="dispatch product">
@@ -75,9 +74,9 @@
           <span class="line"></span>
           <p>Dispatched Item</p>
         </div>
-      {% endif %}
+      {% endif %} -->
 
-			{% if step >= 5%}
+			{% if flag == 'SR' %}
         <div class="delivery">
           <div class="imgcircle" style="background-color: #98D091;">
             <img src="{{ url_for('static', filename='image/delivery.png') }}" alt="delivery">
@@ -101,7 +100,7 @@
     <div class="timeline">
       {% set color = ['blue', 'red', 'green', 'brown', 'orange', 'purple', 'blue', 'red', 'green', 'brown', 'black', 'orange', 'purple', 'yellow'] %}
       {% set img = ['cached', 'refresh', 'restore', 'show_chart', 'sync'] %}
-      {% for arr in transactions %}
+      {% for arr in transactions|reverse %}
         <div class="timeline-event">
           <div class="card timeline-content">
             <!-- <div class="card-image waves-effect waves-block waves-light">
@@ -111,15 +110,15 @@
               <span class="card-title activator grey-text text-darken-4">
               {{ myTimeFunc(arr['timestamp']['seconds']|int) }}
               <i class="material-icons right">more_vert</i></span>
-              <p>ID: <b>{{ asset_id }}</b></p>
               <p>Quantity: <b>{{ arr['data']['quantity'] }}</b></p>
               <p>Flag: <b>{{ arr['data']['flag'] }}</b></p>
-              {% if arr['data']['processing_plant'] %}
-                <p>Status: <b>{{ arr['data']['processing_plant']['status'] }}</b></p>
-                {% if arr['data']['processing_plant']['inspected'] %}
+              <p>Product serial: <b>{{ arr['data']['product_serial'] }}</b></p>
+              {% if arr['data']['cultivator'] %}
+                <p>Status: <b>{{ arr['data']['cultivator']['status'] }}</b></p>
+                {% if arr['data']['cultivator']['info'] %}
                   <p>Inspected: <b>{{ arr['data']['processing_plant']['inspected'] }}</b></p>
                 {% endif %}
-                {% if arr['data']['processing_plant']['deliverer'] %}
+                {% if arr['data']['cultivator']['deliverer'] %}
                   <p>Deliverer: <b>{{ arr['data']['processing_plant']['deliverer'] }}</b></p>
                 {% endif %}
               {% endif %}
@@ -129,7 +128,7 @@
               <p>{{ arr['tx_id'] }}</p>
             </div>
           </div>
-          <div class="timeline-badge grey white-text"><i class="material-icons">cached</i></div>
+          <div class="timeline-badge grey white-text"><i class="material-icons">restore</i></div>
         </div>
       {% endfor %}
     </div>

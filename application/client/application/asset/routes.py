@@ -73,14 +73,14 @@ def delete(asset_id):
 def edit(asset_id):
 	headers = header_info(current_user.token)
 	if request.method == "POST":
-		age = request.form.get('age', 0)
-		vaccination = request.form.get('vaccination', 0)
-		step = request.form.get('step', 1)
+		quantity = request.form.get('quantity', 0)
+		product_serial = request.form.get('product_serial', 'NaN')
+		message = request.form.get('message', 'Default')
 
 		req = {
-			'age': f'{age}',
-			'vaccination': f'{vaccination}',
-			'step': f'{step}'
+			'quantity': f'{quantity}',
+			'product_serial': f'{product_serial}',
+			'message': f'{message}'
 			}
 		req = json.loads(json.dumps(req))
 		# print(req)
@@ -89,7 +89,7 @@ def edit(asset_id):
 		
 		# check for error
 		if response.status_code != 200:
-			flash(req, "error")
+			flash('Something went wrong, please try later!', "error")
 			return redirect(url_for('grower.grower_farm'))
 		
 		transactions = response.json()
