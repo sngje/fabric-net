@@ -26,7 +26,7 @@
 
         <ul class="collapsible" data-collapsible="accordion">
           {% if current_user.orgname == "Org1" %}
-            <li id="dash_users">
+            <li id="dash_users" class="active">
               <div id="dash_users_header" class="collapsible-header waves-effect waves-light">
                 <span class="valign-wrapper">
                   <i class="material-icons">view_list</i> <b> Grower farm</b>
@@ -37,9 +37,9 @@
                   <li id="dash_users_menu">
                     <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('grower.grower_farm') }}">Current state</a>
                   </li>
-                  <li id="dash_users_menu">
+                  <!-- <li id="dash_users_menu">
                     <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('grower.health_monitor') }}">Health monitor</a>
-                  </li>
+                  </li> -->
                 </ul>
               </div>
             </li>

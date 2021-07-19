@@ -505,6 +505,26 @@ router.put('/processing-plant/:id/start', async function (req, res) {
     }
 });
 
+// Prosessing plant - medical record
+router.put('/processing-plant/:id/medicine', async function (req, res) {
+    const decoded = helper.decodeJwt(req.headers['authorization']);
+    try {
+        // Get the contract from the network
+        const {contract, gateway} = await fabricNetwork.connectNetwork(decoded['email'], decoded['orgname']);
+        const current_time = helper.getDateAsString();
+        // Submit transaction.
+        let tx = await contract.submitTransaction('addMedicineInfo', req.params.id, req.body.medicine, current_time);    
+        logger.info(`Transaction has been submitted ${tx.toString()}`);
+        res.status(200).json({
+            response: `Successfully added - ${tx.toString()}`,
+            tx_id: tx.toString()
+        });
+    } catch (error) {
+        logger.error(`Failed to submit transaction: ${error}`);
+        res.status(500).json({response: 'Failed to submit transaction. Please try again'});
+    }
+});
+
 // Start next phase
 router.put('/assets/:id/start-next-phase', async function (req, res) {
     const decoded = helper.decodeJwt(req.headers['authorization']);

@@ -1,35 +1,56 @@
 {% extends 'base.html' %}
 {% block content %}
-  <div class="create">
+  <div class="create" style="padding: 10px">
     <!-- START FORM -->
       <div class="row">
         <form class="col s12" action="{{ url_for('grower.create_asset') }}" method="POST">
+            {{ form.hidden_tag() }}
             <div class="row">
-              <div class="input-field col s6">
-                <input placeholder="Product serial number" name="product_serial" type="text" >
-              </div>
+              <!-- <div class="input-field col s6"> -->
+                {% if form.product_serial.errors %}
+                  {{ form.product_serial(placeholder="Product serial") }}
+                  <div class="invalid-feedback">
+                      {% for error in form.product_serial.errors %}
+                          <span>{{ error }}</span>
+                      {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.product_serial(placeholder="Product serial") }}
+                {% endif %}
+                  <!-- <input placeholder="Product serial number" name="product_serial" type="text" > -->
+              <!-- </div> -->
               </div>
               <div class="row">
-              <div class="input-field col s6">
-                <input placeholder="Quantity" name="quantity" type="number" >
-              </div>
+              <!-- <div class="input-field col s6"> -->
+                {% if form.quantity.errors %}
+                  {{ form.quantity(placeholder="Quantity") }}
+                  <div class="invalid-feedback">
+                      {% for error in form.quantity.errors %}
+                          <span>{{ error }}</span>
+                      {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.quantity(placeholder="Quantity") }}
+                {% endif %}
+                <!-- <input placeholder="Quantity" name="quantity" type="number" > -->
+              <!-- </div> -->
               </div>
               <div class="row">
-              <div class="input-field col s6">
-                <input placeholder="Message" name="message" type="text" >
-              </div>
-              <!-- <div class="switch col">
-                  <label>
-                    False
-                    <input type="checkbox" name="vaccination">
-                    <span class="lever"></span>
-                    True
-                  </label>
-                </div> -->
+              <!-- <div class="input-field col s6"> -->
+                {% if form.message.errors %}
+                  {{ form.message(placeholder="Label") }}
+                  <div class="invalid-feedback">
+                      {% for error in form.message.errors %}
+                          <span>{{ error }}</span>
+                      {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.message(placeholder="Label") }}
+                {% endif %}
+              <!-- </div> -->
               </div>
             </div>
-            <input class="waves-light btn our-colour" type="submit" value="Submit" name="">
-            <!-- <input  onclick="location.href='/changeOwner/wholesaler';" class="waves-light btn our-colour" type="button" value="Transfer Ownership" style="color: white;"  name=""> -->
+            {{ form.submit(class="btn btn-outline-info") }}
         </form>
       </div>
     <!-- END FORM -->

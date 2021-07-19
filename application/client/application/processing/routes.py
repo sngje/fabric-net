@@ -2,6 +2,7 @@ from flask import render_template, url_for, flash, redirect, request, Blueprint
 import requests, json, json
 from flask_login import current_user, login_required
 from application import API_SERVER, header_info
+from application.forms import CultivatorMedicineForm
 # from application.models import load_user
 
 processing = Blueprint('processing', __name__)
@@ -69,6 +70,28 @@ def processing_request(asset_id):
 	flash("Asset is added to waiting list. Processing Plant organization must confirm to proceed.", "success")
 	return redirect(url_for('grower.grower_farm'))
  
+
+@processing.route("/processing-plant/<string:asset_id>/medicine", methods=['GET', 'POST'])
+@login_required
+def record_medicine(asset_id):
+	headers = header_info(current_user.token)
+	form  = CultivatorMedicineForm()
+	if form.validate_on_submit():
+		medicine = form.medicine.data
+
+		req = {'medicine': f'{medicine}'}
+		req = json.loads(json.dumps(req))
+		# send the data
+		response = requests.put(f'{API_SERVER}/processing-plant/{asset_id}/medicine', json=req, headers=headers) 
+		if response.status_code != 200:
+			flash("Something went wrong, please try again (", "error")
+			return redirect(url_for('processing.processing_all'))
+		transactions = response.json()
+		flash(transactions['response'], "success")
+		return redirect(url_for('processing.processing_all'))
+	return render_template('cultivator_medicine.html', asset_id=asset_id, form=form)
+
+
 # Route: processing plant - start
 @processing.route("/processing-plant/<string:asset_id>", methods=["POST", "GET"])
 @login_required

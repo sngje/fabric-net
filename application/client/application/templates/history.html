@@ -100,6 +100,7 @@
     <div class="timeline">
       {% set color = ['blue', 'red', 'green', 'brown', 'orange', 'purple', 'blue', 'red', 'green', 'brown', 'black', 'orange', 'purple', 'yellow'] %}
       {% set img = ['cached', 'refresh', 'restore', 'show_chart', 'sync'] %}
+      {% set flag = {'PR': 'Grower house', 'CR': 'Cultivator', 'SR': 'Supplier'} %}
       {% for arr in transactions|reverse %}
         <div class="timeline-event">
           <div class="card timeline-content">
@@ -111,12 +112,15 @@
               {{ myTimeFunc(arr['timestamp']['seconds']|int) }}
               <i class="material-icons right">more_vert</i></span>
               <p>Quantity: <b>{{ arr['data']['quantity'] }}</b></p>
-              <p>Flag: <b>{{ arr['data']['flag'] }}</b></p>
-              <p>Product serial: <b>{{ arr['data']['product_serial'] }}</b></p>
+              <p>Flag: <b>{{ flag[arr['data']['flag']] }}</b></p>
+              <p>Product serial: <b>{{ arr['data']['product_serial']|upper }}</b></p>
               {% if arr['data']['cultivator'] %}
                 <p>Status: <b>{{ arr['data']['cultivator']['status'] }}</b></p>
-                {% if arr['data']['cultivator']['info'] %}
-                  <p>Inspected: <b>{{ arr['data']['processing_plant']['inspected'] }}</b></p>
+                {% if arr['data']['cultivator']['medicine_info'] %}
+                  Medicine records:
+                  {% for medicine in arr['data']['cultivator']['medicine_info'] %}
+                    <p><b>{{ medicine['name'] }} - {{ medicine['timestamp'] }}</b></p>
+                  {% endfor %}
                 {% endif %}
                 {% if arr['data']['cultivator']['deliverer'] %}
                   <p>Deliverer: <b>{{ arr['data']['processing_plant']['deliverer'] }}</b></p>

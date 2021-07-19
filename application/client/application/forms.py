@@ -2,8 +2,8 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from flask_login import current_user
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, SelectField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, SelectField, IntegerField, DecimalField
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, NumberRange
 from application.models import User
 
 
@@ -35,3 +35,17 @@ class LoginForm(FlaskForm):
     remember = BooleanField('Remember me')
     submit = SubmitField('Login')
 
+class CreateAssetForm(FlaskForm):
+    product_serial = StringField('Product serial', validators=[DataRequired()])
+    quantity = IntegerField('Price', validators=[DataRequired(), NumberRange(min=10, max=1000)], default=100)
+    message = StringField('Label info', validators=[DataRequired()])
+    submit = SubmitField('Create')
+
+
+class CultivatorMedicineForm(FlaskForm):
+    medicine = SelectField('Please choose medicine to record', validators=[DataRequired()],
+                        choices=[('medicine1', 'Medicine 1'),
+                                ('medicine2', 'Medicine 2'),
+                                ('medicine3', 'Medicine 3'),
+                                ('medicine4', 'Medicine 4')])
+    submit = SubmitField('Record')

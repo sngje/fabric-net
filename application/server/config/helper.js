@@ -17,7 +17,7 @@ function decodeJwt(token) {
     return decoded;
 }
 
-function generateRandomId(length = 8) {
+function generateRandomId(length = 8, upper = true) {
     // Declare all characters
     let chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
@@ -26,6 +26,7 @@ function generateRandomId(length = 8) {
     for (let i = 0; i < length; i++) {
         str += chars.charAt(Math.floor(Math.random() * chars.length));
     }
+    if (upper) return str.toUpperCase();
     return str;
 };
 

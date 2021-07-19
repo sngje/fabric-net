@@ -208,6 +208,28 @@ class Farm extends Contract {
         return ctx.stub.getTxID();
     }
 
+    async addMedicineInfo(ctx, id, medicine, timestamp) {
+        // Check data if exists
+        const currentAsset = await this.getAsset(ctx, id);
+        // Get the data as json format
+        const asset = JSON.parse(currentAsset);
+
+        // Check before adding
+        if (typeof asset.cultivator.medicine_info == 'undefined') {
+            asset.cultivator.medicine_info = [];
+        }
+
+        // Add new record into list
+        asset.cultivator.medicine_info.push({
+            'name': medicine,
+            'timestamp': timestamp
+        });
+
+        // Update the state
+        await ctx.stub.putState(id, Buffer.from(JSON.stringify(asset)));
+        return ctx.stub.getTxID();
+    }
+
     async upgradeAssetToSupplier(ctx, id, deliverer, message, timestamp) {
         // check data if exists
         const currentAsset = await this.getAsset(ctx, id);

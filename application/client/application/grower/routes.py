@@ -2,6 +2,8 @@ from flask import render_template, url_for, flash, redirect, request, Blueprint
 import requests, json, json
 from flask_login import current_user, login_required
 from application import API_SERVER, header_info
+from application.forms import CreateAssetForm
+
 # from application.models import load_user
 
 grower = Blueprint('grower', __name__)
@@ -39,10 +41,11 @@ def health_monitor(bookmark=0):
 @login_required
 def create_asset():
 	headers = header_info(current_user.token)
-	if request.method == "POST":
-		product_serial = request.form['product_serial']
-		quantity = int(request.form['quantity'])
-		message = request.form['message']
+	form  = CreateAssetForm()
+	if form.validate_on_submit():
+		product_serial = form.product_serial.data
+		quantity = int(form.quantity.data)
+		message = form.message.data
 		# vaccination = 'true' if (request.form.get('vaccination', False)) != False else 'false'
 
 		req = {'product_serial': f'{product_serial}', 'quantity': f'{quantity}', 'message': f'{message}'}
@@ -55,7 +58,7 @@ def create_asset():
 		transactions = response.json()
 		flash(transactions['response'], "success")
 		return redirect(url_for('grower.grower_farm'))
-	return render_template('create_asset.html', title="Create cage")
+	return render_template('create_asset.html', title="Create cage", form=form)
 
 
 

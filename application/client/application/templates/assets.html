@@ -21,7 +21,7 @@
             </td>
             <td>{{ arr['data']['quantity'] }}</td>
             <td>
-              {{ arr['data']['timestamp'] }}
+              {{ daysCount(arr['data']['timestamp']) }}
             </td>
             <td>{{ arr['data']['product_serial']|upper }}</td>
             <!-- <td><a href="{{ url_for('asset.update_age', asset_id=arr['key']) }}" title="Update"><i class="material-icons md-30">&nbsp;update</i></a></td> -->
