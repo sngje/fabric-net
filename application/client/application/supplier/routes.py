@@ -7,7 +7,7 @@ from application.forms import DeliveryInfoForm
 supplier = Blueprint('supplier', __name__)
 
 # Route: request to delivery organization
-@supplier.route("/delivery/<string:asset_id>/request")
+@supplier.route("/supplier/<string:asset_id>/request")
 @login_required
 def request(asset_id):
 	headers = header_info(current_user.token)
@@ -24,8 +24,8 @@ def request(asset_id):
 	return redirect(url_for('cultivator.all'))
 
 # Route: show all processing plant data
-@supplier.route("/delivery/all")
-@supplier.route("/delivery/all/<string:bookmark>")
+@supplier.route("/supplier/all")
+@supplier.route("/supplier/all/<string:bookmark>")
 @login_required
 def all(bookmark=0):
 	headers = header_info(current_user.token)
@@ -39,8 +39,8 @@ def all(bookmark=0):
 	return render_template('delivery_pages.html', title="Supplier - current state", bookmark=bookmark, transactions=transactions)
 
 # Route: show all processing plant data
-@supplier.route("/delivery/finished")
-@supplier.route("/delivery/finished/<string:bookmark>")
+@supplier.route("/supplier/finished")
+@supplier.route("/supplier/finished/<string:bookmark>")
 @login_required
 def finished(bookmark=0):
 	headers = header_info(current_user.token)
@@ -54,8 +54,8 @@ def finished(bookmark=0):
 	return render_template('delivery_pages.html', title="Supplier - finished products", page="finished", bookmark=bookmark, transactions=transactions)
 
 # Route: show all processing plant data - confirmation
-@supplier.route("/delivery/confirmation")
-@supplier.route("/delivery/confirmation/<string:bookmark>")
+@supplier.route("/supplier/confirmation")
+@supplier.route("/supplier/confirmation/<string:bookmark>")
 @login_required
 def confirmation(bookmark=0):
 	headers = header_info(current_user.token)
@@ -69,7 +69,7 @@ def confirmation(bookmark=0):
 	return render_template('delivery_pages.html', title="Supplier - confirmation", page="confirmation", bookmark=bookmark, transactions=transactions)
 
 # Route: processing plant - start
-@supplier.route("/delivery/<string:asset_id>", methods=["POST", "GET"])
+@supplier.route("/supplier/<string:asset_id>", methods=["POST", "GET"])
 @login_required
 def start(asset_id):
 	headers = header_info(current_user.token)

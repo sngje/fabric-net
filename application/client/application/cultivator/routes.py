@@ -8,8 +8,8 @@ from application.forms import CultivatorMedicineForm, DeliveryInfoForm
 cultivator = Blueprint('cultivator', __name__)
 
 # Route: show all processing plant data
-@cultivator.route("/processing-plant/all")
-@cultivator.route("/processing-plant/all/<string:bookmark>")
+@cultivator.route("/cultivator/all")
+@cultivator.route("/cultivator/all/<string:bookmark>")
 @login_required
 def all(bookmark=0):
 	headers = header_info(current_user.token)
@@ -23,8 +23,8 @@ def all(bookmark=0):
 	return render_template('processing_plant_pages.html', title="Cultivator - current state", bookmark=bookmark, transactions=transactions)
 
 # Route: show all processing plant data
-@cultivator.route("/processing-plant/finished")
-@cultivator.route("/processing-plant/finished/<string:bookmark>")
+@cultivator.route("/cultivator/finished")
+@cultivator.route("/cultivator/finished/<string:bookmark>")
 @login_required
 def finished(bookmark=0):
 	headers = header_info(current_user.token)
@@ -38,8 +38,8 @@ def finished(bookmark=0):
 	return render_template('processing_plant_pages.html', title="Cultivator - finished products", page="finished", bookmark=bookmark, transactions=transactions)
 
 # Route: show all processing plant data - confirmation
-@cultivator.route("/processing-plant/confirmation")
-@cultivator.route("/processing-plant/confirmation/<string:bookmark>")
+@cultivator.route("/cultivator/confirmation")
+@cultivator.route("/cultivator/confirmation/<string:bookmark>")
 @login_required
 def confirmation(bookmark=0):
 	headers = header_info(current_user.token)
@@ -54,7 +54,7 @@ def confirmation(bookmark=0):
 
 
 # Route: change asset status to PENDING for processing plant
-@cultivator.route("/processing-plant/<string:asset_id>/request")
+@cultivator.route("/cultivator/<string:asset_id>/request")
 @login_required
 def request(asset_id):
 	headers = header_info(current_user.token)
@@ -71,7 +71,7 @@ def request(asset_id):
 	return redirect(url_for('grower.all'))
  
 
-@cultivator.route("/processing-plant/<string:asset_id>/medicine", methods=['GET', 'POST'])
+@cultivator.route("/cultivator/<string:asset_id>/medicine", methods=['GET', 'POST'])
 @login_required
 def record_medicine(asset_id):
 	headers = header_info(current_user.token)
@@ -93,7 +93,7 @@ def record_medicine(asset_id):
 
 
 # Route: processing plant - start
-@cultivator.route("/processing-plant/<string:asset_id>", methods=["POST", "GET"])
+@cultivator.route("/cultivator/<string:asset_id>", methods=["POST", "GET"])
 @login_required
 def start(asset_id):
 	headers = header_info(current_user.token)
