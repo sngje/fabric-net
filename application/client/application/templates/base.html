@@ -35,7 +35,7 @@
               <div id="dash_users_body" class="collapsible-body">
                 <ul>
                   <li id="dash_users_menu">
-                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('grower.grower_farm') }}">Current state</a>
+                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('grower.all') }}">Current state</a>
                   </li>
                   <!-- <li id="dash_users_menu">
                     <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('grower.health_monitor') }}">Health monitor</a>
@@ -54,13 +54,13 @@
               <div id="dash_users_body" class="collapsible-body">
                 <ul>
                   <li id="dash_users_menu">
-                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('processing.processing_confirmation') }}">Products to collect</a>
+                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('cultivator.confirmation') }}">Products to collect</a>
                   </li>
                   <li id="dash_users_menu">
-                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('processing.processing_all') }}">Current state</a>
+                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('cultivator.all') }}">Current state</a>
                   </li>
                   <li id="dash_users_menu">
-                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('processing.processing_finished') }}">Finished products</a>
+                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('cultivator.finished') }}">Finished products</a>
                   </li>
                 </ul>
               </div>
@@ -76,13 +76,13 @@
               <div id="dash_users_body" class="collapsible-body">
                 <ul>
                   <li id="dash_users_menu">
-                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('delivery.delivery_confirmation') }}">Products to collect</a>
+                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('supplier.confirmation') }}">Products to collect</a>
                   </li>
                   <li id="dash_users_menu">
-                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('delivery.delivery_all') }}">Current state</a>
+                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('supplier.all') }}">Current state</a>
                   </li>
                   <li id="dash_users_menu">
-                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('delivery.delivery_finished') }}">Finished products</a>
+                    <a class="waves-effect waves-light" style="text-decoration: none;" href="{{ url_for('supplier.finished') }}">Finished products</a>
                   </li>
                 </ul>
               </div>
@@ -169,11 +169,11 @@
         <nav>
           <div class="nav-wrapper our-colour darken-2">
             {% if current_user.orgname == "Org1" %}
-              <a style="margin-left: 20px;font-size: 14.5px;" class="breadcrumb" href="{{ url_for('grower.grower_farm') }}">Home</a>
+              <a style="margin-left: 20px;font-size: 14.5px;" class="breadcrumb" href="{{ url_for('grower.all') }}">Home</a>
             {% elif current_user.orgname == "Org2" %}
-              <a style="margin-left: 20px;font-size: 14.5px;" class="breadcrumb" href="{{ url_for('processing.processing_all') }}">Home</a>
+              <a style="margin-left: 20px;font-size: 14.5px;" class="breadcrumb" href="{{ url_for('cultivator.all') }}">Home</a>
             {% elif current_user.orgname == "Org3" %}
-              <a style="margin-left: 20px;font-size: 14.5px;" class="breadcrumb" href="{{ url_for('delivery.delivery_all') }}">Home</a>
+              <a style="margin-left: 20px;font-size: 14.5px;" class="breadcrumb" href="{{ url_for('supplier.all') }}">Home</a>
             {% endif %}
             <a style="font-size: 14.5px;" class="breadcrumb" href="#">{{ title }}</a>
     

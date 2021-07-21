@@ -1,30 +1,45 @@
 {% extends 'base.html' %}
 {% block content %}
-  <div class="create">
-    <div class="row" style="padding-top: 20px;">
+  <div class="create" style="padding: 10px;">
+    <div class="row">
     {% if flag == 'CR' %}
-      <form class="col s12" action="{{ url_for('processing.processing_start', asset_id=asset_id) }}" method="POST">
+      <form class="col s12" action="{{ url_for('cultivator.start', asset_id=asset_id) }}" method="POST">
     {% else %}
-      <form class="col s12" action="{{ url_for('delivery.delivery_start', asset_id=asset_id) }}" method="POST">
+      <form class="col s12" action="{{ url_for('supplier.start', asset_id=asset_id) }}" method="POST">
     {% endif %}
+    {{ form.hidden_tag() }}
+    <div class="row">
+      <!-- <div class="input-field col s12"> -->
+          <!-- <i class="material-icons prefix">play_arrow</i> -->
+      {% if form.plate_number.errors %}
+        {{ form.plate_number(placeholder="Plate number") }}
+        <div class="invalid-feedback">
+          {% for error in form.plate_number.errors %}
+            <span>{{ error }}</span>
+          {% endfor %}
+        </div>
+      {% else %}
+        {{ form.plate_number(placeholder="Plate number") }}
+      {% endif %}
+      </div>
+      <!-- <div class="input-field col s12">
+          <input id="icon_prefix2" name="quantity" value="" type="text" class="validate">
+          <label for="icon_prefix2">Product serial</label>
+      </div> -->
       <div class="row">
-        <div class="input-field col s12">
-            <!-- <i class="material-icons prefix">play_arrow</i> -->
-            <input id="icon_prefix2" name="plate_number" value="" type="text" class="validate">
-            <label for="icon_prefix2">Plate number</label>
+        <!-- <i class="material-icons prefix">play_arrow</i> -->
+        {% if form.message.errors %}
+        {{ form.message(placeholder="Label info") }}
+        <div class="invalid-feedback">
+          {% for error in form.message.errors %}
+            <span>{{ error }}</span>
+          {% endfor %}
         </div>
-        <!-- <div class="input-field col s12">
-            <input id="icon_prefix2" name="quantity" value="" type="text" class="validate">
-            <label for="icon_prefix2">Product serial</label>
-        </div> -->
-        <div class="input-field col s12">
-            <!-- <i class="material-icons prefix">play_arrow</i> -->
-            <input id="icon_prefix2" name="message" value="" type="text" class="validate">
-            <label for="icon_prefix2">Message</label>
-        </div>
+      {% else %}
+        {{ form.message(placeholder="Label info") }}
+      {% endif %}
     </div>
-    <input class="waves-light btn our-colour" type="submit" value="Proceed" name="">
-      </form>
-    </div>
+    <div class="row">{{ form.submit(class="btn btn-outline-info") }}</div>
+    </form>
   </div>
 {% endblock %}

@@ -49,3 +49,8 @@ class CultivatorMedicineForm(FlaskForm):
                                 ('medicine3', 'Medicine 3'),
                                 ('medicine4', 'Medicine 4')])
     submit = SubmitField('Record')
+
+class DeliveryInfoForm(FlaskForm):
+    plate_number = StringField('Plate number', validators=[DataRequired()])
+    message = StringField('Label info', validators=[DataRequired()])
+    submit = SubmitField('Proceedss')

@@ -33,13 +33,13 @@ def create_app(config_class=Config):
     from application.users.routes import users
     from application.asset.routes import asset
     from application.grower.routes import grower
-    from application.processing.routes import processing
-    from application.delivery.routes import delivery
+    from application.cultivator.routes import cultivator
+    from application.supplier.routes import supplier
 
     app.register_blueprint(users)
     app.register_blueprint(asset)
     app.register_blueprint(grower)
-    app.register_blueprint(processing)
-    app.register_blueprint(delivery)
+    app.register_blueprint(cultivator)
+    app.register_blueprint(supplier)
 
     return app

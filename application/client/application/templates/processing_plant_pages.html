@@ -10,7 +10,7 @@
               <th>Status</th>
               <th>Inspection</th>
               <th>Timestamp</th>
-              <th>Start Delivery</th>
+              <!-- <th>Start Delivery</th> -->
             </tr>
           </thead>
           <tbody>
@@ -22,9 +22,9 @@
               <td>{{ arr['data']['cultivator']['status'] }}</td>
               <td>{{ arr['data']['cultivator']['delivery']['deliverer'] }}</td>
               <td>{{ daysCount(arr['data']['cultivator']['delivery']['timestamp']) }}</td>
-              <td>
+              <!-- <td>
                 <a href="{{ url_for('delivery.delivery_request', asset_id=arr['key']) }}" title="Confirm"><i class="material-icons md-30">&nbsp;next_plan</i></a>
-              </td>
+              </td> -->
             </tr>
             {% endfor %}
           </tbody>
@@ -47,7 +47,7 @@
               </td> -->
               <td>{{ arr['data']['cultivator']['status'] }}</td>
               <td>
-                <a href="{{ url_for('processing.processing_start', asset_id=arr['key']) }}" title="Confirm"><i class="material-icons md-30">&nbsp;check_box</i></a>
+                <a href="{{ url_for('cultivator.start', asset_id=arr['key']) }}" title="Confirm"><i class="material-icons md-30">&nbsp;check_box</i></a>
               </td>
             </tr>
             {% endfor %}
@@ -76,14 +76,14 @@
               </td>
               <!-- <td>{{ daysCount(arr['data']['timestamp']) }}</td> -->
               <td>
-                {% if (daysCount(arr['data']['timestamp'], remaining_days=True) < 45)  %}
+                {% if (daysCount(arr['data']['timestamp'], remaining_days=True) < 0)  %}
                   {{ 45 - daysCount(arr['data']['timestamp'], remaining_days=True) }} days left
                 {% else %}
                   <a href="{{ url_for('delivery.delivery_request', asset_id=arr['key']) }}" title="Update"><i class="material-icons md-30">&nbsp;next_plan</i></a>
                 {% endif %}
               </td>
             
-              <td><a href="{{ url_for('processing.record_medicine', asset_id=arr['key']) }}" title="Delete"><i class="material-icons md-30">&nbsp;autorenew</i></a></td>
+              <td><a href="{{ url_for('cultivator.record_medicine', asset_id=arr['key']) }}" title="Delete"><i class="material-icons md-30">&nbsp;autorenew</i></a></td>
             </tr>
             {% endfor %}
           </tbody>
@@ -106,15 +106,15 @@
       {% if transactions['meta_data']['fetchedRecordsCount'] >= 10 %}
         <li class="waves-effect">
           {% if page == 'finished' %}
-            <a href="{{ url_for('processing.processing_finished', bookmark=transactions['meta_data']['bookmark']) }}">
+            <a href="{{ url_for('cultivator.finished', bookmark=transactions['meta_data']['bookmark']) }}">
               <i class="material-icons">chevron_right</i>
             </a>
           {% elif page == 'confirmation' %}
-            <a href="{{ url_for('processing.processing_confirmation', bookmark=transactions['meta_data']['bookmark']) }}">
+            <a href="{{ url_for('cultivator.confirmation', bookmark=transactions['meta_data']['bookmark']) }}">
               <i class="material-icons">chevron_right</i>
             </a>
           {% else %}
-            <a href="{{ url_for('processing.processing_all', bookmark=transactions['meta_data']['bookmark']) }}">
+            <a href="{{ url_for('cultivator.all', bookmark=transactions['meta_data']['bookmark']) }}">
               <i class="material-icons">chevron_right</i>
             </a>
           {% endif %}

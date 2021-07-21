@@ -12,7 +12,7 @@ grower = Blueprint('grower', __name__)
 @grower.route("/grower-farm")
 @grower.route("/grower-farm/<string:bookmark>")
 @login_required
-def grower_farm(bookmark=0):
+def all(bookmark=0):
 	headers = header_info(current_user.token)
 	response = requests.get(f'{API_SERVER}/assets/all/{bookmark}', headers=headers) 
 	transactions = response.json()
@@ -30,7 +30,7 @@ def health_monitor(bookmark=0):
 	response = requests.get(f'{API_SERVER}/assets/filter/health-monitor/{bookmark}', headers=headers) 
 	if response.status_code != 200:
 		flash("All cages are injected", "info")
-		return redirect(url_for('grower.grower_farm'))
+		return redirect(url_for('grower.all'))
 	transactions = response.json()
 	if len(transactions['data']) == 0:
 		return render_template('empty_list.html', title="Health monitor", text="Nothing found")
@@ -57,7 +57,7 @@ def create_asset():
 			return redirect(url_for('grower.create_asset'))
 		transactions = response.json()
 		flash(transactions['response'], "success")
-		return redirect(url_for('grower.grower_farm'))
+		return redirect(url_for('grower.all'))
 	return render_template('create_asset.html', title="Create cage", form=form)
 
 

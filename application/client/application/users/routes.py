@@ -35,11 +35,11 @@ def login():
 				db.session.commit()
 				# next_page = request.args.get('next')
 				if user.orgname == 'Org1':
-					return redirect(url_for('grower.grower_farm'));
+					return redirect(url_for('grower.all'));
 				elif user.orgname == 'Org2':
-					return redirect(url_for('processing.processing_all'));
+					return redirect(url_for('cultivator.all'));
 				elif user.orgname == 'Org3':
-					return redirect(url_for('delivery.delivery_all'));
+					return redirect(url_for('supplier.all'));
 				else:
 					return redirect(url_for('users.register'));
 				# return redirect(next_page) if next_page else redirect(url_for('asset.index'))

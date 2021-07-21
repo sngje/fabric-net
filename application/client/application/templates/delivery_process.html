@@ -36,7 +36,7 @@
     </div>
     <hr/>
     <div class="row">
-    <form class="col s12" action="{{ url_for('delivery.delivery_start', asset_id=asset_id) }}" method="POST">
+    <form class="col s12" action="{{ url_for('supplier.start', asset_id=asset_id) }}" method="POST">
         {% if transactions['delivery']['status'] == "PENDING" %}
         <div class="row">
             <div class="input-field col s6">
@@ -57,7 +57,7 @@
         {% endif %}
         {% if transactions['delivery']['status'] == "FINISHED" %}
           <input class="waves-light btn our-colour disabled" type="submit" value="Delivery finished" name="">
-          <a class="waves-light btn our-colour" href="{{ url_for('delivery.delivery_finished') }}">Show Finished Products</a>
+          <a class="waves-light btn our-colour" href="{{ url_for('supplier.finished') }}">Show Finished Products</a>
         {% else %}
           <input class="waves-light btn our-colour" type="submit" value="Proceed" name="">
         {% endif %}

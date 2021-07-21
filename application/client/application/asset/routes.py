@@ -10,11 +10,11 @@ asset = Blueprint('asset', __name__)
 @login_required
 def index():
 	if current_user.orgname == 'Org1':
-		return redirect(url_for('grower.grower_farm'))
+		return redirect(url_for('grower.all'))
 	elif current_user.orgname == 'Org2':
-		return redirect(url_for('processing.processing_all'))
+		return redirect(url_for('cultivator.all'))
 	elif current_user.orgname == 'Org3':
-		return redirect(url_for('delivery.delivery_all'))
+		return redirect(url_for('supplier.all'))
 	else:
 		return redirect(url_for('users.register'))
 		
@@ -48,9 +48,9 @@ def update_age(asset_id):
 	print(transactions)
 	if response.status_code != 200:
 		flash(transactions['error'], "error")
-		return redirect(url_for('grower.grower_farm'))
+		return redirect(url_for('grower.all'))
 	flash(transactions['response'], 'success')
-	return redirect(url_for('grower.grower_farm'))
+	return redirect(url_for('grower.all'))
 	# return render_template('transaction.html', title=f"Change age - {asset_id}", asset_id=asset_id, transactions=transactions)
 
 # Route: delete
@@ -61,10 +61,10 @@ def delete(asset_id):
 	response = requests.delete(f'{API_SERVER}/assets/{asset_id}/delete', headers=headers) 
 	if response.status_code != 200:
 		flash('Cage not found', "warning")
-		return redirect(url_for('grower.grower_farm'))
+		return redirect(url_for('grower.all'))
 	transactions = response.json()
 	flash(transactions['response'], "success")
-	return redirect(url_for('grower.grower_farm'))
+	return redirect(url_for('grower.all'))
 	# return render_template('transaction.html', title=f"Deleted - {asset_id}", asset_id=asset_id, transactions=transactions)
 
 # Route: edit asset
@@ -90,11 +90,11 @@ def edit(asset_id):
 		# check for error
 		if response.status_code != 200:
 			flash('Something went wrong, please try later!', "error")
-			return redirect(url_for('grower.grower_farm'))
+			return redirect(url_for('grower.all'))
 		
 		transactions = response.json()
 		flash("Updated successfully", "success")
-		return redirect(url_for('grower.grower_farm', asset_id=asset_id))
+		return redirect(url_for('grower.all', asset_id=asset_id))
 		# return render_template(f'edit.html', title=f"Data - {asset_id}", asset_id=asset_id, transactions=transactions)
 	else:
 		response = requests.get(f'{API_SERVER}/assets/{asset_id}', headers=headers) 
@@ -102,7 +102,7 @@ def edit(asset_id):
 		# check for error
 		if response.status_code != 200:
 			flash("Asset not found", "error")
-			return redirect(url_for('grower.grower_farm'))
+			return redirect(url_for('grower.all'))
 
 		transactions = response.json()
 		return render_template(f'edit.html', title=f"Edit - {asset_id}", asset_id=asset_id, transactions=transactions)
