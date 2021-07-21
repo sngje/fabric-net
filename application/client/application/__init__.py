@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from application.config import Config
-from application.utils import myTimeFunc, header_info, daysCount
+from application.utils import myTimeFunc, header_info, daysCount, generate_QR
 
 API_SERVER = 'http://localhost:3000/api'
 db = SQLAlchemy()
@@ -29,6 +29,8 @@ def create_app(config_class=Config):
     app.jinja_env.globals.update(myTimeFunc=myTimeFunc) 
     app.jinja_env.globals.update(header_info=header_info)
     app.jinja_env.globals.update(daysCount=daysCount)
+    app.jinja_env.globals.update(generate_QR=generate_QR)
+    
 
     from application.users.routes import users
     from application.asset.routes import asset

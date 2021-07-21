@@ -3,6 +3,11 @@ import requests, json, json
 from flask_login import current_user, login_required
 from application import API_SERVER, header_info
 from application.forms import DeliveryInfoForm
+from application.utils import generate_QR
+
+# QR code library+
+import qrcode
+from PIL import Image
 
 supplier = Blueprint('supplier', __name__)
 
@@ -107,3 +112,11 @@ def start(asset_id):
 			return redirect(url_for('supplier.confirmation', asset_id=asset_id))
 		transactions = response.json()
 		return render_template(f'delivery_info.html', title=f"Supplier - {asset_id}", asset_id=asset_id, form=form, flag='SR', transactions=transactions)
+
+# Route: generate QR code page
+@supplier.route("/supplier/<string:asset_id>/generate-qr-code")
+@login_required
+def generate_qr(asset_id):
+	file_path = generate_QR(asset_id)
+	# print(file_path)
+	return render_template('qr_code.html', title=f'QR code - {asset_id}', file=f'qr-codes/{asset_id}.png')

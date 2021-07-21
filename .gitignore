@@ -11,14 +11,10 @@ organizations/fabric-ca/
 .vscode/
 bin/
 application/client/venv/
+application/client/application/static/qr-codes/
 **/__pycache__/
 **/.DS_Store
 **/.bin
-<<<<<<< HEAD
-farm_2.tar.gz
-farm_3.tar.gz
-=======
 application/client/application/site.db
 **.id
 **.tar.gz
->>>>>>> e7df4b99d7d00f6280945c9494709a3bdb7193dd
