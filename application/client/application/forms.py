@@ -54,3 +54,11 @@ class DeliveryInfoForm(FlaskForm):
     plate_number = StringField('Plate number', validators=[DataRequired()])
     message = StringField('Label info', validators=[DataRequired()])
     submit = SubmitField('Proceedss')
+
+class AdvancedSearchForm(FlaskForm):
+    flag = SelectField('Please one of them', validators=[DataRequired()],
+                        choices=[('PR', 'Grower farm'),
+                                 ('CR', 'Cultivator'),
+                                 ('SR', 'Supplier')])
+    product_serial = StringField('Product serial', validators=[DataRequired()])
+    submit = SubmitField('Search')

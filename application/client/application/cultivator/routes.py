@@ -20,7 +20,7 @@ def all(bookmark=0):
 	transactions = response.json()
 	if len(transactions['data']) == 0:
 		return render_template('empty_list.html', title="Cultivator", text="Nothing found")
-	return render_template('processing_plant_pages.html', title="Cultivator - current state", bookmark=bookmark, transactions=transactions)
+	return render_template('cultivator_menu.html', title="Cultivator - current state", bookmark=bookmark, transactions=transactions)
 
 # Route: show all processing plant data
 @cultivator.route("/cultivator/finished")
@@ -35,7 +35,7 @@ def finished(bookmark=0):
 	transactions = response.json()
 	if len(transactions['data']) == 0:
 		return render_template('empty_list.html', title="Cultivator - finished products", text="Finished products not found")
-	return render_template('processing_plant_pages.html', title="Cultivator - finished products", page="finished", bookmark=bookmark, transactions=transactions)
+	return render_template('cultivator_menu.html', title="Cultivator - finished products", page="finished", bookmark=bookmark, transactions=transactions)
 
 # Route: show all processing plant data - confirmation
 @cultivator.route("/cultivator/confirmation")
@@ -50,7 +50,7 @@ def confirmation(bookmark=0):
 	transactions = response.json()
 	if len(transactions['data']) == 0:
 		return render_template('empty_list.html', title="Cultivator", text="Nothing found")
-	return render_template('processing_plant_pages.html', title="Cultivator - confirmation", page="confirmation", bookmark=bookmark, transactions=transactions)
+	return render_template('cultivator_menu.html', title="Cultivator - confirmation", page="confirmation", bookmark=bookmark, transactions=transactions)
 
 
 # Route: change asset status to PENDING for processing plant

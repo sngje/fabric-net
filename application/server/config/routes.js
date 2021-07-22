@@ -288,12 +288,10 @@ router.get('/assets/search/:bookmark', async function (req, res) {
         // const result = await contract.evaluateTransaction('queryWithVaccination', condition);
         // let objects = JSON.parse(result);
 
-        const age = parseInt(req.body.age);
-        const condition = (req.body.vaccination === 'on') ? true : false;
         let queryString = {
             selector: {
-                age: age,
-                vaccination: condition
+                flag: req.body.flag,
+                product_serial: req.body.product_serial
             }
         };
         logger.info(queryString);

@@ -1,24 +1,48 @@
 {% extends 'base.html' %}
 {% block content %}
-  <div class="create">
+  <script>
+    $(document).ready(function(){
+        $('select').formSelect();
+    });
+    $(document).ready(function() {
+        M.updateTextFields();
+    });
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!-- Compiled and minified JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <div class="create" style="padding: 10px;">
       <div class="row">
         <form class="col s12" action="{{ url_for('asset.search') }}" method="POST">
-            <div class="row">
-              <div class="input-field col s6">
-                <input placeholder="Age" name="age" type="text" >
-              </div>
-              <div class="row">
-                </div><div class="switch col">
-                  <label>
-                    False
-                    <input type="checkbox" name="vaccination">
-                    <span class="lever"></span>
-                    True
-                  </label>
+          {{ form.hidden_tag() }}
+          <div class="row">
+            <!-- <div class="input-field col s6"> -->
+            {% if form.flag.errors %}
+              {{ form.flag(placeholder="Flag") }}
+              <div class="invalid-feedback">
+                  {% for error in form.flag.errors %}
+                      <span>{{ error }}</span>
+                  {% endfor %}
                 </div>
+            {% else %}
+                {{ form.flag() }}
+            {% endif %}
+            <!-- </div> -->
+          </div>
+          <div class="row">
+            <!-- <i class="material-icons prefix">play_arrow</i> -->
+            {% if form.product_serial.errors %}
+              {{ form.product_serial(placeholder="Product serial") }}
+              <div class="invalid-feedback">
+                {% for error in form.product_serial.errors %}
+                  <span>{{ error }}</span>
+                {% endfor %}
               </div>
-            </div>
-            <input class="waves-light btn our-colour" type="submit" value="Submit" name="">
+            {% else %}
+              {{ form.product_serial(placeholder="Product serial") }}
+            {% endif %}
+          </div>
+          <div class="row">{{ form.submit(class="btn btn-outline-info") }}</div>
         </form>
       </div>
   </div>

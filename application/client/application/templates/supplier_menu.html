@@ -56,6 +56,7 @@
           <thead>
             <tr>
               <th>ID</th>
+              <th>Quantity</th>
               <th>Deliverer</th>
               <th>Message</th>
               <th>Stage</th>
@@ -69,6 +70,7 @@
               <td style="text-transform:uppercase;">
                 <a class="waves-effect waves-light btn" href="{{ url_for('asset.history', asset_id=arr['key'])}}" title="See history">{{ arr['key'] }}</a>
               </td>
+              <td>{{ arr['data']['quantity'] }}</td>
               <td>
                 {% if arr['data']['supplier']['delivery']['deliverer'] is defined %}
                   {{ arr['data']['supplier']['delivery']['deliverer'] }}

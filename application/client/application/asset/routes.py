@@ -2,6 +2,8 @@ from flask import render_template, url_for, flash, redirect, request, Blueprint
 import requests, json, json
 from flask_login import current_user, login_required
 from application import API_SERVER, header_info
+from application.forms import AdvancedSearchForm
+
 asset = Blueprint('asset', __name__)
 
 # Route: home page
@@ -112,24 +114,24 @@ def edit(asset_id):
 @login_required
 def search():
 	headers = header_info(current_user.token)
-	if request.method == "GET":
-		return render_template('search.html', title="Advanced search")
+	form = AdvancedSearchForm()
+	if form.validate_on_submit():
+		product_serial = form.product_serial.data
+		flag = form.flag.data
 
-	age = int(request.form['age'])
-	vaccination = request.form.get('vaccination', 'off')
-
-	req = {
-		'age': f'{age}',
-		'vaccination': f'{vaccination}'
-		}
-	req = json.loads(json.dumps(req))
-	# send the data
-	response = requests.get(f'{API_SERVER}/assets/search/0/', json=req, headers=headers) 
-	if response.status_code != 200:
-		flash(req, "error")
-		return redirect(url_for('asset.search'))
-	transactions = response.json()
-	if len(transactions['data']) == 0:
-		return render_template('empty_list.html', title="Advanced search results", text="Nothing found")
-	flash("Founded results", "success")
-	return render_template('assets.html', title="Advanced search results", transactions=transactions)
+		req = {
+			'product_serial': f'{product_serial}',
+			'flag': f'{flag}'
+			}
+		req = json.loads(json.dumps(req))
+		# send the data
+		response = requests.get(f'{API_SERVER}/assets/search/0/', json=req, headers=headers) 
+		if response.status_code != 200:
+			flash(req, "error")
+			return redirect(url_for('asset.search'))
+		transactions = response.json()
+		if len(transactions['data']) == 0:
+			return render_template('empty_list.html', title="Advanced search results", text="Nothing found")
+		flash("Founded results", "success")
+		return render_template('assets.html', title="Advanced search results", transactions=transactions)
+	return render_template('search.html', title="Advanced search", form=form)
