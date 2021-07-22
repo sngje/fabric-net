@@ -13,7 +13,7 @@ cultivator = Blueprint('cultivator', __name__)
 @login_required
 def all(bookmark=0):
 	headers = header_info(current_user.token)
-	response = requests.get(f'{API_SERVER}/processing-plant/assets/all/{bookmark}', headers=headers) 
+	response = requests.get(f'{API_SERVER}/cultivator/assets/all/{bookmark}', headers=headers) 
 	if response.status_code != 200:
 		flash("Something went wrong", "error")
 		return render_template('empty_list.html', title="Cultivator", text="Nothing found")
@@ -28,7 +28,7 @@ def all(bookmark=0):
 @login_required
 def finished(bookmark=0):
 	headers = header_info(current_user.token)
-	response = requests.get(f'{API_SERVER}/processing-plant/assets/finished/{bookmark}', headers=headers) 
+	response = requests.get(f'{API_SERVER}/cultivator/assets/finished/{bookmark}', headers=headers) 
 	if response.status_code != 200:
 		flash("Error occured, please ask from back-end team", "info")
 		return render_template('empty_list.html', title="Cultivator", text="Nothing found")
@@ -43,7 +43,7 @@ def finished(bookmark=0):
 @login_required
 def confirmation(bookmark=0):
 	headers = header_info(current_user.token)
-	response = requests.get(f'{API_SERVER}/processing-plant/assets/confirmation/{bookmark}', headers=headers) 
+	response = requests.get(f'{API_SERVER}/cultivator/assets/confirmation/{bookmark}', headers=headers) 
 	if response.status_code != 200:
 		flash("List is currently empty", "info")
 		return render_template('empty_list.html', title="Cultivator", text="Nothing found")
@@ -82,7 +82,7 @@ def record_medicine(asset_id):
 		req = {'medicine': f'{medicine}'}
 		req = json.loads(json.dumps(req))
 		# send the data
-		response = requests.put(f'{API_SERVER}/processing-plant/{asset_id}/medicine', json=req, headers=headers) 
+		response = requests.put(f'{API_SERVER}/cultivator/{asset_id}/medicine', json=req, headers=headers) 
 		if response.status_code != 200:
 			flash("Something went wrong, please try again (", "error")
 			return redirect(url_for('cultivator.all'))
@@ -112,7 +112,7 @@ def start(asset_id):
 			}
 		req = json.loads(json.dumps(req))
 		
-		response = requests.put(f'{API_SERVER}/processing-plant/{asset_id}/start', json=req, headers=headers)
+		response = requests.put(f'{API_SERVER}/cultivator/{asset_id}/start', json=req, headers=headers)
 		
 		# check for error
 		if response.status_code != 200:

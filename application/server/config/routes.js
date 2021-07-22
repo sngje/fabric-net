@@ -365,7 +365,7 @@ router.put('/assets/:id/update/age', async function (req, res) {
 });
 
 // Query to get finished processing plant data
-router.get('/processing-plant/assets/confirmation/:bookmark', async function (req, res) {
+router.get('/cultivator/assets/confirmation/:bookmark', async function (req, res) {
     const decoded = helper.decodeJwt(req.headers['authorization']);
     try {
         // Get the contract from the network
@@ -402,7 +402,7 @@ router.get('/processing-plant/assets/confirmation/:bookmark', async function (re
 });
 
 // Query to get processing plant data
-router.get('/processing-plant/assets/all/:bookmark', async function (req, res) {
+router.get('/cultivator/assets/all/:bookmark', async function (req, res) {
     const decoded = helper.decodeJwt(req.headers['authorization']);
     try {
         // Get the contract from the network
@@ -442,7 +442,7 @@ router.get('/processing-plant/assets/all/:bookmark', async function (req, res) {
 });
 
 // Query to get finished processing plant data
-router.get('/processing-plant/assets/finished/:bookmark', async function (req, res) {
+router.get('/cultivator/assets/finished/:bookmark', async function (req, res) {
     const decoded = helper.decodeJwt(req.headers['authorization']);
     try {
         // Get the contract from the network
@@ -478,7 +478,7 @@ router.get('/processing-plant/assets/finished/:bookmark', async function (req, r
 });
 
 // Prosessing plant steps
-router.put('/processing-plant/:id/start', async function (req, res) {
+router.put('/cultivator/:id/start', async function (req, res) {
     const decoded = helper.decodeJwt(req.headers['authorization']);
     try {
         // Get the contract from the network
@@ -504,7 +504,7 @@ router.put('/processing-plant/:id/start', async function (req, res) {
 });
 
 // Prosessing plant - medical record
-router.put('/processing-plant/:id/medicine', async function (req, res) {
+router.put('/cultivator/:id/medicine', async function (req, res) {
     const decoded = helper.decodeJwt(req.headers['authorization']);
     try {
         // Get the contract from the network
@@ -544,7 +544,7 @@ router.put('/assets/:id/start-next-phase', async function (req, res) {
 });
 
 // Query to get deliver data
-router.get('/delivery/assets/all/:bookmark', async function (req, res) {
+router.get('/supplier/assets/all/:bookmark', async function (req, res) {
     const decoded = helper.decodeJwt(req.headers['authorization']);
     try {
         // Get the contract from the network
@@ -580,7 +580,7 @@ router.get('/delivery/assets/all/:bookmark', async function (req, res) {
 });
 
 // Query to get finished delivery data
-router.get('/delivery/assets/finished/:bookmark', async function (req, res) {
+router.get('/supplier/assets/finished/:bookmark', async function (req, res) {
     const decoded = helper.decodeJwt(req.headers['authorization']);
     try {
         // Get the contract from the network
@@ -616,7 +616,7 @@ router.get('/delivery/assets/finished/:bookmark', async function (req, res) {
 });
 
 // Query to get waiting list of delivery data
-router.get('/delivery/assets/confirmation/:bookmark', async function (req, res) {
+router.get('/supplier/assets/confirmation/:bookmark', async function (req, res) {
     const decoded = helper.decodeJwt(req.headers['authorization']);
     try {
         // Get the contract from the network
@@ -653,7 +653,7 @@ router.get('/delivery/assets/confirmation/:bookmark', async function (req, res) 
 });
 
 // Delivery - start
-router.put('/delivery/:id/start', async function (req, res) {
+router.put('/supplier/:id/start', async function (req, res) {
     const decoded = helper.decodeJwt(req.headers['authorization']);
     try {
         // Get the contract from the network

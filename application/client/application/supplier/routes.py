@@ -34,7 +34,7 @@ def request(asset_id):
 @login_required
 def all(bookmark=0):
 	headers = header_info(current_user.token)
-	response = requests.get(f'{API_SERVER}/delivery/assets/all/{bookmark}', headers=headers) 
+	response = requests.get(f'{API_SERVER}/supplier/assets/all/{bookmark}', headers=headers) 
 	if response.status_code != 200:
 		flash("Something went wrong (", "error")
 		return render_template('empty_list.html', title="Supplier", text="Nothing found")
@@ -49,7 +49,7 @@ def all(bookmark=0):
 @login_required
 def finished(bookmark=0):
 	headers = header_info(current_user.token)
-	response = requests.get(f'{API_SERVER}/delivery/assets/finished/{bookmark}', headers=headers) 
+	response = requests.get(f'{API_SERVER}/supplier/assets/finished/{bookmark}', headers=headers) 
 	if response.status_code != 200:
 		flash("Error occured, please ask from back-end team", "error")
 		return render_template('empty_list.html', title="Supplier", text="Nothing found")
@@ -64,7 +64,7 @@ def finished(bookmark=0):
 @login_required
 def confirmation(bookmark=0):
 	headers = header_info(current_user.token)
-	response = requests.get(f'{API_SERVER}/delivery/assets/confirmation/{bookmark}', headers=headers) 
+	response = requests.get(f'{API_SERVER}/supplier/assets/confirmation/{bookmark}', headers=headers) 
 	if response.status_code != 200:
 		flash("Something went wrong (", "error")
 		return render_template('empty_list.html', title="Supplier", text="Nothing found")
@@ -92,7 +92,7 @@ def start(asset_id):
 			}
 		req = json.loads(json.dumps(req))
 		
-		response = requests.put(f'{API_SERVER}/delivery/{asset_id}/start', json=req, headers=headers)
+		response = requests.put(f'{API_SERVER}/supplier/{asset_id}/start', json=req, headers=headers)
 		
 		# check for error
 		if response.status_code != 200:
