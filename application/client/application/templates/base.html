@@ -144,7 +144,7 @@
       <header>
         <ul class="dropdown-content" id="dropdown1">
           {% if current_user.is_authenticated %}
-            <!-- <li><a class="indigo-text" href="{{ url_for('users.login') }}"><i class="material-icons">person</i> Profile</a></li> -->
+            <li><a class="indigo-text" href="{{ url_for('users.profile') }}"><i class="material-icons">person</i> Profile</a></li>
             <li><a class="indigo-text" href="{{ url_for('users.logout') }}""><i class="material-icons">cancel</i> Logout</a></li>
           {% else %}
             <li><a class="indigo-text" href="{{ url_for('users.register') }}"><i class="material-icons">person</i> Register</a></li>

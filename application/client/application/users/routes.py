@@ -1,8 +1,9 @@
-from flask import render_template, url_for, flash, redirect, Blueprint
+from flask import render_template, url_for, flash, redirect, Blueprint, request
 from application import  db, bcrpyt, API_SERVER
-from flask_login import current_user, login_user, logout_user
+from flask_login import current_user, login_user, logout_user, login_required
 from application.models import User
-from application.forms import RegistirationForm, LoginForm
+from application.forms import RegistirationForm, LoginForm, UpdateAccountForm
+from application.utils import save_file
 import json, requests
 
 users = Blueprint('users', __name__)
@@ -80,9 +81,38 @@ def register():
 			flash(response['message'], "error")
 	return render_template('register.html', title='Registration', form=form)
 
-
 # Route: Logout
 @users.route("/logout")
 def logout():
     logout_user()
     return redirect(url_for('users.login'))
+
+@users.route("/profile")
+@login_required
+def profile():
+    image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
+    return render_template('profile.html', title='My profile', image_file=image_file)
+
+@users.route("/update-profile", methods=['POST', 'GET'])
+@login_required
+def update_profile():
+    form = UpdateAccountForm()
+    if form.validate_on_submit():
+        if form.picture.data:
+            picture_file = save_file(form.picture.data)
+            current_user.image_file = picture_file
+        current_user.first_name = form.first_name.data
+        current_user.last_name = form.last_name.data
+        current_user.location = form.location.data
+        current_user.phone = form.phone.data
+        db.session.commit()
+        flash('Your account has been updated', 'success')
+        return redirect(url_for('users.update_profile'))
+    elif request.method == 'GET':
+        form.email.data = current_user.email
+        if (current_user.first_name): form.first_name.data = current_user.first_name
+        if (current_user.last_name): form.last_name.data = current_user.last_name
+        if (current_user.location): form.location.data = current_user.location
+        if (current_user.phone): form.phone.data = current_user.phone
+    image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
+    return render_template('update_profile.html', title='Edit ptofile', image_file=image_file, form=form)

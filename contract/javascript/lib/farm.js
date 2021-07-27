@@ -156,7 +156,7 @@ class Farm extends Contract {
         // if (newAsset.age < 5 || newAsset.vaccination != true) {
         //     throw new Error('Asset is not accaptable yet, age must be at least 5 and vaccination should be true');
         // }
-        newAsset.flag = 'CR';
+        newAsset.flag = flag;
         if (flag == 'CR') {
             // add new dictinoary if not exists
             if (typeof newAsset.cultivator == 'undefined') {

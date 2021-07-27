@@ -18,3 +18,5 @@ application/client/application/static/qr-codes/
 application/client/application/site.db
 **.id
 **.tar.gz
+**.png
+**.jpg

@@ -678,4 +678,30 @@ router.put('/supplier/:id/start', async function (req, res) {
     }
 });
 
+// Delivery - finish
+router.put('/supplier/:id/finish', async function (req, res) {
+    const decoded = helper.decodeJwt(req.headers['authorization']);
+    try {
+        // Get the contract from the network
+        const {contract, gateway} = await fabricNetwork.connectNetwork(decoded['email'], decoded['orgname']);
+        const current_time = helper.getDateAsString();
+        // Evaluate the specified transaction.
+        // getAsset transaction - requires 1 argument, ex: ('getAsset', 'Cage1')
+        let tx = await contract.submitTransaction('addDeliveryInfo', req.params.id, 'SR', req.body.plate_number, req.body.message, current_time);
+        let data = await contract.evaluateTransaction('getAsset', req.params.id);
+        let answer = JSON.parse(data);
+        answer.tx_id = tx.toString();
+        logger.info('Transaction has been evaluated');
+        res.status(200).json(answer);
+        // logger.info(JSON.parse(query_result));
+        // res.send('Transaction has been submitted');
+
+        // disconnect the gateway
+        // await gateway.disconnect();
+    } catch (error) {
+        logger.error(`Failed to evaluate transaction: ${error}`);
+        res.status(500).json({error: 'Failed to evaluate transaction. Please try again'});
+    }
+});
+
 module.exports = router;

@@ -71,7 +71,7 @@ def confirmation(bookmark=0):
 	transactions = response.json()
 	if len(transactions['data']) == 0:
 		return render_template('empty_list.html', title="Supplier", text="Nothing found")
-	return render_template('supplier_menu.ßhtml', title="Supplier - confirmation", page="confirmation", bookmark=bookmark, transactions=transactions)
+	return render_template('supplier_menu.html', title="Supplier - confirmation", page="confirmation", bookmark=bookmark, transactions=transactions)
 
 # Route: processing plant - start
 @supplier.route("/supplier/<string:asset_id>", methods=["POST", "GET"])

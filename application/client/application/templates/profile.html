@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="create" style="padding: 10px">
+        <div class="row center">
+            <img class="circle responsive-img" src="{{ image_file }}">
+            <div class="media-body">
+                <p class="text-secondary">{{ current_user.email }}</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s12">
+                <input disabled value="{{ current_user.first_name }}" id="disabled" type="text" class="validate">
+                <label for="disabled">First name</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s12">
+                <input disabled value="{{ current_user.last_name }}" id="disabled" type="text" class="validate">
+                <label for="disabled">Last name</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s12">
+                <input disabled value="{{ current_user.location }}" id="disabled" type="text" class="validate">
+                <label for="disabled">Address</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s12">
+                <input disabled value="{{ current_user.phone }}" id="disabled" type="text" class="validate">
+                <label for="disabled">Contact</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s12">
+                <input disabled value="{{ current_user.orgname }}" id="disabled" type="text" class="validate">
+                <label for="disabled">Organization</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s12">
+                <input disabled value="{{ current_user.date_registred }}" id="disabled" type="text" class="validate">
+                <label for="disabled">Joined at</label>
+            </div>
+        </div>
+        <div class="row">
+            <a class="waves-effect waves-light btn" href="{{ url_for('users.update_profile') }}">Update info</a>
+        </div>
+    </div>
+{% endblock content %}

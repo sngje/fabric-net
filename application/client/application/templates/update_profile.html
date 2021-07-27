@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="create" style="padding: 20px">
+        <form method="POST" action="" enctype="multipart/form-data" class="col s12">
+            {{ form.hidden_tag() }}
+            <div class="row">
+                {{ form.email.label(class="form-control-label") }}
+                {% if form.email.errors %}
+                    {{ form.email(class="form-control form-control-lg is-invalid", disabled=True) }}
+                    <div class="invalid-feedback">
+                        {% for error in form.email.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.email(class="form-control form-control-lg", disabled=True) }}
+                {% endif %}
+            </div>
+            <div class="row">
+                {{ form.first_name.label(class="form-control-label") }}
+                {% if form.first_name.errors %}
+                    {{ form.first_name(class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.first_name.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.first_name(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+            <div class="row">
+                {{ form.last_name.label(class="form-control-label") }}
+                {% if form.last_name.errors %}
+                    {{ form.last_name(class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.last_name.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.last_name(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+            <div class="row">
+                {{ form.location.label(class="form-control-label") }}
+                {% if form.location.errors %}
+                    {{ form.location(class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.location.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.location(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+            <div class="row">
+                {{ form.phone.label(class="form-control-label") }}
+                {% if form.phone.errors %}
+                    {{ form.phone(class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.phone.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.phone(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+            <div class="row file-field input-field">
+                <div class="btn">
+                    <span>Profile pictur</span>
+                    {{ form.picture() }}
+                    {{ form.picture(class="form-control-file") }}
+                </div>
+                <div class="file-path-wrapper">
+                    <input class="file-path validate" type="text" placeholder="Select a file">
+                </div>
+                {% if form.picture.errors %}
+                    {% for error in form.picture.errors %}
+                        <span class="text-danger">{{ error }}</span></br>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        <div class="row">
+            {{ form.submit(class="btn btn-outline-info") }}  <a  class="right waves-effect waves-light btn" href="{{ url_for('users.profile') }}">My profile</a>
+        </div>
+        </form>
+    </div>
+{% endblock content %}

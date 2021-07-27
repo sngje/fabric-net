@@ -89,7 +89,7 @@ def record_medicine(asset_id):
 		transactions = response.json()
 		flash(transactions['response'], "success")
 		return redirect(url_for('cultivator.all'))
-	return render_template('cultivator_medicine.html', asset_id=asset_id, form=form)
+	return render_template('cultivator_medicine.html', title='Medicine record', asset_id=asset_id, form=form)
 
 
 # Route: processing plant - start
