@@ -10,7 +10,8 @@
               <th>Deliverer</th>
               <th>Address</th>
               <th>Status</th>
-              <!-- <th>Start Delivery</th> -->
+              <th>Employee</th>
+              <th>QR code</th>
             </tr>
           </thead>
           <tbody>
@@ -22,9 +23,10 @@
               <td>{{ arr['data']['supplier']['delivery']['deliverer'] }}</td>
               <td>{{ arr['data']['supplier']['delivery']['message'] }}</td>
               <td>{{ arr['data']['supplier']['status'] }}</td>
-              <!-- <td>
-                <a href="{{ url_for('supplier.request', asset_id=arr['key']) }}" title="Confirm"><i class="material-icons md-30">&nbsp;next_plan</i></a>
-              </td> -->
+              <td>
+                <a class="waves-effect" href="{{ url_for('users.profile', email=arr['data']['supplier']['delivery']['employee'])}}" title="See profile"><i class="material-icons md-30">&nbsp;person</i></a>
+              </td>
+              <td><a href="{{ url_for('supplier.generate_qr', asset_id=arr['key']) }}" title="QR code generator"><i class="material-icons md-30">&nbsp;add</i></a></td>
             </tr>
             {% endfor %}
           </tbody>
@@ -59,7 +61,7 @@
               <th>Quantity</th>
               <th>Deliverer</th>
               <th>Message</th>
-              <th>Stage</th>
+              <th>Employee</th>
               <th>QR code</th>
               <th>Update</th>
           </tr>
@@ -85,9 +87,12 @@
                   -
                 {% endif %}
               </td>
-              <td>{{ arr['data']['supplier']['status'] }}</td>
+              <td>
+                <a class="waves-effect" href="{{ url_for('users.profile', email=arr['data']['supplier']['delivery']['employee'])}}" title="See profile"><i class="material-icons md-30">&nbsp;person</i></a>
+              </td>
+            
               <td><a href="{{ url_for('supplier.generate_qr', asset_id=arr['key']) }}" title="QR code generator"><i class="material-icons md-30">&nbsp;add</i></a></td>
-              <td><a href="{{ url_for('supplier.start', asset_id=arr['key']) }}" title="Update"><i class="material-icons md-30">&nbsp;autorenew</i></a></td>
+              <td><a href="{{ url_for('supplier.finish', asset_id=arr['key']) }}" title="Finish"><i class="material-icons md-30">&nbsp;stop</i></a></td>
             </tr>
             {% endfor %}
           </tbody>

@@ -72,7 +72,7 @@ class Farm extends Contract {
     }
 
     // Create new asset
-    async createAsset(ctx, id, timestamp, quantity, product_serial, message) {
+    async createAsset(ctx, id, timestamp, quantity, product_serial, message, employee) {
         const assetExists = await this.assetExists(ctx, id);
         if (assetExists) {
             throw new Error(`This asset with ${id} already exists`);
@@ -94,6 +94,7 @@ class Farm extends Contract {
             quantity: int_quantity,
             timestamp: timestamp,
             message: message,
+            employee: employee,
             flag: 'PR',
             step: 1,
             tx_id: this.tx_id,
@@ -157,13 +158,13 @@ class Farm extends Contract {
         //     throw new Error('Asset is not accaptable yet, age must be at least 5 and vaccination should be true');
         // }
         newAsset.flag = flag;
-        if (flag == 'CR') {
+        if (flag === 'CR') {
             // add new dictinoary if not exists
             if (typeof newAsset.cultivator == 'undefined') {
                 newAsset.cultivator = {};
             }
             newAsset.cultivator.status = 'PENDING';
-        } else if (flag ==  'SR') {
+        } else if (flag ===  'SR') {
             // add new dictinoary if not exists
             if (typeof newAsset.supplier == 'undefined') {
                 newAsset.supplier = {};
@@ -178,8 +179,26 @@ class Farm extends Contract {
         return ctx.stub.getTxID();
     }
 
+    // Change asset status to FINISHED
+    async finishPhase(ctx, id, flag) {
+        const currentAsset = await this.getAsset(ctx, id);
+        // get the data as json format
+        const newAsset = JSON.parse(currentAsset);
+        if (flag === 'SR') {
+            newAsset.supplier.status = 'FINISHED';
+        } else if (flag === 'CR') {
+            newAsset.cultivator.status = 'FINISHED';
+        } else {
+            throw new Error('Phase not found, please check the value and try again');
+        }
+
+        // update the state
+        await ctx.stub.putState(id, Buffer.from(JSON.stringify(newAsset)));
+        return ctx.stub.getTxID();
+    }
+
     // Prosessing plant logic goes here
-    async addDeliveryInfo(ctx, id, flag, deliverer, message, timestamp) {
+    async addDeliveryInfo(ctx, id, flag, deliverer, message, timestamp, employee) {
         // Check data if exists
         const currentAsset = await this.getAsset(ctx, id);
         // Get the data as json format
@@ -192,6 +211,7 @@ class Farm extends Contract {
                 'message': message,
                 'deliverer': deliverer,
                 'timestamp': timestamp,
+                'employee': employee,
             }
         } else {
             asset.cultivator.status = 'FINISHED';
@@ -200,6 +220,7 @@ class Farm extends Contract {
                 'message': message,
                 'deliverer': deliverer,
                 'timestamp': timestamp,
+                'employee': employee,
             }
         }
     

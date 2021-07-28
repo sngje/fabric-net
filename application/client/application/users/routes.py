@@ -88,10 +88,19 @@ def logout():
     return redirect(url_for('users.login'))
 
 @users.route("/profile")
+@users.route("/profile/<string:email>")
 @login_required
-def profile():
-    image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
-    return render_template('profile.html', title='My profile', image_file=image_file)
+def profile(email=None):
+	if (email is None):
+		image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
+		return render_template('profile.html', title='My profile', user=current_user, image_file=image_file)
+	user = User.query.filter_by(email=email).first()
+	if (user is None):
+		return render_template('empty_list.html', title='Account not found', text='Account not found!')
+	image_file = url_for('static', filename='profile_pics/' + user.image_file)
+	return render_template('profile.html', title=f'Profile - {email}', user=user, image_file=image_file)
+	
+	
 
 @users.route("/update-profile", methods=['POST', 'GET'])
 @login_required

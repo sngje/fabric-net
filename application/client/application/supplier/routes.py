@@ -74,7 +74,7 @@ def confirmation(bookmark=0):
 	return render_template('supplier_menu.html', title="Supplier - confirmation", page="confirmation", bookmark=bookmark, transactions=transactions)
 
 # Route: processing plant - start
-@supplier.route("/supplier/<string:asset_id>", methods=["POST", "GET"])
+@supplier.route("/supplier/<string:asset_id>/start", methods=["POST", "GET"])
 @login_required
 def start(asset_id):
 	headers = header_info(current_user.token)
@@ -113,10 +113,28 @@ def start(asset_id):
 		transactions = response.json()
 		return render_template(f'delivery_info.html', title=f"Supplier - {asset_id}", asset_id=asset_id, form=form, flag='SR', transactions=transactions)
 
+# Route: processing plant - finish
+@supplier.route("/supplier/<string:asset_id>/finish", methods=["GET"])
+@login_required
+def finish(asset_id):
+	headers = header_info(current_user.token)
+
+	response = requests.put(f'{API_SERVER}/supplier/{asset_id}/finish', headers=headers)
+	
+	# check for error
+	if response.status_code != 200:
+		flash("Error occured during the transaction, please contact with back-end team", "error")
+		return redirect(url_for('supplier.all'))
+	
+	# transactions = response.json()
+	flash("Updated successfully", "success")
+	return redirect(url_for('supplier.finished', asset_id=asset_id))
+
+
 # Route: generate QR code page
 @supplier.route("/supplier/<string:asset_id>/generate-qr-code")
 @login_required
 def generate_qr(asset_id):
 	file_path = generate_QR(asset_id)
-	# print(file_path)
+	print(file_path)
 	return render_template('qr_code.html', title=f'QR code - {asset_id}', file=f'qr-codes/{asset_id}.png')

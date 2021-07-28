@@ -104,7 +104,7 @@ router.post('/assets/create', async function (req, res) {
         // console.log(JSON.parse(result.toString('utf8')));
 
         // Submit the specified transaction.
-        let tx = await contract.submitTransaction('createAsset', product_id, current_time, req.body.quantity, req.body.product_serial, req.body.message);
+        let tx = await contract.submitTransaction('createAsset', product_id, current_time, req.body.quantity, req.body.product_serial, req.body.message, decoded['email']);
         console.log('Transaction has been submitted');
         res.status(200).json({
             response: `Successfully added - ${product_id}`,
@@ -486,7 +486,7 @@ router.put('/cultivator/:id/start', async function (req, res) {
         const current_time = helper.getDateAsString();
         // Evaluate the specified transaction.
         // getAsset transaction - requires 1 argument, ex: ('getAsset', 'Cage1')
-        let tx = await contract.submitTransaction('addDeliveryInfo', req.params.id, 'CR', req.body.plate_number, req.body.message, current_time);
+        let tx = await contract.submitTransaction('addDeliveryInfo', req.params.id, 'CR', req.body.plate_number, req.body.message, current_time, decoded['email']);
         let data = await contract.evaluateTransaction('getAsset', req.params.id);
         let answer = JSON.parse(data);
         answer.tx_id = tx.toString();
@@ -661,7 +661,7 @@ router.put('/supplier/:id/start', async function (req, res) {
         const current_time = helper.getDateAsString();
         // Evaluate the specified transaction.
         // getAsset transaction - requires 1 argument, ex: ('getAsset', 'Cage1')
-        let tx = await contract.submitTransaction('addDeliveryInfo', req.params.id, 'SR', req.body.plate_number, req.body.message, current_time);
+        let tx = await contract.submitTransaction('addDeliveryInfo', req.params.id, 'SR', req.body.plate_number, req.body.message, current_time, decoded['email']);
         let data = await contract.evaluateTransaction('getAsset', req.params.id);
         let answer = JSON.parse(data);
         answer.tx_id = tx.toString();
@@ -687,17 +687,12 @@ router.put('/supplier/:id/finish', async function (req, res) {
         const current_time = helper.getDateAsString();
         // Evaluate the specified transaction.
         // getAsset transaction - requires 1 argument, ex: ('getAsset', 'Cage1')
-        let tx = await contract.submitTransaction('addDeliveryInfo', req.params.id, 'SR', req.body.plate_number, req.body.message, current_time);
-        let data = await contract.evaluateTransaction('getAsset', req.params.id);
-        let answer = JSON.parse(data);
-        answer.tx_id = tx.toString();
+        let tx = await contract.submitTransaction('finishPhase', req.params.id, 'SR');
+        // let data = await contract.evaluateTransaction('getAsset', req.params.id);
+        // let answer = JSON.parse(data);
+        // answer.tx_id = tx.toString();
         logger.info('Transaction has been evaluated');
         res.status(200).json(answer);
-        // logger.info(JSON.parse(query_result));
-        // res.send('Transaction has been submitted');
-
-        // disconnect the gateway
-        // await gateway.disconnect();
     } catch (error) {
         logger.error(`Failed to evaluate transaction: ${error}`);
         res.status(500).json({error: 'Failed to evaluate transaction. Please try again'});
