@@ -49,7 +49,7 @@ async function main() {
             let randomId = helper.generateRandomId()
             let randomQuantity = Math.floor(Math.random() * (1000 - 10 + 1));
             let randomSerial = helper.generateRandomId(2);
-            let tx = await contract.submitTransaction('createAsset', randomId, current_time, randomQuantity, randomSerial, 'CR - auto');
+            let tx = await contract.submitTransaction('createAsset', randomId, current_time, randomQuantity, randomSerial, 'CR - auto', 'usmonov.me@gmail.com`');
             console.log(`${i} ok - ${tx.toString()}`);
         }
 

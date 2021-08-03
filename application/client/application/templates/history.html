@@ -1,7 +1,65 @@
 {% extends 'base.html' %}
 {% block content %}
 {% set flag = transactions[0]['data']['flag'] %}
-<div class="content0">
+{% set latest = transactions[0] %}
+  <div class="container" style="padding-top: 20px; padding-bottom: 20px;">
+    <ul class="timeline-head" id="timeline-head">
+      <li class="li complete">
+        <div class="timestamp">
+          <span class="author">Grower Farm</span>
+          <span class="date">{{ daysCount(latest['data']['timestamp']) }}<span>
+        </div>
+        <div class="status">
+          <h4> CREATED </h4>
+        </div>
+      </li>
+      {% if latest['data']['cultivator'] %}
+        <li class="li complete">
+          <div class="timestamp">
+            <span class="author">Cultivator</span>
+            <span class="date">{{ myTimeFunc(latest['timestamp']['seconds']|int) }}<span>
+          </div>
+          <div class="status">
+            <h4> {{ latest['data']['cultivator']['status'] }} </h4>
+          </div>
+        </li>
+      {% else %}
+        <li class="li">
+          <div class="timestamp">
+            <span class="author">Cultivator</span>
+            <span class="date">- - -<span>
+          </div>
+          <div class="status">
+            <h4> WAITING </h4>
+          </div>
+        </li>
+      {% endif %}
+      
+      {% if latest['data']['supplier'] %}
+        <li class="li complete">
+          <div class="timestamp">
+            <span class="author">Supplier</span>
+            <span class="date">{{ myTimeFunc(latest['timestamp']['seconds']|int) }}<span>
+          </div>
+          <div class="status">
+            <h4> {{ latest['data']['supplier']['status'] }} </h4>
+          </div>
+        </li>
+      {% else %}
+        <li class="li">
+          <div class="timestamp">
+            <span class="author">Supplier</span>
+            <span class="date">- - -<span>
+          </div>
+          <div class="status">
+            <h4> WAITING </h4>
+          </div>
+        </li>
+      {% endif %}
+
+    </ul>
+  </div>
+<!-- <div class="content0">
 	<div class="content3">
     <div class="shipment">
 			{% if flag == 'PR' %}
@@ -39,42 +97,6 @@
           <p>Process order</p>
         </div>
       {% endif %}
-      
-      <!-- {% if flag == 'SR' %}
-        <div class="quality">
-          <div class="imgcircle" style="background-color:#98D091">
-            <img src="{{ url_for('static', filename='image/quality.png') }}" alt="quality check">
-          </div>
-          <span class="line" style="background-color: #98D091;"></span>
-          <p>Quality Check</p>
-        </div>
-      {% else %}
-        <div class="quality">
-          <div class="imgcircle">
-            <img src="{{ url_for('static', filename='image/quality.png') }}" alt="quality check">
-          </div>
-          <span class="line"></span>
-          <p>Quality Check</p>
-        </div>
-      {% endif %}
-
-      {% if flag == 'AX' %}
-        <div class="dispatch">
-          <div class="imgcircle" style="background-color:#98D091">
-            <img src="{{ url_for('static', filename='image/dispatch.png') }}" alt="dispatch product">
-          </div>
-          <span class="line" style="background-color: #98D091;"></span>
-          <p>Dispatched Item</p>
-        </div>
-      {% else %}
-        <div class="dispatch">
-          <div class="imgcircle">
-            <img src="{{ url_for('static', filename='image/dispatch.png') }}" alt="dispatch product">
-          </div>
-          <span class="line"></span>
-          <p>Dispatched Item</p>
-        </div>
-      {% endif %} -->
 
 			{% if flag == 'SR' %}
         <div class="delivery">
@@ -95,7 +117,7 @@
 		</div>
   </div>
 
-</div>  
+</div>   -->
   <div class="container">
     <div class="timeline">
       {% set color = ['blue', 'red', 'green', 'brown', 'orange', 'purple', 'blue', 'red', 'green', 'brown', 'black', 'orange', 'purple', 'yellow'] %}
