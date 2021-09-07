@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
   <div class="create" style="padding: 10px">
-    <!-- START FORM -->
       <div class="row">
         <form class="col s12" action="{{ url_for('grower.create_asset') }}" method="POST">
             {{ form.hidden_tag() }}
@@ -53,6 +52,5 @@
             {{ form.submit(class="btn btn-outline-info") }}
         </form>
       </div>
-    <!-- END FORM -->
   </div>
 {% endblock %}
